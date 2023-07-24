@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-background text-foreground;
+}
+
+.node {
+  @apply min-w-[200px] bg-neutral-200 border rounded-lg p-3;
+}
+
+.node .label {
+  text-wrap: balance;
+  @apply leading-5 block text-sm font-bold;
+}

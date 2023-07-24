@@ -1,0 +1,15 @@
+{
+  "name": "vite-vercel-serverless-imports",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "pnpm -F app dev --",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "env:pull": "vercel env pull app/.env"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

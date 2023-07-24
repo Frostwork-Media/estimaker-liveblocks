@@ -1,0 +1,4 @@
+- ~~parsing it into a graph and~~
+- ~~build edges out of what people use~~
+- ~~displaying as dom nodes~~
+- then allow suggestions to make suggested edges
