@@ -2,10 +2,8 @@
 - ~~build edges out of what people use~~
 - ~~displaying as dom nodes~~
 - ~~draw edges that truly exist~~
-- color edges by person who drew them (QUESTION) Not sure edge colors are really valuable. Not doing it.
+- ~~what is showing~~
 
-- ~~create unique color for every userId present in values~~
-
-- what is showing
+- showing needs to be moved into individual user code, really we need a better abstraction on showing.
 
 - then allow suggestions to make suggested edges
