@@ -16,6 +16,9 @@ type Presence = {
 export type Node = LiveObject<{
   content: string;
   variableName: string;
+  x: number;
+  y: number;
+  showing?: "graph";
 }>;
 
 type Storage = {

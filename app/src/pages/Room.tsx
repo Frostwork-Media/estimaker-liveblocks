@@ -10,9 +10,7 @@ import {
   useOthers,
   useSelf,
   useStatus,
-  useStorage,
 } from "../liveblocks.config";
-import { useMemo, useState } from "react";
 import cx from "classnames";
 import { Graph } from "../components/Graph";
 import { colors } from "../lib/constants";
@@ -23,79 +21,52 @@ const inputClasses =
 function Inner() {
   const status = useStatus();
   const { id = "" } = useParams<{ id: string }>();
-  const nodes = useStorage((state) => state.nodes);
-  const removeNode = useMutation(({ storage }, id: string) => {
-    const nodes = storage.get("nodes");
-    nodes.delete(id);
-  }, []);
-  const nodesArray = Array.from(nodes?.entries() ?? []);
 
-  const self = useSelf();
-  const others = useOthers();
-  const userIds = useMemo(() => {
-    let ids: string[] = [];
-    if (self) ids.push(self.id);
-    if (others) ids = ids.concat(others.map((other) => other.id));
-    return ids;
-  }, [self, others]);
+  // const self = useSelf();
+  // const others = useOthers();
+  // const userIds = useMemo(() => {
+  //   let ids: string[] = [];
+  //   if (self) ids.push(self.id);
+  //   if (others) ids = ids.concat(others.map((other) => other.id));
+  //   return ids;
+  // }, [self, others]);
 
   if (status === "connecting") return <div>Connecting...</div>;
 
   return (
-    <div className="p-5">
-      <header className="grid gap-1 mb-6">
+    <div className="h-screen">
+      <header className="grid gap-4 mb-6 p-6 absolute z-10 max-w-2xl bg-background border shadow top-3 left-3 rounded">
         <Link to="/" className="text-blue-500 text-sm justify-self-start">
           ← Back Home
         </Link>
         <h1 className="text-4xl font-bold">{id}</h1>
+        <AddNode />
+        <Users />
       </header>
-      <main className="grid grid-cols-[minmax(0,1fr)_auto] gap-4">
-        <div className="grid gap-8">
-          <AddNode />
-          <Graph userIds={userIds} />
-          <div className="grid gap-3">
-            {nodesArray.map(([key, node]) => (
-              <div
-                key={key}
-                className="border border-neutral-300 rounded-xl p-3 grid gap-2"
-              >
-                <header className="flex justify-between items-start">
-                  <span className="text-xl border-b pb-1">{node.content}</span>
-                  <button
-                    className="bg-red-500 text-background rounded-md p-2 whitespace-nowrap"
-                    onClick={() => removeNode(key)}
-                  >
-                    Delete
-                  </button>
-                </header>
-                <div className="flex items-center gap-2">
-                  <span className="font-mono text-neutral-400 text-sm">
-                    {node.variableName}
-                  </span>
-                  <EditValue nodeId={key} />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-        <aside>
-          <Users />
-        </aside>
-      </main>
+      <Graph />
     </div>
   );
 }
 
 function AddNode() {
   const addNode = useMutation(({ storage }, content: string) => {
-    const node = new LiveObject({ content, variableName: getVarName(content) });
     const nodes = storage.get("nodes");
+    // get most recent node
+    const lastNode = Array.from(nodes.values()).pop();
+    const x = lastNode?.get("x") ?? 0;
+    const y = lastNode?.get("y") ?? 0;
+    const node = new LiveObject({
+      content,
+      variableName: getVarName(content),
+      x: x + 100,
+      y,
+    });
     const id = nanoid();
     nodes.set(id, node);
   }, []);
   return (
     <form
-      className="border flex items-center gap-2 max-w-md bg-neutral-100 p-4 rounded-md"
+      className="flex items-center gap-2 max-w-md rounded-md"
       onSubmit={(e) => {
         e.preventDefault();
         const formData = new FormData(e.currentTarget);
@@ -121,7 +92,7 @@ function Users() {
   const self = useSelf();
   const others = useOthers();
   return (
-    <div className="grid gap-4 min-w-[200px] p-2 bg-neutral-100 shadow rounded-lg sticky top-4">
+    <div className="grid gap-4">
       {self && <Avatar {...self} userIndex={0} />}
       {others.map((other, index) => (
         <Avatar key={other.id} {...other} userIndex={index + 1} />
@@ -163,45 +134,5 @@ export function Room() {
         {() => <Inner />}
       </ClientSideSuspense>
     </RoomProvider>
-  );
-}
-
-function EditValue({ nodeId }: { nodeId: string }) {
-  const self = useSelf();
-  if (!self) throw new Error("Missing self");
-  const valueKey = `${self.id}:${nodeId}`;
-  const value = useStorage((state) => state.values.get(valueKey)) ?? "";
-  const [currentValue, setCurrentValue] = useState(value);
-  const setValue = useMutation(({ storage }, value: string) => {
-    const values = storage.get("values");
-    values.set(valueKey, value);
-  }, []);
-  return (
-    <form
-      className="flex gap-2 w-full"
-      onSubmit={(e) => {
-        e.preventDefault();
-        const formData = new FormData(e.currentTarget);
-        const value = formData.get("value");
-        if (!(typeof value === "string")) return;
-        setValue(value);
-      }}
-    >
-      <input
-        className={cx(inputClasses, "font-mono")}
-        type="text"
-        value={currentValue}
-        name="value"
-        onChange={(e) => {
-          const value = e.target.value;
-          setCurrentValue(value);
-        }}
-      />
-      {currentValue !== value && (
-        <button className="bg-blue-500 text-background rounded-md p-2 whitespace-nowrap">
-          Save
-        </button>
-      )}
-    </form>
   );
 }

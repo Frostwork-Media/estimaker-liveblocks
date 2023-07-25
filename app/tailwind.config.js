@@ -1,6 +1,11 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+    // for squiggle-components
+    "./node_modules/@quri/squiggle-components/**/*.{js,ts,jsx,tsx}",
+  ],
   theme: {
     extend: {
       colors: {
@@ -69,6 +74,19 @@ export default {
           700: "#2c6c82",
           800: "#0c5c72",
           900: "#004d61",
+        },
+        yellow: {
+          DEFAULT: "#ffe713",
+          50: "#fdfce8",
+          100: "#fdfcc3",
+          200: "#fdf583",
+          300: "#ffe713",
+          400: "#f9d200",
+          500: "#e8b800",
+          600: "#c88e00",
+          700: "#a06500",
+          800: "#844e02",
+          900: "#70400e",
         },
       },
     },

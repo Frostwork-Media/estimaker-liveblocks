@@ -6,11 +6,30 @@ body {
   @apply bg-background text-foreground;
 }
 
-.node {
-  @apply min-w-[200px] bg-neutral-200 border rounded-lg p-3;
+.text-wrap-balance {
+  text-wrap: balance;
 }
 
-.node .label {
-  text-wrap: balance;
-  @apply leading-5 block text-sm font-bold;
+.react-flow__handle {
+  @apply bg-blue-200 w-4 h-4 rounded-full border-none;
+}
+
+.react-flow__handle-bottom {
+  @apply -bottom-2;
+}
+
+.react-flow__handle-top {
+  @apply -top-2;
+}
+
+.squiggle > div,
+.squiggle > div > div:nth-child(2),
+.squiggle > div > div:nth-child(2) > div,
+.squiggle > div > div:nth-child(2) > div > div,
+.squiggle > div > div:nth-child(2) > div > div > div {
+  width: 100%;
+}
+
+.squiggle > div > div:nth-child(2) > div > div > div + div {
+  display: none;
 }
