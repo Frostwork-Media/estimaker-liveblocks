@@ -4,7 +4,7 @@ import ReactFlow, { Controls, Background, BackgroundVariant } from "reactflow";
 import type { OnNodesChange, NodeTypes } from "reactflow";
 import "reactflow/dist/style.css";
 import { AppEdge, AppNode } from "../lib/types";
-import { CUSTOM_NODE, squiggleReservedWords } from "../lib/constants";
+import { CUSTOM_NODE } from "../lib/constants";
 import { CustomNode } from "./CustomNode";
 import { getVariables } from "../lib/helpers";
 
