@@ -105,7 +105,7 @@ export function CustomNode({ data, id }: NodeProps<AppNodeData>) {
         )}
         <div className="px-2 py-3 rounded-md bg-[white] grid gap-3 shadow-sm">
           <button
-            className="font-mono text-blue-600 text-sm text-left tracking-wider"
+            className="font-mono text-blue-600 text-sm text-left tracking-wider w-full overflow-hidden whitespace-nowrap overflow-ellipsis"
             onClick={() => {
               // copy variable name to clipboard
               navigator.clipboard.writeText(variableName);
