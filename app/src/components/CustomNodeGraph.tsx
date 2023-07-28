@@ -73,7 +73,7 @@ function getSquiggleCode(
     }
   }
 
-  const sortedIds = toposort.array(nodeIds, deps);
+  const sortedIds = toposort.array(Array.from(new Set(nodeIds)), deps);
 
   const code =
     sortedIds
