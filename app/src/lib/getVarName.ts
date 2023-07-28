@@ -75,5 +75,9 @@ export function getVarName(content: string): string {
       index === 0 ? word : word[0].toUpperCase() + word.slice(1)
     );
   const variableName = finalWords.join("").replace(/[\W ]/g, "");
+
+  // if it starts with a number, add an "n" to the beginning
+  if (variableName.match(/^\d/)) return `n${variableName}`;
+
   return variableName;
 }
