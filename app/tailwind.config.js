@@ -8,6 +8,9 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ["Wix Madefor Text", "sans-serif"],
+      },
       colors: {
         background: "#fafafa",
         foreground: "#3d3d3e",
