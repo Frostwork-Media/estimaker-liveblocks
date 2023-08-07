@@ -1,23 +1,13 @@
 import { authorize } from "@liveblocks/node";
 import { VercelApiHandler } from "@vercel/node";
-import { config } from "dotenv";
-import path from "path";
+
 import { verify } from "jsonwebtoken";
 import { clerkClient } from "@clerk/clerk-sdk-node";
-
-config({ path: path.join(__dirname, "..", "app", ".env") });
-
-const API_KEY = process.env.LIVEBLOCKS_SECRET_KEY;
-const JWT_PUBLIC_KEY = process.env.JWT_PUBLIC_KEY;
+import { API_KEY, JWT_PUBLIC_KEY } from "./_config";
 
 const auth: VercelApiHandler = async (req, res) => {
-  if (!API_KEY || !JWT_PUBLIC_KEY) {
-    res.status(403).end();
-    return;
-  }
-
   // lookup clerk public key
-  const splitPem = process.env.JWT_PUBLIC_KEY.match(/.{1,64}/g);
+  const splitPem = JWT_PUBLIC_KEY.match(/.{1,64}/g);
   if (!splitPem) {
     throw new Error("Invalid JWT_PUBLIC_KEY");
   }

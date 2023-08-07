@@ -7,6 +7,8 @@ import {
   SignedOut,
   RedirectToSignIn,
 } from "@clerk/clerk-react";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { queryClient } from "./lib/queryClient";
 
 const clerkPubKey = import.meta.env.VITE_APP_CLERK_PUBLISHABLE_KEY;
 
@@ -21,14 +23,16 @@ const router = createBrowserRouter([
 
 function App() {
   return (
-    <ClerkProvider publishableKey={clerkPubKey}>
-      <SignedIn>
-        <RouterProvider router={router} />
-      </SignedIn>
-      <SignedOut>
-        <RedirectToSignIn />
-      </SignedOut>
-    </ClerkProvider>
+    <QueryClientProvider client={queryClient}>
+      <ClerkProvider publishableKey={clerkPubKey}>
+        <SignedIn>
+          <RouterProvider router={router} />
+        </SignedIn>
+        <SignedOut>
+          <RedirectToSignIn />
+        </SignedOut>
+      </ClerkProvider>
+    </QueryClientProvider>
   );
 }
 
