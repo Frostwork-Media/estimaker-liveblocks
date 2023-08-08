@@ -5,15 +5,12 @@ import { nanoid } from "nanoid";
 import { getVarName } from "../lib/getVarName";
 import {
   RoomProvider,
-  UserMeta,
   useMutation,
   useOthers,
   useSelf,
   useStatus,
 } from "../liveblocks.config";
-import cx from "classnames";
 import { Graph } from "../components/Graph";
-import { colors } from "../lib/constants";
 
 const inputClasses =
   "border border-neutral-300 rounded-md p-2 w-full bg-background h-10";
@@ -39,7 +36,7 @@ function Inner() {
         <Link to="/" className="text-blue-500 text-sm justify-self-start">
           ← Back Home
         </Link>
-        <h1 className="text-4xl font-bold">{id}</h1>
+        <h1 className="text-2xl font-bold">{id}</h1>
         <AddNode />
         <Users />
       </header>
@@ -89,36 +86,12 @@ function AddNode() {
 }
 
 function Users() {
-  const self = useSelf();
-  const others = useOthers();
-  return (
-    <div className="grid gap-4">
-      {self && <Avatar {...self} userIndex={0} />}
-      {others.map((other, index) => (
-        <Avatar key={other.id} {...other} userIndex={index + 1} />
-      ))}
-    </div>
-  );
+  // const self = useSelf();
+  // const others = useOthers();
+  return <div className="grid gap-4">NOT IMPLEMENTED</div>;
 }
 
-function Avatar({ userIndex, ...meta }: UserMeta & { userIndex: number }) {
-  return (
-    <div className="flex items-center gap-2">
-      <img
-        src={meta.info.picture}
-        alt={`${meta.info.name}`}
-        className="w-6 h-6 rounded-full"
-      />
-      <span className="text-xs">{meta.info.name}</span>
-      <span
-        className={cx("w-4 h-4 block rounded-full")}
-        style={{ backgroundColor: colors[userIndex] }}
-      />
-    </div>
-  );
-}
-
-export function Room() {
+export function Project() {
   const { id } = useParams<{ id: string }>();
   if (!id) throw new Error("Missing ID");
   return (

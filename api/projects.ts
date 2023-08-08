@@ -1,15 +1,25 @@
 import { VercelApiHandler } from "@vercel/node";
-import { API_KEY } from "./_config";
+import { LIVEBLOCKS_SECRET_KEY } from "./_config";
 
 const handler: VercelApiHandler = async (req, res) => {
   try {
     const userId = req.body.userId;
     if (!userId) throw new Error("Missing userId");
-    const response = await fetch("https://api.liveblocks.io/v2/rooms", {
+
+    const params = {
+      limit: "100",
+      userId,
+    };
+
+    const url = new URL("https://api.liveblocks.io/v2/rooms");
+    url.search = new URLSearchParams(params).toString();
+
+    const response = await fetch(url.toString(), {
       headers: {
-        Authorization: `Bearer ${API_KEY}`,
+        Authorization: `Bearer ${LIVEBLOCKS_SECRET_KEY}`,
       },
     });
+
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }

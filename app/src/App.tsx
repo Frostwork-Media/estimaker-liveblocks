@@ -1,5 +1,5 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { Room } from "./pages/Room";
+import { Project } from "./pages/Project";
 import { Home } from "./pages/Home";
 import {
   ClerkProvider,
@@ -9,6 +9,8 @@ import {
 } from "@clerk/clerk-react";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/queryClient";
+import { AuthWrapper } from "./components/AuthWrapper";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 const clerkPubKey = import.meta.env.VITE_APP_CLERK_PUBLISHABLE_KEY;
 
@@ -17,8 +19,12 @@ if (!clerkPubKey) {
 }
 
 const router = createBrowserRouter([
-  { path: "/", element: <Home /> },
-  { path: "/room/:id", element: <Room /> },
+  {
+    path: "/",
+    element: <AuthWrapper />,
+    children: [{ element: <Home />, index: true }],
+  },
+  { path: "/projects/:id", element: <Project /> },
 ]);
 
 function App() {
@@ -32,6 +38,7 @@ function App() {
           <RedirectToSignIn />
         </SignedOut>
       </ClerkProvider>
+      <ReactQueryDevtools />
     </QueryClientProvider>
   );
 }

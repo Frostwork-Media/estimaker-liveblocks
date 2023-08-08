@@ -1,5 +1,5 @@
-import { useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { Link, useNavigate } from "react-router-dom";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useUser } from "@clerk/clerk-react";
 
 export interface Project {
@@ -34,6 +34,30 @@ export function Home() {
       enabled: !!userId,
     }
   );
+
+  const createProjectMutation = useMutation<{ id: string }>(
+    async () => {
+      const res = await fetch("/api/create-project", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error);
+      }
+      return data;
+    },
+    {
+      onSuccess: (data) => {
+        if (data.id) navigate(`/projects/${data.id}`);
+      },
+    }
+  );
   return (
     <div className="h-screen p-6 py-10">
       <div className="max-w-4xl mx-auto w-full grid gap-5 content-start">
@@ -45,25 +69,9 @@ export function Home() {
           className="flex items-center gap-2"
           onSubmit={(e) => {
             e.preventDefault();
-            const formData = new FormData(e.currentTarget);
-            const roomName = formData.get("roomName");
-            if (!(typeof roomName === "string")) return;
-
-            // slugify it
-            const slug = roomName
-              .toLowerCase()
-              .replace(/[^a-z0-9]+/g, "-")
-              .replace(/(^-|-$)+/g, "");
-
-            // go there
-            navigate(`/room/${slug}`);
+            createProjectMutation.mutate();
           }}
         >
-          <input
-            type="text"
-            className="border rounded-md p-2 w-96 focus:outline-none focus:shadow-sm"
-            name="roomName"
-          />
           <button className="bg-blue-600 text-background rounded-md py-2 px-4 font-bold">
             Create a new project
           </button>
@@ -73,9 +81,10 @@ export function Home() {
         {projects.isSuccess && (
           <div className="grid gap-2">
             {projects.data?.map((project) => (
-              <div
+              <Link
                 key={project.id}
-                className="p-4 border rounded-md flex items-center justify-between"
+                className="p-4 border rounded-md flex items-center justify-between hover:bg-neutral-100"
+                to={`/projects/${project.id}`}
               >
                 <div className="flex items-center gap-2">
                   <div className="bg-blue-600 rounded-md h-2 w-2" />
@@ -84,7 +93,7 @@ export function Home() {
                 <div className="text-sm text-neutral-400">
                   {new Date(project.createdAt).toLocaleDateString()}
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         )}
