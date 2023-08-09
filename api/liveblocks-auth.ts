@@ -5,8 +5,9 @@ import { userFromSession } from "./_userFromSession";
 const handler: VercelApiHandler = async (req, res) => {
   // get user based on session
   const user = await userFromSession(req);
+  const emailAddress = user.emailAddresses[0]?.emailAddress;
 
-  if (!user) {
+  if (!user || !emailAddress) {
     res.status(401).end("Unauthorized");
     return;
   }
@@ -14,12 +15,9 @@ const handler: VercelApiHandler = async (req, res) => {
   // In Liveblocks we will identify by clerk Id but store
   // email and name in the user info
   const { status, body } = await liveblocks.identifyUser({
-    userId: user.id,
+    userId: emailAddress,
     groupIds: [],
   });
-
-  // Curiosity
-  console.log("Liveblocks identifyUser response", body);
 
   // Return the Result
   res.status(status).end(body);

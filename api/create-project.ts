@@ -3,21 +3,21 @@ import { nanoid } from "nanoid";
 import { LIVEBLOCKS_SECRET_KEY } from "./_config";
 
 const handler: VercelApiHandler = async (req, res) => {
+  // In this case the userId is the email address, that's our unique identifier in liveblocks land
   const userId = req.body.userId;
   if (!userId) {
     res.status(400).end("Missing userId");
     return;
   }
 
-  console.log(userId);
-  console.log(userId.length);
-
   const id = `room-${nanoid()}`;
 
   const body = {
     id,
     defaultAccesses: [],
-    metadata: {},
+    metadata: {
+      name: "Untitled",
+    },
     usersAccesses: {
       [userId]: ["room:write"],
     },
@@ -32,8 +32,6 @@ const handler: VercelApiHandler = async (req, res) => {
     },
     body: JSON.stringify(body),
   });
-
-  console.log("room", room);
 
   const roomJson = await room.json();
 

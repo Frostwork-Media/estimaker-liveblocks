@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useUser } from "@clerk/clerk-react";
 import { Button } from "@/components/ui/button";
+import { useLiveblocksUserId } from "@/lib/hooks";
 
 export interface Project {
   type: string;
@@ -12,7 +12,7 @@ export interface Project {
 
 export function Home() {
   const navigate = useNavigate();
-  const userId = useUser().user?.id;
+  const userId = useLiveblocksUserId();
   const projects = useQuery<Project[], Error>(
     ["projects"],
     async () => {
@@ -59,6 +59,7 @@ export function Home() {
       },
     }
   );
+
   return (
     <div className="h-screen p-6 py-10">
       <div className="max-w-4xl mx-auto w-full grid gap-5 content-start">
@@ -77,7 +78,7 @@ export function Home() {
         </form>
         {projects.isError && <ErrorMessage error={projects.error} />}
         {projects.isLoading && <div>Loading...</div>}
-        {projects.isSuccess && (
+        {projects.isSuccess && projects.data.length ? (
           <div className="grid gap-2">
             {projects.data?.map((project) => (
               <Link
@@ -95,6 +96,8 @@ export function Home() {
               </Link>
             ))}
           </div>
+        ) : (
+          <NoProjects />
         )}
       </div>
     </div>
@@ -103,4 +106,12 @@ export function Home() {
 
 function ErrorMessage({ error }: { error: Error }) {
   return <div className="text-red-500">{error.message}</div>;
+}
+
+function NoProjects() {
+  return (
+    <div className="text-xl text-neutral-400 max-w-2xl">
+      You don't have any projects yet.
+    </div>
+  );
 }

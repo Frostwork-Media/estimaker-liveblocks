@@ -3,6 +3,7 @@ import { LIVEBLOCKS_SECRET_KEY } from "./_config";
 
 const handler: VercelApiHandler = async (req, res) => {
   try {
+    // userId is the email address, that's our unique identifier in liveblocks land
     const userId = req.body.userId;
     if (!userId) throw new Error("Missing userId");
 
