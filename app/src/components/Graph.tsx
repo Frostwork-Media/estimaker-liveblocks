@@ -1,11 +1,16 @@
 import { useCallback, useMemo } from "react";
 import { useMutation, useSelf, useStorage } from "../liveblocks.config";
-import ReactFlow, { Controls, Background, BackgroundVariant } from "reactflow";
+import ReactFlow, {
+  Controls,
+  Background,
+  BackgroundVariant,
+  ReactFlowProvider,
+} from "reactflow";
 import type { OnNodesChange, NodeTypes } from "reactflow";
 import "reactflow/dist/style.css";
 import { AppEdge, AppNode } from "../lib/types";
 import { CUSTOM_NODE } from "../lib/constants";
-import { CustomNode } from "./CustomNode";
+import { CustomNode } from "./CustomNode/CustomNode";
 import { getVariables } from "../lib/helpers";
 import { LiveObject } from "@liveblocks/client";
 import { nanoid } from "nanoid";
@@ -24,6 +29,14 @@ type NodesArray = [
 const snapGrid = [25, 25] as [number, number];
 
 export function Graph() {
+  return (
+    <ReactFlowProvider>
+      <GraphInner />
+    </ReactFlowProvider>
+  );
+}
+
+function GraphInner() {
   const values = useStorage((state) => state.values);
   const initialNodes = useStorage((state) => state.nodes);
   const nodesArray = Array.from(initialNodes?.entries() ?? []);
@@ -112,6 +125,7 @@ export function Graph() {
         variableName: "xxx",
         x: position.x,
         y: position.y,
+        value: "",
       });
       const id = nanoid();
       nodes.set(id, node);
@@ -157,6 +171,7 @@ export function Graph() {
         snapGrid={snapGrid}
         zoomOnDoubleClick={false}
         onDoubleClick={addNodeOnDblClick}
+        fitView
       >
         <Controls />
         <Background

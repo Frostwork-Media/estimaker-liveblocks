@@ -18,6 +18,7 @@ export type Node = LiveObject<{
   variableName: string;
   x: number;
   y: number;
+  value: string;
   showing?: "graph";
 }>;
 

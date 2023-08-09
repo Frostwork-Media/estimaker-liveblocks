@@ -1,5 +1,5 @@
-import { getVariables } from "../lib/helpers";
-import { useSelf, useStorage } from "../liveblocks.config";
+import { getVariables } from "../../lib/helpers";
+import { useSelf, useStorage } from "../../liveblocks.config";
 import { SquiggleChart } from "@quri/squiggle-components";
 import toposort from "toposort";
 

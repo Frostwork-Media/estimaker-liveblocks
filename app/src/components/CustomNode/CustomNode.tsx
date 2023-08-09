@@ -1,13 +1,14 @@
 import { Handle, Position } from "reactflow";
 import type { NodeProps } from "reactflow";
-import { AppNodeData } from "../lib/types";
-import { EditValue } from "./EditValue";
+import { AppNodeData } from "../../lib/types";
+import { EditNodeValue } from "./EditValue";
 import { RxBarChart, RxCross1 } from "react-icons/rx";
-import { useMutation } from "../liveblocks.config";
-import { useEffect, useRef, useState } from "react";
+import { useMutation } from "../../liveblocks.config";
+import { useCallback, useEffect, useRef, useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";
 import * as ToggleGroup from "@radix-ui/react-toggle-group";
 import { CustomNodeGraph } from "./CustomNodeGraph";
+import { getVarName } from "@/lib/getVarName";
 
 const titleClasses =
   "text-left bg-transparent text-blue-800 p-3 pt-2 font-bold leading-7 text-xl resize-none focus:outline-none focus:ring-0 focus:border-transparent";
@@ -60,6 +61,25 @@ export function CustomNode({ data, id }: NodeProps<AppNodeData>) {
     [id]
   );
 
+  const updateNodeLabel = useCallback(
+    (label: string) => {
+      if (!label) return;
+      // get current variable name
+      const oldVariableName = variableName;
+      const newVariableName = getVarName(label);
+
+      // will replace values in all nodes
+      console.log({
+        oldVariableName,
+        newVariableName,
+      });
+
+      setLabel(label);
+      setEditing(false);
+    },
+    [setLabel, variableName]
+  );
+
   return (
     <>
       <Handle type="target" position={Position.Top} />
@@ -75,23 +95,17 @@ export function CustomNode({ data, id }: NodeProps<AppNodeData>) {
             value={currentLabel}
             ref={titleInputRef}
             onChange={(e) => {
-              const value = e.target.value;
-              setCurrentLabel(value);
+              setCurrentLabel(e.target.value);
             }}
             // catch enter key and set label
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 e.preventDefault();
                 e.stopPropagation();
-                const value = e.currentTarget.value;
-                setLabel(value);
-                setEditing(false);
+                updateNodeLabel(e.currentTarget.value);
               }
             }}
-            onBlur={() => {
-              setLabel(currentLabel);
-              setEditing(false);
-            }}
+            onBlur={() => updateNodeLabel(currentLabel)}
           />
         ) : (
           <button
@@ -114,7 +128,7 @@ export function CustomNode({ data, id }: NodeProps<AppNodeData>) {
           >
             {`{${variableName}}`}
           </button>
-          <EditValue nodeId={id} />
+          <EditNodeValue nodeId={id} />
           <ToggleGroup.Root
             className="flex justify-center rounded space-x-px mt-1"
             type="single"

@@ -196,6 +196,7 @@ function AddNode() {
       variableName: getVarName(content),
       x: x + 100,
       y,
+      value: "",
     });
     const id = nanoid();
     nodes.set(id, node);
