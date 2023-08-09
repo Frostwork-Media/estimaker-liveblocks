@@ -13,7 +13,11 @@ import { CustomNode } from "./CustomNode/CustomNode";
 import { getVariables } from "../lib/helpers";
 import { LiveObject } from "@liveblocks/client";
 import { nanoid } from "nanoid";
-import { useLiveNodes } from "@/lib/useLive";
+import {
+  useLiveAddSuggestedEdge,
+  useLiveNodes,
+  useLiveSuggestedEdges,
+} from "@/lib/useLive";
 
 const snapGrid = [25, 25] as [number, number];
 
@@ -66,6 +70,8 @@ function GraphInner() {
     };
   }, []);
 
+  const liveSuggestedEdges = useLiveSuggestedEdges();
+
   // Create edges for react flow
   const edges = useMemo<AppEdge[]>(() => {
     const nodesArray = Array.from(liveNodes?.entries() ?? []);
@@ -83,15 +89,32 @@ function GraphInner() {
         if (!foundNode) continue;
         const [sourceNodeId] = foundNode;
         edges.push({
-          id: `${id}:${sourceNodeId}`,
+          id: `${sourceNodeId}-${id}`,
           source: sourceNodeId,
           target: id,
           style: { stroke: "#ccc", strokeWidth: "4px" },
         });
       }
     }
+
+    // Add suggested edges which are not yet in the graph
+    const suggestedEdgesArray = Array.from(liveSuggestedEdges.entries());
+    for (const [id, [sourceNodeId, targetNodeId]] of suggestedEdgesArray) {
+      const foundEdge = edges.find((edge) => {
+        return edge.id === id;
+      });
+      if (foundEdge) continue;
+      edges.push({
+        id,
+        source: sourceNodeId,
+        target: targetNodeId,
+        style: { stroke: "#ccc", strokeWidth: "4px" },
+        animated: true,
+      });
+    }
+
     return edges;
-  }, [liveNodes]);
+  }, [liveNodes, liveSuggestedEdges]);
 
   const addNode = useMutation(
     ({ storage }, position: { x: number; y: number }) => {
@@ -148,6 +171,8 @@ function GraphInner() {
     [addNode, reactFlowInstance]
   );
 
+  const liveAddSuggestedEdge = useLiveAddSuggestedEdge();
+
   return (
     <div className="w-full h-full bg-[white]">
       <ReactFlow
@@ -159,6 +184,9 @@ function GraphInner() {
         snapGrid={snapGrid}
         zoomOnDoubleClick={false}
         onDoubleClick={addNodeOnDblClick}
+        onConnect={({ source, target }) => {
+          if (source && target) liveAddSuggestedEdge([source, target]);
+        }}
         fitView
       >
         <Controls />

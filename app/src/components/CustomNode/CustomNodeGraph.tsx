@@ -50,9 +50,8 @@ function getSquiggleCode(
     if (id in nodeIds) continue;
     nodeIds.push(id);
 
-    const value = node.value;
-    if (!value) continue;
-    idToVarNameAndValue[id] = [node.variableName, node.value];
+    const value = node.value ?? "";
+    idToVarNameAndValue[id] = [node.variableName, value];
 
     const variablesInValue = getVariables(value);
     for (const variableName of variablesInValue) {

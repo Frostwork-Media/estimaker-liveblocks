@@ -233,7 +233,7 @@ export function Project() {
       initialStorage={() => ({
         title: "Untitled",
         nodes: new LiveMap([]),
-        values: new LiveMap([]),
+        suggestedEdges: new LiveMap([]),
       })}
     >
       <ClientSideSuspense fallback={<div>Loading...</div>}>
