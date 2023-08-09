@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useUser } from "@clerk/clerk-react";
+import { Button } from "@/components/ui/button";
 
 export interface Project {
   type: string;
@@ -72,9 +73,7 @@ export function Home() {
             createProjectMutation.mutate();
           }}
         >
-          <button className="bg-blue-600 text-background rounded-md py-2 px-4 font-bold">
-            Create a new project
-          </button>
+          <Button>Create a new project</Button>
         </form>
         {projects.isError && <ErrorMessage error={projects.error} />}
         {projects.isLoading && <div>Loading...</div>}

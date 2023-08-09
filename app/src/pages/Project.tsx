@@ -11,9 +11,13 @@ import {
 } from "../liveblocks.config";
 import { Graph } from "../components/Graph";
 import { useState } from "react";
-
-const inputClasses =
-  "border border-neutral-300 rounded-md p-2 w-full bg-background h-10";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 function Inner() {
   const status = useStatus();
@@ -22,13 +26,13 @@ function Inner() {
 
   return (
     <div className="h-screen">
-      <header className="grid gap-4 mb-6 p-6 absolute z-10 max-w-2xl bg-background border shadow top-3 left-3 rounded">
+      <header className="grid gap-4 mb-6 p-6 absolute z-10 max-w-2xl bg-white border shadow top-3 left-3 rounded">
         <Link to="/" className="text-blue-500 text-sm justify-self-start">
           ← Back Home
         </Link>
         <PageTitle />
         <AddNode />
-        <Users />
+        <Share />
       </header>
       <Graph />
     </div>
@@ -59,15 +63,29 @@ function PageTitle() {
         value={newTitle}
         onChange={(e) => setNewTitle(e.target.value)}
       />
-      {title !== newTitle && (
-        <button
-          type="submit"
-          className="bg-blue-500 text-background rounded-md p-2 whitespace-nowrap"
-        >
-          Save
-        </button>
-      )}
+      {title !== newTitle && <Button type="submit">Save</Button>}
     </form>
+  );
+}
+
+function Share() {
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button variant="outline">Share</Button>
+      </PopoverTrigger>
+      <PopoverContent>
+        <div className="grid gap-2">
+          <p className="text-sm text-neutral-600">
+            Add people you would like to share this project with via email
+          </p>
+          <form className="flex items-center gap-2 max-w-md rounded-md">
+            <Input type="email" name="email" />
+            <Button className="whitespace-nowrap">Add</Button>
+          </form>
+        </div>
+      </PopoverContent>
+    </Popover>
   );
 }
 
@@ -103,18 +121,10 @@ function AddNode() {
         if (input) input.focus();
       }}
     >
-      <input type="text" name="content" className={inputClasses} />
-      <button className="bg-blue-500 text-background rounded-md p-2 whitespace-nowrap">
-        Add Node
-      </button>
+      <Input type="text" name="content" />
+      <Button className="whitespace-nowrap">Add Node</Button>
     </form>
   );
-}
-
-function Users() {
-  // const self = useSelf();
-  // const others = useOthers();
-  return <div className="grid gap-4">NOT IMPLEMENTED</div>;
 }
 
 export function Project() {

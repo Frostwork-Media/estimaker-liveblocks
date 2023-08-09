@@ -13,7 +13,7 @@ const titleClasses =
   "text-left bg-transparent text-blue-800 p-3 pt-2 font-bold leading-7 text-xl resize-none focus:outline-none focus:ring-0 focus:border-transparent";
 
 const toggleGroupItemClasses =
-  "bg-neutral-100 hover:bg-neutral-300 color-neutral-600 data-[state=on]:bg-blue-700 data-[state=on]:text-neutral-100 flex h-8 w-8 items-center justify-center bg-background text-base leading-4 first:rounded-l last:rounded-r focus:z-10 focus:outline-none";
+  "bg-neutral-100 hover:bg-neutral-300 color-neutral-600 data-[state=on]:bg-blue-700 data-[state=on]:text-neutral-100 flex h-8 w-8 items-center justify-center bg-white text-base leading-4 first:rounded-l last:rounded-r focus:z-10 focus:outline-none";
 
 export function CustomNode({ data, id }: NodeProps<AppNodeData>) {
   const { label, variableName, showing } = data;
