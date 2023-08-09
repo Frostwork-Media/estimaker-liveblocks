@@ -1,5 +1,6 @@
 import { squiggleReservedWords } from "./constants";
 
+/** Finds variable names in a value */
 export function getVariables(value: string) {
   const matches = value.matchAll(/([a-z]\w*)/gi);
   const safeMatches: string[] = [];

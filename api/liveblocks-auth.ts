@@ -14,10 +14,18 @@ const handler: VercelApiHandler = async (req, res) => {
 
   // In Liveblocks we will identify by clerk Id but store
   // email and name in the user info
-  const { status, body } = await liveblocks.identifyUser({
-    userId: emailAddress,
-    groupIds: [],
-  });
+  const { status, body } = await liveblocks.identifyUser(
+    {
+      userId: emailAddress,
+      groupIds: [],
+    },
+    {
+      userInfo: {
+        name: user.firstName,
+        picture: user.imageUrl,
+      },
+    }
+  );
 
   // Return the Result
   res.status(status).end(body);

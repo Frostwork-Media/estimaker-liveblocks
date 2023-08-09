@@ -11,7 +11,7 @@ import { CustomNodeGraph } from "./CustomNodeGraph";
 import { getVarName } from "@/lib/getVarName";
 
 const titleClasses =
-  "text-left bg-transparent text-blue-800 p-3 pt-2 font-bold leading-7 text-xl resize-none focus:outline-none focus:ring-0 focus:border-transparent";
+  "text-left text-blue-800 p-3 py-2 rounded leading-7 text-2xl leading-tight resize-none focus:outline-none focus:ring-0 focus:border-transparent bg-blue-100";
 
 const toggleGroupItemClasses =
   "bg-neutral-100 hover:bg-neutral-300 color-neutral-600 data-[state=on]:bg-blue-700 data-[state=on]:text-neutral-100 flex h-8 w-8 items-center justify-center bg-white text-base leading-4 first:rounded-l last:rounded-r focus:z-10 focus:outline-none";
@@ -61,6 +61,30 @@ export function CustomNode({ data, id }: NodeProps<AppNodeData>) {
     [id]
   );
 
+  const changeNodeVarName = useMutation(
+    (
+      { storage },
+      {
+        oldVariableName,
+        newVariableName,
+      }: { oldVariableName: string; newVariableName: string }
+    ) => {
+      const nodes = storage.get("nodes");
+      for (const node of nodes.values()) {
+        const variableName = node.get("variableName");
+        if (variableName === oldVariableName)
+          node.set("variableName", newVariableName);
+
+        const value = node.get("value");
+        if (!value) continue;
+        const regex = new RegExp(`\\b${oldVariableName}\\b`, "g");
+        const newValue = value.replace(regex, newVariableName);
+        node.set("value", newValue);
+      }
+    },
+    []
+  );
+
   const updateNodeLabel = useCallback(
     (label: string) => {
       if (!label) return;
@@ -69,21 +93,18 @@ export function CustomNode({ data, id }: NodeProps<AppNodeData>) {
       const newVariableName = getVarName(label);
 
       // will replace values in all nodes
-      console.log({
-        oldVariableName,
-        newVariableName,
-      });
+      changeNodeVarName({ oldVariableName, newVariableName });
 
       setLabel(label);
       setEditing(false);
     },
-    [setLabel, variableName]
+    [changeNodeVarName, setLabel, variableName]
   );
 
   return (
     <>
       <Handle type="target" position={Position.Top} />
-      <div className="rounded-md bg-blue-100 p-1 pb-3 w-[275px] grid gap-1">
+      <div className="bg-neutral-100 p-1 w-[275px] grid gap-1">
         <div className="flex justify-end pr-1 pt-1">
           <button className="text-blue-600 text-sm" onClick={deleteNode}>
             <RxCross1 />

@@ -1,10 +1,12 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useMutation, useSelf, useStorage } from "../liveblocks.config";
 import ReactFlow, {
   Controls,
   Background,
   BackgroundVariant,
   ReactFlowProvider,
+  useViewport,
+  useReactFlow,
 } from "reactflow";
 import type { OnNodesChange, NodeTypes } from "reactflow";
 import "reactflow/dist/style.css";
@@ -14,6 +16,7 @@ import { CustomNode } from "./CustomNode/CustomNode";
 import { getVariables } from "../lib/helpers";
 import { LiveObject } from "@liveblocks/client";
 import { nanoid } from "nanoid";
+import { useNodes } from "@/lib/liveblocks-helpers";
 
 type NodesArray = [
   string,
@@ -38,7 +41,7 @@ export function Graph() {
 
 function GraphInner() {
   const values = useStorage((state) => state.values);
-  const initialNodes = useStorage((state) => state.nodes);
+  const initialNodes = useNodes();
   const nodesArray = Array.from(initialNodes?.entries() ?? []);
   const selfId = useSelf()?.id;
   const nodes = toReactFlowNodes({ nodesArray, selfId, values });
@@ -122,9 +125,8 @@ function GraphInner() {
       const nodes = storage.get("nodes");
       const node = new LiveObject({
         content: "",
-        variableName: "xxx",
-        x: position.x,
-        y: position.y,
+        variableName: `var${nodes.size + 1}`,
+        ...position,
         value: "",
       });
       const id = nanoid();
@@ -148,16 +150,29 @@ function GraphInner() {
     []
   );
 
+  const reactFlowInstance = useReactFlow();
+
   const addNodeOnDblClick = useCallback(
     (event: React.MouseEvent) => {
       event.preventDefault();
-      const position = {
+      event.stopPropagation();
+
+      // check if an element is focused anywhere in the document
+      const focusedElement = document.querySelector(":focus");
+      if (focusedElement) {
+        // This avoids creating a node when the user
+        // is trying to edit a node title
+        return;
+      }
+
+      const projectedCoords = reactFlowInstance.project({
         x: event.clientX,
         y: event.clientY,
-      };
-      addNode(position);
+      });
+
+      addNode(projectedCoords);
     },
-    [addNode]
+    [addNode, reactFlowInstance]
   );
 
   return (
@@ -174,12 +189,12 @@ function GraphInner() {
         fitView
       >
         <Controls />
-        <Background
+        {/* <Background
           variant={BackgroundVariant.Lines}
           gap={25}
           size={1}
           color="#f3f3f3"
-        />
+        /> */}
       </ReactFlow>
     </div>
   );

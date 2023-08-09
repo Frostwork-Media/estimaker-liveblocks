@@ -1,5 +1,5 @@
+import { useNodes } from "@/lib/liveblocks-helpers";
 import { getVariables } from "../../lib/helpers";
-import { useSelf, useStorage } from "../../liveblocks.config";
 import { SquiggleChart } from "@quri/squiggle-components";
 import toposort from "toposort";
 
@@ -15,12 +15,8 @@ export function CustomNodeGraph({
 }
 
 function CustomNodeInner({ nodeId }: { nodeId: string }) {
-  const nodes = useStorage((state) => state.nodes);
-  const values = useStorage((state) => state.values);
-  const self = useSelf();
-  const selfId = self?.id;
-  if (!selfId || !values || !nodes) return null;
-  const code = getSquiggleCode(selfId, nodes, values, nodeId);
+  const nodes = useNodes();
+  const code = getSquiggleCode(nodes, nodeId);
   return (
     <div className="w-full">
       <SquiggleChart code={code} enableLocalSettings />
@@ -28,46 +24,41 @@ function CustomNodeInner({ nodeId }: { nodeId: string }) {
   );
 }
 
-function getSquiggleCode(
-  selfId: string,
-  nodes: ReadonlyMap<
-    string,
-    {
-      readonly content: string;
-      readonly variableName: string;
-      readonly x: number;
-      readonly y: number;
-      readonly showing?: "graph" | undefined;
-    }
-  >,
-  values: ReadonlyMap<string, string>,
-  nodeId: string
-) {
+/** Returns all the squiggle code needed to run for a given node */
+function getSquiggleCode(nodes: ReturnType<typeof useNodes>, nodeId: string) {
   if (!nodes) return "";
+  const nodesArray = Array.from(nodes.entries());
   const idsToCheck = [nodeId];
   const deps: [string, string][] = [];
   const nodeIds: string[] = [];
 
-  const idToVarNameValue: Record<string, [string, string]> = {};
+  /**
+   * Keep a map from node id's to their varName and value
+   * This is used to rebuild the code after a topological sort
+   */
+  const idToVarNameAndValue: Record<string, [string, string]> = {};
 
   while (idsToCheck.length) {
     const id = idsToCheck.pop();
     if (!id) continue;
     const node = nodes.get(id);
     if (!node) continue;
-
+    // Don't check nodes twice
+    if (id in nodeIds) continue;
     nodeIds.push(id);
 
-    const value = values?.get(`${selfId}:${id}`);
-    idToVarNameValue[id] = [node.variableName, value ?? ""];
+    const value = node.value;
     if (!value) continue;
-    for (const variableName of getVariables(value)) {
-      // find the node with this variable name
-      const sourceNodeId = Array.from(nodes.entries()).find(([_id, node]) => {
-        return node.variableName === variableName;
-      })?.[0];
+    idToVarNameAndValue[id] = [node.variableName, node.value];
 
-      if (typeof sourceNodeId !== "string") continue;
+    const variablesInValue = getVariables(value);
+    for (const variableName of variablesInValue) {
+      // find the node with this variable name
+      const foundNode = nodesArray.find(([_id, node]) => {
+        return node.variableName === variableName;
+      });
+      if (!foundNode) continue;
+      const [sourceNodeId] = foundNode;
       deps.push([sourceNodeId, id]);
       idsToCheck.push(sourceNodeId);
     }
@@ -78,10 +69,10 @@ function getSquiggleCode(
   const code =
     sortedIds
       .map((id) => {
-        const [variableName, value] = idToVarNameValue[id];
+        const [variableName, value] = idToVarNameAndValue[id];
         return `${variableName} = ${value}`;
       })
-      .join("\n") + `\n${idToVarNameValue[nodeId][0]}`;
+      .join("\n") + `\n${idToVarNameAndValue[nodeId][0]}`;
 
   return code;
 }

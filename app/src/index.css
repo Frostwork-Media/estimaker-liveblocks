@@ -10,3 +10,12 @@ html {
 .text-wrap-balance {
   text-wrap: balance;
 }
+
+.react-flow__node-customNode > div {
+  @apply transition-all;
+}
+
+.react-flow__node-customNode.selected > div,
+.react-flow__node-customNode.dragging > div {
+  @apply shadow-xl shadow-blue-500/30;
+}
