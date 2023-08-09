@@ -25,6 +25,7 @@ export type Node = LiveObject<{
 type Storage = {
   title: string;
   nodes: LiveMap<string, Node>;
+  suggestedEdges: LiveMap<string, string[]>;
 };
 
 // UserMeta represents static/readonly metadata on each User, as provided by

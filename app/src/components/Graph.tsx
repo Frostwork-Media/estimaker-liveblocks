@@ -1,11 +1,8 @@
-import { useCallback, useEffect, useMemo } from "react";
-import { useMutation, useSelf, useStorage } from "../liveblocks.config";
+import { useCallback, useMemo } from "react";
+import { useMutation } from "../liveblocks.config";
 import ReactFlow, {
   Controls,
-  Background,
-  BackgroundVariant,
   ReactFlowProvider,
-  useViewport,
   useReactFlow,
 } from "reactflow";
 import type { OnNodesChange, NodeTypes } from "reactflow";
@@ -16,18 +13,7 @@ import { CustomNode } from "./CustomNode/CustomNode";
 import { getVariables } from "../lib/helpers";
 import { LiveObject } from "@liveblocks/client";
 import { nanoid } from "nanoid";
-import { useNodes } from "@/lib/liveblocks-helpers";
-
-type NodesArray = [
-  string,
-  {
-    readonly content: string;
-    readonly variableName: string;
-    readonly x: number;
-    readonly y: number;
-    readonly showing?: "graph";
-  }
-][];
+import { useLiveNodes } from "@/lib/useLive";
 
 const snapGrid = [25, 25] as [number, number];
 
@@ -40,11 +26,8 @@ export function Graph() {
 }
 
 function GraphInner() {
-  const values = useStorage((state) => state.values);
-  const initialNodes = useNodes();
-  const nodesArray = Array.from(initialNodes?.entries() ?? []);
-  const selfId = useSelf()?.id;
-  const nodes = toReactFlowNodes({ nodesArray, selfId, values });
+  const liveNodes = useLiveNodes();
+  const nodes = toReactFlowNodes(liveNodes);
 
   const updateNodePosition = useMutation(
     ({ storage }, id: string, position: { x: number; y: number }) => {
@@ -83,42 +66,32 @@ function GraphInner() {
     };
   }, []);
 
+  // Create edges for react flow
   const edges = useMemo<AppEdge[]>(() => {
-    if (!values || !initialNodes) return [];
+    const nodesArray = Array.from(liveNodes?.entries() ?? []);
     // from, to, userId
     const edges: AppEdge[] = [];
-    for (const key of values.keys()) {
-      const [userId, targetNodeId] = key.split(":");
-
-      const value = values.get(key);
+    for (const [id, node] of nodesArray) {
+      const value = node.value;
       if (!value) continue;
-
-      const node = initialNodes.get(targetNodeId);
-      if (!node) continue;
-
-      for (const variableName of getVariables(value)) {
+      const variablesInValue = getVariables(value);
+      for (const variableName of variablesInValue) {
         // find the node with this variable name
-        const sourceNodeId = Array.from(initialNodes.entries()).find(
-          ([_id, node]) => {
-            return node.variableName === variableName;
-          }
-        )?.[0];
-
-        if (typeof sourceNodeId !== "string") continue;
-
+        const foundNode = nodesArray.find(([_id, node]) => {
+          return node.variableName === variableName;
+        });
+        if (!foundNode) continue;
+        const [sourceNodeId] = foundNode;
         edges.push({
-          id: `${sourceNodeId}-${targetNodeId}-${userId}`,
+          id: `${id}:${sourceNodeId}`,
           source: sourceNodeId,
-          target: targetNodeId,
-          style: {
-            stroke: "#35a3ce",
-            strokeWidth: 3,
-          },
+          target: id,
+          style: { stroke: "#ccc", strokeWidth: "4px" },
         });
       }
     }
     return edges;
-  }, [values, initialNodes]);
+  }, [liveNodes]);
 
   const addNode = useMutation(
     ({ storage }, position: { x: number; y: number }) => {
@@ -200,15 +173,10 @@ function GraphInner() {
   );
 }
 
-function toReactFlowNodes({
-  nodesArray,
-  selfId,
-  values,
-}: {
-  nodesArray: NodesArray;
-  selfId?: string;
-  values: ReadonlyMap<string, string> | null;
-}): AppNode[] {
+function toReactFlowNodes(
+  liveNodes: ReturnType<typeof useLiveNodes>
+): AppNode[] {
+  const nodesArray = Array.from(liveNodes.entries());
   const nodes: AppNode[] = [];
 
   for (const [id, node] of nodesArray) {
@@ -217,7 +185,7 @@ function toReactFlowNodes({
       data: {
         label: node.content,
         variableName: node.variableName,
-        selfValue: values?.get(`${selfId}:${id}`) ?? "",
+        selfValue: node.value,
         showing: node.showing,
       },
       position: { x: node.x, y: node.y },

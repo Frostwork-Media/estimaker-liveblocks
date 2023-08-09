@@ -1,5 +1,5 @@
 import { useStorage } from "@/liveblocks.config";
 
-export function useNodes() {
+export function useLiveNodes() {
   return useStorage((state) => state.nodes);
 }
