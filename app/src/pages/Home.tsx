@@ -8,6 +8,9 @@ export interface Project {
   id: string;
   lastConnectionAt: string;
   createdAt: string;
+  metadata: {
+    name: string;
+  };
 }
 
 export function Home() {
@@ -77,8 +80,9 @@ export function Home() {
           <Button>Create a new project</Button>
         </form>
         {projects.isError && <ErrorMessage error={projects.error} />}
-        {projects.isLoading && <div>Loading...</div>}
-        {projects.isSuccess && projects.data.length ? (
+        {projects.isLoading ? (
+          <div>Loading...</div>
+        ) : projects.isSuccess && projects.data.length ? (
           <div className="grid gap-2">
             {projects.data?.map((project) => (
               <Link
@@ -88,7 +92,9 @@ export function Home() {
               >
                 <div className="flex items-center gap-2">
                   <div className="bg-blue-600 rounded-md h-2 w-2" />
-                  <div className="text-lg font-bold">{project.id}</div>
+                  <div className="text-lg font-bold">
+                    {project.metadata.name ?? "Untitled"}
+                  </div>
                 </div>
                 <div className="text-sm text-neutral-400">
                   {new Date(project.createdAt).toLocaleDateString()}

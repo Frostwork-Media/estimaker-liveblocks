@@ -57,15 +57,37 @@ function PageTitle() {
   const title = useStorage((state) => state.title) ?? "Untitled";
   const [newTitle, setNewTitle] = useState(title);
 
-  const updateTitle = useMutation(({ storage }, title: string) => {
+  const updateRealtimeTitle = useMutation(({ storage }, title: string) => {
     storage.set("title", title);
   }, []);
+
+  const room = useRoom();
+  const setProjectNameMutation = useRQMutation(
+    async (newName: string) => {
+      if (!room.id) return;
+      return fetch(`/api/set-project-name`, {
+        method: "POST",
+        body: JSON.stringify({
+          roomId: room.id,
+          newName,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+    },
+    {
+      onSuccess: (_response, newName) => {
+        updateRealtimeTitle(newName);
+      },
+    }
+  );
 
   return (
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        updateTitle(newTitle);
+        setProjectNameMutation.mutate(newTitle);
         const form = e.currentTarget;
         if (!form) return;
         form.querySelector("input")?.blur();
@@ -76,8 +98,13 @@ function PageTitle() {
         className="text-2xl font-bold bg-transparent border-b py-2 px-1 focus:bg-neutral-100 focus:outline-none"
         value={newTitle}
         onChange={(e) => setNewTitle(e.target.value)}
+        disabled={setProjectNameMutation.isLoading}
       />
-      {title !== newTitle && <Button type="submit">Save</Button>}
+      {title !== newTitle && (
+        <Button type="submit" disabled={setProjectNameMutation.isLoading}>
+          Save
+        </Button>
+      )}
     </form>
   );
 }
