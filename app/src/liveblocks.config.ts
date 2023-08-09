@@ -22,6 +22,7 @@ export type Node = LiveObject<{
 }>;
 
 type Storage = {
+  title: string;
   nodes: LiveMap<string, Node>;
   /** Stores the squiggle value. The key is 'userId:nodeId' */
   values: LiveMap<string, string>;
@@ -43,12 +44,15 @@ export type UserMeta = {
 // type RoomEvent = {};
 
 export const {
-  RoomProvider,
-  useOthers,
-  useSelf,
-  useStorage,
-  useMutation,
-  useStatus,
+  suspense: {
+    RoomProvider,
+    useOthers,
+    useSelf,
+    useStorage,
+    useMutation,
+    useStatus,
+    useRoom,
+  },
 } = createRoomContext<
   Presence,
   Storage,

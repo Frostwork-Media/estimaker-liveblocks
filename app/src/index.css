@@ -1,36 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Wix+Madefor+Text:ital,wght@0,400;0,700;1,400;1,700&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-body {
-  @apply bg-background text-foreground antialiased;
-}
-
-.text-wrap-balance {
-  text-wrap: balance;
-}
-
-.react-flow__handle {
-  @apply bg-blue-200 w-4 h-4 rounded-full border-none;
-}
-
-.react-flow__handle-bottom {
-  @apply -bottom-2;
-}
-
-.react-flow__handle-top {
-  @apply -top-2;
-}
-
-.squiggle > div,
-.squiggle > div > div:nth-child(2),
-.squiggle > div > div:nth-child(2) > div,
-.squiggle > div > div:nth-child(2) > div > div,
-.squiggle > div > div:nth-child(2) > div > div > div {
-  width: 100%;
-}
-
-.squiggle > div > div:nth-child(2) > div > div > div + div {
-  display: none;
-}

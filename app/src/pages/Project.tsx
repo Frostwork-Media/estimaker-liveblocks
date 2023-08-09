@@ -6,27 +6,17 @@ import { getVarName } from "../lib/getVarName";
 import {
   RoomProvider,
   useMutation,
-  useOthers,
-  useSelf,
   useStatus,
+  useStorage,
 } from "../liveblocks.config";
 import { Graph } from "../components/Graph";
+import { useState } from "react";
 
 const inputClasses =
   "border border-neutral-300 rounded-md p-2 w-full bg-background h-10";
 
 function Inner() {
   const status = useStatus();
-  const { id = "" } = useParams<{ id: string }>();
-
-  // const self = useSelf();
-  // const others = useOthers();
-  // const userIds = useMemo(() => {
-  //   let ids: string[] = [];
-  //   if (self) ids.push(self.id);
-  //   if (others) ids = ids.concat(others.map((other) => other.id));
-  //   return ids;
-  // }, [self, others]);
 
   if (status === "connecting") return <div>Connecting...</div>;
 
@@ -36,12 +26,48 @@ function Inner() {
         <Link to="/" className="text-blue-500 text-sm justify-self-start">
           ← Back Home
         </Link>
-        <h1 className="text-2xl font-bold">{id}</h1>
+        <PageTitle />
         <AddNode />
         <Users />
       </header>
       <Graph />
     </div>
+  );
+}
+
+function PageTitle() {
+  const title = useStorage((state) => state.title) ?? "Untitled";
+  const [newTitle, setNewTitle] = useState(title);
+
+  const updateTitle = useMutation(({ storage }, title: string) => {
+    storage.set("title", title);
+  }, []);
+
+  return (
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        updateTitle(newTitle);
+        const form = e.currentTarget;
+        if (!form) return;
+        form.querySelector("input")?.blur();
+      }}
+      className="grid gap-1"
+    >
+      <input
+        className="text-2xl font-bold bg-transparent border-b py-2 px-1 focus:bg-neutral-100 focus:outline-none"
+        value={newTitle}
+        onChange={(e) => setNewTitle(e.target.value)}
+      />
+      {title !== newTitle && (
+        <button
+          type="submit"
+          className="bg-blue-500 text-background rounded-md p-2 whitespace-nowrap"
+        >
+          Save
+        </button>
+      )}
+    </form>
   );
 }
 
@@ -99,6 +125,7 @@ export function Project() {
       id={id}
       initialPresence={{}}
       initialStorage={() => ({
+        title: "Untitled",
         nodes: new LiveMap([]),
         values: new LiveMap([]),
       })}
