@@ -64,7 +64,7 @@ export function Home() {
   );
 
   return (
-    <div className="h-screen p-6 py-10">
+    <div className="h-full p-6 py-10">
       <div className="max-w-4xl mx-auto w-full grid gap-5 content-start">
         <h1 className="text-5xl font-bold">Projects</h1>
         <p className="text-xl text-neutral-400 max-w-2xl">

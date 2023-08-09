@@ -7,6 +7,8 @@ import { AppEdge, AppNode } from "../lib/types";
 import { CUSTOM_NODE } from "../lib/constants";
 import { CustomNode } from "./CustomNode";
 import { getVariables } from "../lib/helpers";
+import { LiveObject } from "@liveblocks/client";
+import { nanoid } from "nanoid";
 
 type NodesArray = [
   string,
@@ -18,6 +20,8 @@ type NodesArray = [
     readonly showing?: "graph";
   }
 ][];
+
+const snapGrid = [25, 25] as [number, number];
 
 export function Graph() {
   const values = useStorage((state) => state.values);
@@ -100,6 +104,48 @@ export function Graph() {
     return edges;
   }, [values, initialNodes]);
 
+  const addNode = useMutation(
+    ({ storage }, position: { x: number; y: number }) => {
+      const nodes = storage.get("nodes");
+      const node = new LiveObject({
+        content: "",
+        variableName: "xxx",
+        x: position.x,
+        y: position.y,
+      });
+      const id = nanoid();
+      nodes.set(id, node);
+      setTimeout(() => {
+        // Find the element with the [data-id] attribute equal to the
+        // id of the node we just created
+        const element = document.querySelector(`[data-id="${id}"]`);
+        if (!element) return;
+
+        // find the data-rename-button within that element
+        const renameButton = element.querySelector(
+          "[data-rename-button]"
+        ) as HTMLButtonElement;
+        if (!renameButton) return;
+
+        // click it
+        renameButton.click();
+      }, 0);
+    },
+    []
+  );
+
+  const addNodeOnDblClick = useCallback(
+    (event: React.MouseEvent) => {
+      event.preventDefault();
+      const position = {
+        x: event.clientX,
+        y: event.clientY,
+      };
+      addNode(position);
+    },
+    [addNode]
+  );
+
   return (
     <div className="w-full h-full bg-[white]">
       <ReactFlow
@@ -108,7 +154,9 @@ export function Graph() {
         onNodesChange={onNodesChange}
         nodeTypes={nodeTypes}
         snapToGrid={true}
-        snapGrid={[25, 25]}
+        snapGrid={snapGrid}
+        zoomOnDoubleClick={false}
+        onDoubleClick={addNodeOnDblClick}
       >
         <Controls />
         <Background

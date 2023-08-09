@@ -96,6 +96,7 @@ export function CustomNode({ data, id }: NodeProps<AppNodeData>) {
         ) : (
           <button
             className={titleClasses}
+            data-rename-button
             onClick={() => {
               setEditing(true);
             }}
