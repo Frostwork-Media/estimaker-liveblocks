@@ -4,7 +4,9 @@ import { useParams, Link } from "react-router-dom";
 import {
   RoomProvider,
   useMutation,
+  useOthers,
   useRoom,
+  useSelf,
   useStatus,
   useStorage,
 } from "../liveblocks.config";
@@ -21,6 +23,11 @@ import {
 import { useQuery, useMutation as useRQMutation } from "@tanstack/react-query";
 import AutosizeInput from "react-input-autosize";
 import { useSquigglePlaygroundUrl } from "@/lib/helpers";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 function Inner() {
   const status = useStatus();
@@ -46,6 +53,7 @@ function Inner() {
         </Link>
         <PageTitle />
         <div className="ml-auto flex gap-2">
+          <UsersInRoom />
           <SquigglePlayground />
           <Share users={projectUsers.data} />
         </div>
@@ -255,5 +263,35 @@ export function Project() {
         {() => <Inner />}
       </ClientSideSuspense>
     </RoomProvider>
+  );
+}
+
+function UsersInRoom() {
+  const self = useSelf((state) => state.info);
+  const others = useOthers().map(({ info, id }) => ({ ...info, id }));
+  return (
+    <div className="flex">
+      {self && <UserInRoom {...self} />}
+      {others.map((user) => (
+        <UserInRoom key={user.id} {...user} />
+      ))}
+    </div>
+  );
+}
+
+function UserInRoom(info: { name: string; picture: string }) {
+  return (
+    <Tooltip>
+      <TooltipTrigger className="-ml-2">
+        <img
+          src={info.picture}
+          alt={info.name}
+          className="w-8 h-8 rounded-full border-2 border-white"
+        />
+      </TooltipTrigger>
+      <TooltipContent>
+        <span>{info.name}</span>
+      </TooltipContent>
+    </Tooltip>
   );
 }

@@ -12,10 +12,11 @@ import type {
   NodeTypes,
   OnConnectStartParams,
   OnConnectStart,
+  EdgeTypes,
 } from "reactflow";
 import "reactflow/dist/style.css";
 import { AppEdge, AppNode } from "../lib/types";
-import { CUSTOM_NODE, customNodeWidth } from "../lib/constants";
+import { CUSTOM_NODE, REMOVABLE_EDGE, customNodeWidth } from "../lib/constants";
 import { CustomNode } from "./CustomNode/CustomNode";
 import { getVariables } from "../lib/helpers";
 import { LiveObject } from "@liveblocks/client";
@@ -26,6 +27,7 @@ import {
   useLiveSuggestedEdges,
 } from "@/lib/useLive";
 import { create } from "zustand";
+import RemovableEdge from "./RemovableEdge";
 
 const snapGrid = [25, 25] as [number, number];
 
@@ -35,6 +37,18 @@ const useGraphStore = create<{
 }>((_set) => ({
   connecting: null,
 }));
+
+// const edgeTypes = {
+//buttonedge: ButtonEdge,
+//};
+
+const nodeTypes: NodeTypes = {
+  [CUSTOM_NODE]: CustomNode,
+};
+
+const edgeTypes: EdgeTypes = {
+  [REMOVABLE_EDGE]: RemovableEdge,
+};
 
 export function Graph() {
   return (
@@ -79,12 +93,6 @@ function GraphInner() {
     [updateNodePosition]
   );
 
-  const nodeTypes = useMemo<NodeTypes>(() => {
-    return {
-      [CUSTOM_NODE]: CustomNode,
-    };
-  }, []);
-
   const liveSuggestedEdges = useLiveSuggestedEdges();
 
   // Create edges for react flow
@@ -125,6 +133,7 @@ function GraphInner() {
         target: targetNodeId,
         style: { stroke: "#ccc", strokeWidth: "2px" },
         animated: true,
+        type: REMOVABLE_EDGE,
       });
     }
 
@@ -249,6 +258,7 @@ function GraphInner() {
         edges={edges}
         onNodesChange={onNodesChange}
         nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
         snapToGrid={true}
         snapGrid={snapGrid}
         zoomOnDoubleClick={false}
