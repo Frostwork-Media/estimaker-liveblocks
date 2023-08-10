@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 import { useMutation } from "../liveblocks.config";
 import ReactFlow, {
   Controls,
@@ -32,7 +32,7 @@ const snapGrid = [25, 25] as [number, number];
 const useGraphStore = create<{
   /** Stores the node that the user starts from when making a connection */
   connecting: null | OnConnectStartParams;
-}>((set) => ({
+}>((_set) => ({
   connecting: null,
 }));
 
