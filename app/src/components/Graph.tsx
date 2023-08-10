@@ -4,13 +4,13 @@ import ReactFlow, {
   Controls,
   OnConnect,
   OnConnectEnd,
+  Panel,
   ReactFlowProvider,
   useReactFlow,
 } from "reactflow";
 import type {
   OnNodesChange,
   NodeTypes,
-  OnConnectStartParams,
   OnConnectStart,
   EdgeTypes,
 } from "reactflow";
@@ -26,24 +26,11 @@ import {
   useLiveNodes,
   useLiveSuggestedEdges,
 } from "@/lib/useLive";
-import { create } from "zustand";
 import RemovableEdge from "./RemovableEdge";
+import { NodePanel } from "./NodePanel";
+import { useGraphStore } from "../lib/useGraphStore";
 
 const snapGrid = [25, 25] as [number, number];
-
-/**
- * This stores local-user state (not shared)
- * about the graph
- */
-const useGraphStore = create<{
-  /** Stores the node that the user starts from when making a connection */
-  connecting: null | OnConnectStartParams;
-  /** Selected Node Ids */
-  selected: string[];
-}>((_set) => ({
-  connecting: null,
-  selected: [],
-}));
 
 // const edgeTypes = {
 //buttonedge: ButtonEdge,
@@ -292,6 +279,9 @@ function GraphInner() {
         fitView
       >
         <Controls />
+        <Panel position="top-left">
+          <NodePanel />
+        </Panel>
         {/* <Background
           variant={BackgroundVariant.Lines}
           gap={25}
