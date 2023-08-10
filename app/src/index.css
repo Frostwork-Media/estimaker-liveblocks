@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz@10..48&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -12,10 +13,10 @@ html {
 }
 
 .react-flow__node-customNode > div {
-  @apply transition-all;
+  @apply border-2 border-transparent;
 }
 
 .react-flow__node-customNode.selected > div,
 .react-flow__node-customNode.dragging > div {
-  @apply shadow-xl shadow-blue-500/30;
+  @apply border-2 border-dashed border-black;
 }

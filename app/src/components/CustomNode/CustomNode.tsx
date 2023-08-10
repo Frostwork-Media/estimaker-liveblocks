@@ -12,7 +12,7 @@ import { getVarName } from "@/lib/getVarName";
 import { customNodeWidthClass } from "@/lib/constants";
 
 const titleClasses =
-  "text-left text-blue-800 p-3 py-2 rounded leading-7 text-2xl leading-tight resize-none focus:outline-none focus:ring-0 focus:border-transparent bg-blue-100";
+  "text-center hover:bg-neutral-200 text-black py-2 rounded leading-7 text-4xl leading-tight resize-none focus:outline-none focus:ring-0 focus:border-transparent bg-transparent";
 
 const toggleGroupItemClasses =
   "bg-neutral-100 hover:bg-neutral-300 color-neutral-600 data-[state=on]:bg-blue-700 data-[state=on]:text-neutral-100 flex h-8 w-8 items-center justify-center bg-white text-base leading-4 first:rounded-l last:rounded-r focus:z-10 focus:outline-none";

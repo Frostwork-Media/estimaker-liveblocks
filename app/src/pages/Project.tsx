@@ -113,7 +113,7 @@ function PageTitle() {
         value={newTitle}
         onChange={(e) => setNewTitle(e.target.value)}
         disabled={setProjectNameMutation.isLoading}
-        inputClassName="text-2xl font-bold bg-transparent py-2 px-1 focus:bg-neutral-200 focus:outline-none"
+        inputClassName="text-2xl bg-transparent py-2 px-1 focus:bg-neutral-200 focus:outline-none"
       />
       {title !== newTitle && (
         <Button type="submit" disabled={setProjectNameMutation.isLoading}>
