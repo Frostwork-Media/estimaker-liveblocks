@@ -12,7 +12,7 @@ import { Graph } from "../components/Graph";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { BiGroup } from "react-icons/bi";
+import { BiGroup, BiShareAlt } from "react-icons/bi";
 import {
   Popover,
   PopoverContent,
@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/popover";
 import { useQuery, useMutation as useRQMutation } from "@tanstack/react-query";
 import AutosizeInput from "react-input-autosize";
+import { useSquigglePlaygroundUrl } from "@/lib/helpers";
 
 function Inner() {
   const status = useStatus();
@@ -44,12 +45,25 @@ function Inner() {
           ← Back Home
         </Link>
         <PageTitle />
-        <div className="ml-auto">
+        <div className="ml-auto flex gap-2">
+          <SquigglePlayground />
           <Share users={projectUsers.data} />
         </div>
       </header>
       <Graph />
     </div>
+  );
+}
+
+function SquigglePlayground() {
+  const url = useSquigglePlaygroundUrl();
+  return (
+    <Button asChild variant="ghost">
+      <a href={url} target="_blank" rel="noopener noreferrer">
+        <BiShareAlt className="mr-2 w-6 h-6" />
+        Squiggle Playground
+      </a>
+    </Button>
   );
 }
 
