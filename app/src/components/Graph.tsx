@@ -31,11 +31,18 @@ import RemovableEdge from "./RemovableEdge";
 
 const snapGrid = [25, 25] as [number, number];
 
+/**
+ * This stores local-user state (not shared)
+ * about the graph
+ */
 const useGraphStore = create<{
   /** Stores the node that the user starts from when making a connection */
   connecting: null | OnConnectStartParams;
+  /** Selected Node Ids */
+  selected: string[];
 }>((_set) => ({
   connecting: null,
+  selected: [],
 }));
 
 // const edgeTypes = {
@@ -60,7 +67,8 @@ export function Graph() {
 
 function GraphInner() {
   const liveNodes = useLiveNodes();
-  const nodes = toReactFlowNodes(liveNodes);
+  const selectedIds = useGraphStore((state) => state.selected);
+  const nodes = toReactFlowNodes(liveNodes, selectedIds);
 
   const updateNodePosition = useMutation(
     ({ storage }, id: string, position: { x: number; y: number }) => {
@@ -84,8 +92,23 @@ function GraphInner() {
             updateNodePosition(change.id, { x, y });
             break;
           }
+          case "select": {
+            const { id, selected } = change;
+            const selectedIds = useGraphStore.getState().selected;
+            if (selected) {
+              useGraphStore.setState({
+                selected: [...selectedIds, id],
+              });
+            } else {
+              useGraphStore.setState({
+                selected: selectedIds.filter((selectedId) => selectedId !== id),
+              });
+            }
+            break;
+          }
           default: {
             // applyNodeChanges(nodes, change);
+            console.log("Unhandled change", change);
           }
         }
       }
@@ -281,7 +304,8 @@ function GraphInner() {
 }
 
 function toReactFlowNodes(
-  liveNodes: ReturnType<typeof useLiveNodes>
+  liveNodes: ReturnType<typeof useLiveNodes>,
+  selectedIds: string[]
 ): AppNode[] {
   const nodesArray = Array.from(liveNodes.entries());
   const nodes: AppNode[] = [];
@@ -297,6 +321,7 @@ function toReactFlowNodes(
       },
       position: { x: node.x, y: node.y },
       type: CUSTOM_NODE,
+      selected: selectedIds.includes(id),
     });
   }
 

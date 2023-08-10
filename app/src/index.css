@@ -13,10 +13,10 @@ html {
 }
 
 .react-flow__node-customNode > div {
-  @apply border-2 border-transparent;
+  @apply border-2 border-transparent rounded;
 }
 
 .react-flow__node-customNode.selected > div,
 .react-flow__node-customNode.dragging > div {
-  @apply border-2 border-dashed border-black;
+  @apply border-blue-500;
 }
