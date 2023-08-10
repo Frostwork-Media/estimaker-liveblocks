@@ -1,8 +1,6 @@
-import { LiveObject, LiveMap } from "@liveblocks/client";
+import { LiveMap } from "@liveblocks/client";
 import { ClientSideSuspense } from "@liveblocks/react";
 import { useParams, Link } from "react-router-dom";
-import { nanoid } from "nanoid";
-import { getVarName } from "../lib/getVarName";
 import {
   RoomProvider,
   useMutation,
@@ -187,44 +185,44 @@ function Share({ users }: { users?: string[] }) {
   );
 }
 
-function AddNode() {
-  const addNode = useMutation(({ storage }, content: string) => {
-    const nodes = storage.get("nodes");
-    // get most recent node
-    const lastNode = Array.from(nodes.values()).pop();
-    const x = lastNode?.get("x") ?? 0;
-    const y = lastNode?.get("y") ?? 0;
-    const node = new LiveObject({
-      content,
-      variableName: getVarName(content),
-      x: x + 100,
-      y,
-      value: "",
-    });
-    const id = nanoid();
-    nodes.set(id, node);
-  }, []);
-  return (
-    <form
-      className="flex items-center gap-2 max-w-md rounded-md"
-      onSubmit={(e) => {
-        e.preventDefault();
-        const formData = new FormData(e.currentTarget);
-        const content = formData.get("content");
-        if (!(typeof content === "string") || !content) return;
-        addNode(content);
-        // reset form
-        e.currentTarget.reset();
-        // forcus input
-        const input = e.currentTarget.querySelector("input");
-        if (input) input.focus();
-      }}
-    >
-      <Input type="text" name="content" />
-      <Button className="whitespace-nowrap">Add Node</Button>
-    </form>
-  );
-}
+// function AddNode() {
+//   const addNode = useMutation(({ storage }, content: string) => {
+//     const nodes = storage.get("nodes");
+//     // get most recent node
+//     const lastNode = Array.from(nodes.values()).pop();
+//     const x = lastNode?.get("x") ?? 0;
+//     const y = lastNode?.get("y") ?? 0;
+//     const node = new LiveObject({
+//       content,
+//       variableName: getVarName(content),
+//       x: x + 100,
+//       y,
+//       value: "",
+//     });
+//     const id = nanoid();
+//     nodes.set(id, node);
+//   }, []);
+//   return (
+//     <form
+//       className="flex items-center gap-2 max-w-md rounded-md"
+//       onSubmit={(e) => {
+//         e.preventDefault();
+//         const formData = new FormData(e.currentTarget);
+//         const content = formData.get("content");
+//         if (!(typeof content === "string") || !content) return;
+//         addNode(content);
+//         // reset form
+//         e.currentTarget.reset();
+//         // forcus input
+//         const input = e.currentTarget.querySelector("input");
+//         if (input) input.focus();
+//       }}
+//     >
+//       <Input type="text" name="content" />
+//       <Button className="whitespace-nowrap">Add Node</Button>
+//     </form>
+//   );
+// }
 
 export function Project() {
   const { id } = useParams<{ id: string }>();
