@@ -4,6 +4,9 @@ export function useLiveNodes() {
   return useStorage((state) => state.nodes);
 }
 
+export type LiveNodes = ReturnType<typeof useLiveNodes>;
+export type LiveNode = LiveNodes extends ReadonlyMap<any, infer V> ? V : never;
+
 export function useLiveSuggestedEdges() {
   return useStorage((state) => state.suggestedEdges);
 }

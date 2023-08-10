@@ -1,4 +1,4 @@
-import { useLiveNodes } from "@/lib/useLive";
+import { LiveNodes, useLiveNodes } from "@/lib/useLive";
 import { getVariables } from "../../lib/helpers";
 import { SquiggleChart } from "@quri/squiggle-components";
 import toposort from "toposort";
@@ -25,10 +25,7 @@ function CustomNodeInner({ nodeId }: { nodeId: string }) {
 }
 
 /** Returns all the squiggle code needed to run for a given node */
-function getSquiggleCode(
-  nodes: ReturnType<typeof useLiveNodes>,
-  nodeId: string
-) {
+function getSquiggleCode(nodes: LiveNodes | undefined, nodeId: string) {
   if (!nodes) return "";
   const nodesArray = Array.from(nodes.entries());
   const idsToCheck = [nodeId];

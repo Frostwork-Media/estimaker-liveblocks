@@ -1,11 +1,10 @@
 import type { Node, Edge } from "reactflow";
+import { LiveNode } from "./useLive";
 
 export type AppNodeData = {
   label: string;
-  variableName: string;
   selfValue: string;
-  showing?: "graph";
-};
+} & LiveNode;
 
 export type AppNode = Node<AppNodeData>;
 

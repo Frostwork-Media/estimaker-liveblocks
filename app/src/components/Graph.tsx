@@ -15,7 +15,7 @@ import type {
   EdgeTypes,
 } from "reactflow";
 import "reactflow/dist/style.css";
-import { AppEdge, AppNode } from "../lib/types";
+import { AppEdge } from "../lib/types";
 import { CUSTOM_NODE, REMOVABLE_EDGE, customNodeWidth } from "../lib/constants";
 import { CustomNode } from "./CustomNode/CustomNode";
 import { getVariables } from "../lib/helpers";
@@ -29,6 +29,7 @@ import {
 import RemovableEdge from "./RemovableEdge";
 import { NodePanel } from "./NodePanel";
 import { useGraphStore } from "../lib/useGraphStore";
+import { toReactFlowNodes } from "../lib/toReactFlowNodes";
 
 const snapGrid = [25, 25] as [number, number];
 
@@ -94,8 +95,9 @@ function GraphInner() {
             break;
           }
           default: {
+            // Not sure if this should be used or not
             // applyNodeChanges(nodes, change);
-            console.log("Unhandled change", change);
+            // console.log("Unhandled change", change);
           }
         }
       }
@@ -107,7 +109,7 @@ function GraphInner() {
 
   // Create edges for react flow
   const edges = useMemo<AppEdge[]>(() => {
-    const nodesArray = Array.from(liveNodes?.entries() ?? []);
+    const nodesArray = Array.from(liveNodes.entries() ?? []);
     // from, to, userId
     const edges: AppEdge[] = [];
     for (const [id, node] of nodesArray) {
@@ -120,12 +122,16 @@ function GraphInner() {
           return node.variableName === variableName;
         });
         if (!foundNode) continue;
+        console.log(foundNode);
         const [sourceNodeId] = foundNode;
         edges.push({
           id: `${sourceNodeId}-${id}`,
           source: sourceNodeId,
           target: id,
-          style: { stroke: "#ccc", strokeWidth: "2px" },
+          style: {
+            stroke: foundNode[1].color ? `hsl(${foundNode[1].color})` : "#ccc",
+            strokeWidth: "2px",
+          },
         });
       }
     }
@@ -291,29 +297,4 @@ function GraphInner() {
       </ReactFlow>
     </div>
   );
-}
-
-function toReactFlowNodes(
-  liveNodes: ReturnType<typeof useLiveNodes>,
-  selectedIds: string[]
-): AppNode[] {
-  const nodesArray = Array.from(liveNodes.entries());
-  const nodes: AppNode[] = [];
-
-  for (const [id, node] of nodesArray) {
-    nodes.push({
-      id,
-      data: {
-        label: node.content,
-        variableName: node.variableName,
-        selfValue: node.value,
-        showing: node.showing,
-      },
-      position: { x: node.x, y: node.y },
-      type: CUSTOM_NODE,
-      selected: selectedIds.includes(id),
-    });
-  }
-
-  return nodes;
 }

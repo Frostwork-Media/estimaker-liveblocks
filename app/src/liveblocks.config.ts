@@ -20,6 +20,8 @@ export type Node = LiveObject<{
   y: number;
   value: string;
   showing?: "graph";
+  /** An HSL interior string that can be used to style text or edges */
+  color?: string;
 }>;
 
 type Storage = {

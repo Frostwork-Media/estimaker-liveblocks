@@ -4,7 +4,7 @@ import { AppNodeData } from "../../lib/types";
 import { EditNodeValue } from "./EditValue";
 import { RxBarChart, RxCross1 } from "react-icons/rx";
 import { useMutation } from "../../liveblocks.config";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";
 import * as ToggleGroup from "@radix-ui/react-toggle-group";
 import { CustomNodeGraph } from "./CustomNodeGraph";
@@ -12,15 +12,15 @@ import { getVarName } from "@/lib/getVarName";
 import { customNodeWidthClass } from "@/lib/constants";
 
 const titleClasses =
-  "text-left hover:bg-neutral-200 text-black py-2 rounded leading-7 text-4xl leading-tight resize-none focus:outline-none focus:ring-0 focus:border-transparent bg-transparent";
+  "text-left hover:bg-neutral-200 py-2 rounded leading-7 text-4xl leading-tight resize-none focus:outline-none focus:ring-0 focus:border-transparent bg-transparent";
 
 const toggleGroupItemClasses =
   "bg-neutral-100 hover:bg-neutral-300 color-neutral-600 data-[state=on]:bg-blue-700 data-[state=on]:text-neutral-100 flex h-8 w-8 items-center justify-center bg-white text-base leading-4 first:rounded-l last:rounded-r focus:z-10 focus:outline-none";
 
-const handleStyle = {
+const _handleStyle = {
   width: 12,
   height: 12,
-  backgroundColor: "#ccc",
+  // backgroundColor: "#ccc",
 };
 export function CustomNode({ data, id }: NodeProps<AppNodeData>) {
   const { label, variableName, showing } = data;
@@ -107,10 +107,17 @@ export function CustomNode({ data, id }: NodeProps<AppNodeData>) {
     [changeNodeVarName, setLabel, variableName]
   );
 
+  const handleStyle = useMemo(() => {
+    return {
+      ..._handleStyle,
+      backgroundColor: data.color ? `hsl(${data.color})` : undefined,
+    };
+  }, [data.color]);
+
   return (
     <>
       <Handle type="target" position={Position.Top} style={handleStyle} />
-      <div className={`p-1 bg-neutral-50 grid gap-1 ${customNodeWidthClass}`}>
+      <div className={`bg-transparent grid gap-1 ${customNodeWidthClass}`}>
         <div className="flex justify-end pr-1 pt-1">
           <button className="text-blue-600 text-base" onClick={deleteNode}>
             <RxCross1 />
@@ -138,6 +145,7 @@ export function CustomNode({ data, id }: NodeProps<AppNodeData>) {
           <button
             className={titleClasses}
             data-rename-button
+            style={data.color ? { color: `hsl(${data.color})` } : {}}
             onClick={() => {
               setEditing(true);
             }}
@@ -145,7 +153,7 @@ export function CustomNode({ data, id }: NodeProps<AppNodeData>) {
             {label}
           </button>
         )}
-        <div className="px-2 py-3 rounded-md bg-[white] grid gap-3 shadow-sm">
+        <div className="px-2 py-3 rounded-md border bg-white grid gap-3 shadow-sm">
           <button
             className="font-mono text-blue-600 text-sm text-left tracking-wider w-full overflow-hidden whitespace-nowrap overflow-ellipsis"
             onClick={() => {
