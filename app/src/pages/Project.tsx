@@ -21,6 +21,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useQuery, useMutation as useRQMutation } from "@tanstack/react-query";
+import AutosizeInput from "react-input-autosize";
 
 function Inner() {
   const status = useStatus();
@@ -39,14 +40,15 @@ function Inner() {
   if (status === "connecting") return <div>Connecting...</div>;
 
   return (
-    <div className="h-screen">
-      <header className="grid gap-4 mb-6 p-6 absolute z-10 max-w-2xl bg-white border shadow top-3 left-3 rounded">
+    <div className="h-screen grid grid-rows-[auto_minmax(0,1fr)]">
+      <header className="flex items-center gap-4 px-6 border-b">
         <Link to="/" className="text-blue-500 text-sm justify-self-start">
           ← Back Home
         </Link>
         <PageTitle />
-        <Share users={projectUsers.data} />
-        <AddNode />
+        <div className="ml-auto">
+          <Share users={projectUsers.data} />
+        </div>
       </header>
       <Graph />
     </div>
@@ -92,13 +94,14 @@ function PageTitle() {
         if (!form) return;
         form.querySelector("input")?.blur();
       }}
-      className="grid gap-1"
+      className="flex gap-1 items-center"
     >
-      <input
-        className="text-2xl font-bold bg-transparent border-b py-2 px-1 focus:bg-neutral-100 focus:outline-none"
+      <AutosizeInput
+        name="form-field-name"
         value={newTitle}
         onChange={(e) => setNewTitle(e.target.value)}
         disabled={setProjectNameMutation.isLoading}
+        inputClassName="text-2xl font-bold bg-transparent py-2 px-1 focus:bg-neutral-200 focus:outline-none"
       />
       {title !== newTitle && (
         <Button type="submit" disabled={setProjectNameMutation.isLoading}>
@@ -127,12 +130,12 @@ function Share({ users }: { users?: string[] }) {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="secondary">
+        <Button>
           <BiGroup className="mr-2 w-6 h-6" />
           Share
         </Button>
       </PopoverTrigger>
-      <PopoverContent align="start">
+      <PopoverContent align="end">
         <div className="grid gap-3">
           <h3 className="text-lg font-bold">Share</h3>
           {users?.length ? (
@@ -166,9 +169,9 @@ function Share({ users }: { users?: string[] }) {
             }}
           >
             <Input
-              type="email"
               name="email"
               autoComplete="off"
+              data-1p-ignore
               disabled={addUserMutation.isLoading}
             />
             <Button

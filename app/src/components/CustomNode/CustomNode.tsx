@@ -9,6 +9,7 @@ import TextareaAutosize from "react-textarea-autosize";
 import * as ToggleGroup from "@radix-ui/react-toggle-group";
 import { CustomNodeGraph } from "./CustomNodeGraph";
 import { getVarName } from "@/lib/getVarName";
+import { customNodeWidthClass } from "@/lib/constants";
 
 const titleClasses =
   "text-left text-blue-800 p-3 py-2 rounded leading-7 text-2xl leading-tight resize-none focus:outline-none focus:ring-0 focus:border-transparent bg-blue-100";
@@ -16,6 +17,11 @@ const titleClasses =
 const toggleGroupItemClasses =
   "bg-neutral-100 hover:bg-neutral-300 color-neutral-600 data-[state=on]:bg-blue-700 data-[state=on]:text-neutral-100 flex h-8 w-8 items-center justify-center bg-white text-base leading-4 first:rounded-l last:rounded-r focus:z-10 focus:outline-none";
 
+const handleStyle = {
+  width: 12,
+  height: 12,
+  backgroundColor: "#ccc",
+};
 export function CustomNode({ data, id }: NodeProps<AppNodeData>) {
   const { label, variableName, showing } = data;
   const deleteNode = useMutation(
@@ -103,10 +109,10 @@ export function CustomNode({ data, id }: NodeProps<AppNodeData>) {
 
   return (
     <>
-      <Handle type="target" position={Position.Top} />
-      <div className="bg-neutral-100 p-1 w-[275px] grid gap-1">
+      <Handle type="target" position={Position.Top} style={handleStyle} />
+      <div className={`p-1 bg-neutral-50 grid gap-1 ${customNodeWidthClass}`}>
         <div className="flex justify-end pr-1 pt-1">
-          <button className="text-blue-600 text-sm" onClick={deleteNode}>
+          <button className="text-blue-600 text-base" onClick={deleteNode}>
             <RxCross1 />
           </button>
         </div>
@@ -169,7 +175,12 @@ export function CustomNode({ data, id }: NodeProps<AppNodeData>) {
           <CustomNodeGraph showing={showing === "graph"} nodeId={id} />
         </div>
       </div>
-      <Handle type="source" position={Position.Bottom} id="a" />
+      <Handle
+        type="source"
+        position={Position.Bottom}
+        id="a"
+        style={handleStyle}
+      />
     </>
   );
 }

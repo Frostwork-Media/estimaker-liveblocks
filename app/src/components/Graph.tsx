@@ -1,14 +1,21 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useMutation } from "../liveblocks.config";
 import ReactFlow, {
   Controls,
+  OnConnect,
+  OnConnectEnd,
   ReactFlowProvider,
   useReactFlow,
 } from "reactflow";
-import type { OnNodesChange, NodeTypes } from "reactflow";
+import type {
+  OnNodesChange,
+  NodeTypes,
+  OnConnectStartParams,
+  OnConnectStart,
+} from "reactflow";
 import "reactflow/dist/style.css";
 import { AppEdge, AppNode } from "../lib/types";
-import { CUSTOM_NODE } from "../lib/constants";
+import { CUSTOM_NODE, customNodeWidth } from "../lib/constants";
 import { CustomNode } from "./CustomNode/CustomNode";
 import { getVariables } from "../lib/helpers";
 import { LiveObject } from "@liveblocks/client";
@@ -18,8 +25,16 @@ import {
   useLiveNodes,
   useLiveSuggestedEdges,
 } from "@/lib/useLive";
+import { create } from "zustand";
 
 const snapGrid = [25, 25] as [number, number];
+
+const useGraphStore = create<{
+  /** Stores the node that the user starts from when making a connection */
+  connecting: null | OnConnectStartParams;
+}>((set) => ({
+  connecting: null,
+}));
 
 export function Graph() {
   return (
@@ -92,7 +107,7 @@ function GraphInner() {
           id: `${sourceNodeId}-${id}`,
           source: sourceNodeId,
           target: id,
-          style: { stroke: "#ccc", strokeWidth: "4px" },
+          style: { stroke: "#ccc", strokeWidth: "2px" },
         });
       }
     }
@@ -108,7 +123,7 @@ function GraphInner() {
         id,
         source: sourceNodeId,
         target: targetNodeId,
-        style: { stroke: "#ccc", strokeWidth: "4px" },
+        style: { stroke: "#ccc", strokeWidth: "2px" },
         animated: true,
       });
     }
@@ -122,11 +137,16 @@ function GraphInner() {
       const node = new LiveObject({
         content: "",
         variableName: `var${nodes.size + 1}`,
-        ...position,
+        // We move the x position back by half of the node width, so it's centered
+        x: position.x - customNodeWidth / 2,
+        // Not sure
+        y: position.y - 50,
         value: "",
       });
       const id = nanoid();
       nodes.set(id, node);
+
+      // Auto-select the input for naming the node
       setTimeout(() => {
         // Find the element with the [data-id] attribute equal to the
         // id of the node we just created
@@ -141,7 +161,10 @@ function GraphInner() {
 
         // click it
         renameButton.click();
-      }, 0);
+      }, 100);
+
+      // Return the id of the node so that the caller can use it
+      return id;
     },
     []
   );
@@ -173,6 +196,52 @@ function GraphInner() {
 
   const liveAddSuggestedEdge = useLiveAddSuggestedEdge();
 
+  const onConnectStart = useCallback<OnConnectStart>((_event, params) => {
+    useGraphStore.setState({ connecting: params });
+  }, []);
+
+  const onConnect = useCallback<OnConnect>(
+    ({ source, target }) => {
+      if (source && target) {
+        liveAddSuggestedEdge([source, target]);
+        useGraphStore.setState({ connecting: null });
+      }
+    },
+    [liveAddSuggestedEdge]
+  );
+
+  /**
+   * Auto-create a node and connect it when dragging to nowhere
+   */
+  const onConnectEnd = useCallback<OnConnectEnd>(
+    (event) => {
+      const connecting = useGraphStore.getState().connecting;
+      if (!connecting) return;
+
+      // Create a new node where the user stopped dragging
+      const x =
+        event instanceof MouseEvent ? event.clientX : event.touches[0].clientX;
+      const y =
+        event instanceof MouseEvent ? event.clientY : event.touches[0].clientY;
+      const coords = reactFlowInstance.project({ x, y });
+      const nodeId = addNode(coords);
+
+      // Create a suggested edge between the node the user started dragging
+      const toConnectId = connecting.nodeId;
+      if (toConnectId) {
+        if (connecting.handleType === "target") {
+          liveAddSuggestedEdge([nodeId, toConnectId]);
+        } else {
+          liveAddSuggestedEdge([toConnectId, nodeId]);
+        }
+      }
+
+      // Reset the connecting state
+      useGraphStore.setState({ connecting: null });
+    },
+    [addNode, liveAddSuggestedEdge, reactFlowInstance]
+  );
+
   return (
     <div className="w-full h-full bg-[white]">
       <ReactFlow
@@ -184,9 +253,9 @@ function GraphInner() {
         snapGrid={snapGrid}
         zoomOnDoubleClick={false}
         onDoubleClick={addNodeOnDblClick}
-        onConnect={({ source, target }) => {
-          if (source && target) liveAddSuggestedEdge([source, target]);
-        }}
+        onConnect={onConnect}
+        onConnectStart={onConnectStart}
+        onConnectEnd={onConnectEnd}
         fitView
       >
         <Controls />
