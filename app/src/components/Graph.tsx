@@ -122,7 +122,6 @@ function GraphInner() {
           return node.variableName === variableName;
         });
         if (!foundNode) continue;
-        console.log(foundNode);
         const [sourceNodeId] = foundNode;
         edges.push({
           id: `${sourceNodeId}-${id}`,
@@ -275,8 +274,8 @@ function GraphInner() {
         onNodesChange={onNodesChange}
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
-        snapToGrid={true}
-        snapGrid={snapGrid}
+        // snapToGrid={true}
+        // snapGrid={snapGrid}
         zoomOnDoubleClick={false}
         onDoubleClick={addNodeOnDblClick}
         onConnect={onConnect}

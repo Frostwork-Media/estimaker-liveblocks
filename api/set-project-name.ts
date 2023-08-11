@@ -56,8 +56,6 @@ const setProjectName: VercelApiHandler = async (req, res) => {
 
   let updatedRoom = (await response.json()) as Room;
 
-  console.log({ updatedRoom });
-
   // Return the updated room
   res.status(200).json(updatedRoom);
 };
