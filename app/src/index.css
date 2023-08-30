@@ -13,12 +13,12 @@ html {
 }
 
 .react-flow__node-customNode > div {
-  @apply border-2 border-transparent rounded;
+  @apply outline outline-transparent rounded transition-all duration-200;
 }
 
 .react-flow__node-customNode.selected > div,
 .react-flow__node-customNode.dragging > div {
-  @apply border-blue-500;
+  @apply outline-blue-500/20;
 }
 
 .squiggle > div > div:nth-child(2) {

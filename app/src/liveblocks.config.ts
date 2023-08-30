@@ -23,6 +23,8 @@ export type Node = LiveObject<{
   showing?: "graph";
   /** An HSL interior string that can be used to style text or edges */
   color?: string;
+  /** Link to a manifold market user/slug */
+  manifold?: string;
 }>;
 
 type Storage = {
