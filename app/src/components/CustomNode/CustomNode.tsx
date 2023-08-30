@@ -3,13 +3,18 @@ import type { NodeProps } from "reactflow";
 import { AppNodeData } from "../../lib/types";
 import { EditNodeValue } from "./EditValue";
 import { RxBarChart, RxCross1 } from "react-icons/rx";
-import { useMutation } from "../../liveblocks.config";
+import { useMutation, useStorage } from "../../liveblocks.config";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";
 import * as ToggleGroup from "@radix-ui/react-toggle-group";
 import { CustomNodeGraph } from "./CustomNodeGraph";
 import { getVarName } from "@/lib/getVarName";
 import { customNodeWidthClass } from "@/lib/constants";
+import { useQuery } from "@tanstack/react-query";
+import { fetchManifoldData } from "@/lib/fetchManifoldData";
+import { SmallSpinner } from "../SmallSpinner";
+import { numberToPercentage } from "@/lib/numberToPercentage";
+import { fetchMetaculusData } from "@/lib/fetchMetaculusData";
 
 const titleClasses =
   "text-left hover:bg-neutral-200 py-2 rounded leading-7 text-4xl leading-tight resize-none focus:outline-none focus:ring-0 focus:border-transparent bg-transparent";
@@ -32,6 +37,32 @@ export function CustomNode({ data, id }: NodeProps<AppNodeData>) {
     },
     [id]
   );
+
+  const manifold = useStorage((state) => state.nodes.get(id)?.manifold);
+  const manifoldQuery = useQuery(
+    ["manifold", manifold],
+    () => {
+      if (manifold) return fetchManifoldData(manifold);
+    },
+    {
+      enabled: !!manifold,
+      // Refetch every 10 minutes
+      refetchInterval: 10 * 60 * 1000,
+    }
+  );
+
+  // const metaculus = useStorage((state) => state.nodes.get(id)?.metaculus);
+  // const metaculusQuery = useQuery(
+  //   ["metaculus", metaculus],
+  //   () => {
+  //     if (metaculus) return fetchMetaculusData(metaculus);
+  //   },
+  //   {
+  //     enabled: !!metaculus,
+  //     // Refetch every 10 minutes
+  //     refetchInterval: 10 * 60 * 1000,
+  //   }
+  // );
 
   const [editing, setEditing] = useState(false);
   const [currentLabel, setCurrentLabel] = useState(label);
@@ -181,6 +212,43 @@ export function CustomNode({ data, id }: NodeProps<AppNodeData>) {
             </ToggleGroup.Item>
           </ToggleGroup.Root>
           <CustomNodeGraph showing={showing === "graph"} nodeId={id} />
+          {manifold ? (
+            <div className="grid gap-1">
+              <div className="flex items-center gap-1">
+                <img
+                  src="/manifold-market-logo.svg"
+                  className="w-6 h-6 -translate-y-px"
+                  alt="Manifold Markets Logo"
+                />
+
+                <div className="text-sm text-slate-500">Manifold</div>
+              </div>
+              {manifoldQuery.isLoading ? (
+                <SmallSpinner />
+              ) : manifoldQuery.error ? (
+                <span className="text-red-500 text-center text-sm rounded-full p-1 bg-red-100">
+                  Error
+                </span>
+              ) : manifoldQuery.data ? (
+                <a
+                  className="grid gap-1 text-slate-600"
+                  href={manifoldQuery.data.url}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <span className="text-sm grow">
+                    {manifoldQuery.data.question}
+                  </span>
+                  <span
+                    className="bg-slate-100 text-center font-mono overflow-hidden whitespace-nowrap overflow-ellipsis"
+                    title={manifoldQuery.data.probability.toString()}
+                  >
+                    {numberToPercentage(manifoldQuery.data.probability)}
+                  </span>
+                </a>
+              ) : null}
+            </div>
+          ) : null}
         </div>
       </div>
       <Handle

@@ -25,6 +25,8 @@ export type Node = LiveObject<{
   color?: string;
   /** Link to a manifold market user/slug */
   manifold?: string;
+  /** Link to a metaculus question id */
+  metaculus?: string;
 }>;
 
 type Storage = {
