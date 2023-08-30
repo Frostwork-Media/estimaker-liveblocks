@@ -51,18 +51,20 @@ export function CustomNode({ data, id }: NodeProps<AppNodeData>) {
     }
   );
 
-  // const metaculus = useStorage((state) => state.nodes.get(id)?.metaculus);
-  // const metaculusQuery = useQuery(
-  //   ["metaculus", metaculus],
-  //   () => {
-  //     if (metaculus) return fetchMetaculusData(metaculus);
-  //   },
-  //   {
-  //     enabled: !!metaculus,
-  //     // Refetch every 10 minutes
-  //     refetchInterval: 10 * 60 * 1000,
-  //   }
-  // );
+  const metaculus = useStorage((state) => state.nodes.get(id)?.metaculus);
+  const metaculusQuery = useQuery(
+    ["metaculus", metaculus],
+    () => {
+      if (metaculus) return fetchMetaculusData(metaculus);
+    },
+    {
+      enabled: !!metaculus,
+      // Refetch every 10 minutes
+      refetchInterval: 10 * 60 * 1000,
+    }
+  );
+
+  console.log(metaculusQuery.data?.title);
 
   const [editing, setEditing] = useState(false);
   const [currentLabel, setCurrentLabel] = useState(label);
@@ -213,41 +215,24 @@ export function CustomNode({ data, id }: NodeProps<AppNodeData>) {
           </ToggleGroup.Root>
           <CustomNodeGraph showing={showing === "graph"} nodeId={id} />
           {manifold ? (
-            <div className="grid gap-1">
-              <div className="flex items-center gap-1">
-                <img
-                  src="/manifold-market-logo.svg"
-                  className="w-6 h-6 -translate-y-px"
-                  alt="Manifold Markets Logo"
-                />
-
-                <div className="text-sm text-slate-500">Manifold</div>
-              </div>
-              {manifoldQuery.isLoading ? (
-                <SmallSpinner />
-              ) : manifoldQuery.error ? (
-                <span className="text-red-500 text-center text-sm rounded-full p-1 bg-red-100">
-                  Error
-                </span>
-              ) : manifoldQuery.data ? (
-                <a
-                  className="grid gap-1 text-slate-600"
-                  href={manifoldQuery.data.url}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <span className="text-sm grow">
-                    {manifoldQuery.data.question}
-                  </span>
-                  <span
-                    className="bg-slate-100 text-center font-mono overflow-hidden whitespace-nowrap overflow-ellipsis"
-                    title={manifoldQuery.data.probability.toString()}
-                  >
-                    {numberToPercentage(manifoldQuery.data.probability)}
-                  </span>
-                </a>
-              ) : null}
-            </div>
+            <MarketLink
+              isLoading={manifoldQuery.isLoading}
+              url={manifoldQuery.data?.url}
+              title={manifoldQuery.data?.question}
+              probability={manifoldQuery.data?.probability}
+              error={!!manifoldQuery.error}
+              community="Manifold"
+            />
+          ) : null}
+          {metaculus ? (
+            <MarketLink
+              isLoading={metaculusQuery.isLoading}
+              url={metaculusQuery.data?.url}
+              title={metaculusQuery.data?.title}
+              probability={metaculusQuery.data?.community_prediction.full.q2}
+              error={!!metaculusQuery.error}
+              community="Metaculus"
+            />
           ) : null}
         </div>
       </div>
@@ -258,5 +243,57 @@ export function CustomNode({ data, id }: NodeProps<AppNodeData>) {
         style={handleStyle}
       />
     </>
+  );
+}
+
+function MarketLink({
+  isLoading,
+  url,
+  title,
+  probability,
+  error,
+  community,
+}: {
+  isLoading: boolean;
+  url?: string;
+  title?: string;
+  probability?: number;
+  error: boolean;
+  community: "Manifold" | "Metaculus";
+}) {
+  return (
+    <div className="grid gap-1">
+      <div className="flex items-center gap-1">
+        <img
+          src="/manifold-market-logo.svg"
+          className="w-6 h-6 -translate-y-px"
+          alt="Manifold Markets Logo"
+        />
+
+        <div className="text-sm text-slate-500">{community}</div>
+      </div>
+      {isLoading ? (
+        <SmallSpinner />
+      ) : error ? (
+        <span className="text-red-500 text-center text-sm rounded-full p-1 bg-red-100">
+          Error
+        </span>
+      ) : title && url && probability != null ? (
+        <a
+          className="grid gap-1 text-slate-600"
+          href={url}
+          target="_blank"
+          rel="noreferrer"
+        >
+          <span className="text-sm grow">{title}</span>
+          <span
+            className="bg-slate-100 text-center font-mono overflow-hidden whitespace-nowrap overflow-ellipsis"
+            title={probability.toString()}
+          >
+            {numberToPercentage(probability)}
+          </span>
+        </a>
+      ) : null}
+    </div>
   );
 }

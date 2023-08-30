@@ -1,18 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-const BASE_PATH = "https://www.metaculus.com/api2/questions/";
-
 export async function fetchMetaculusData(id: string) {
-  const response = await fetch(`${BASE_PATH}${id}`, {
-    method: "GET",
-    mode: "cors",
+  const response = await fetch("/api/metaculus", {
+    method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "*",
     },
+    body: JSON.stringify({ id }),
   });
   const result = (await response.json()) as MetaculusResponse;
-  console.log(result);
-  return null;
+  return result;
 }
 
 interface MetaculusResponse {
@@ -91,8 +87,9 @@ export interface MetaculusPrediction {
 }
 
 export interface CommunityPrediction {
-  property1: any;
-  property2: any;
+  full: {
+    q2: number;
+  };
 }
 
 export interface RelatedQuestion {

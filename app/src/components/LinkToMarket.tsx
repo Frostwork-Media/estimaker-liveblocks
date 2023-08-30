@@ -60,7 +60,7 @@ export function LinkToMarket({ selected }: { selected: string[] }) {
             }}
             clear={() => removeMarket("manifold")}
           />
-          {/* <EditableLink
+          <EditableLink
             title="Metaculus"
             description="Enter the id of the question you want to link to."
             placeholder="11589"
@@ -69,7 +69,7 @@ export function LinkToMarket({ selected }: { selected: string[] }) {
               linkToMarket("metaculus", value);
             }}
             clear={() => removeMarket("metaculus")}
-          /> */}
+          />
         </div>
       </DialogContent>
     </Dialog>
