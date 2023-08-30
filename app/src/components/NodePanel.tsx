@@ -1,4 +1,4 @@
-import { BiPaint } from "react-icons/bi";
+import { BiLink, BiPalette } from "react-icons/bi";
 import { Button } from "./ui/button";
 import { useGraphStore } from "@/lib/useGraphStore";
 import {
@@ -11,6 +11,28 @@ import { useMutation } from "@/liveblocks.config";
 
 export function NodePanel() {
   const selected = useGraphStore((state) => state.selected);
+  return (
+    <Popover open={selected.length === 1}>
+      <PopoverTrigger asChild>
+        <span />
+      </PopoverTrigger>
+      <PopoverContent className="flex border border-neutral-300 rounded-lg p-2 shadow bg-white w-auto">
+        <ChangeNodeColor selected={selected} />
+        <LinkToMarket selected={selected} />
+      </PopoverContent>
+    </Popover>
+  );
+}
+
+function LinkToMarket({ selected }: { selected: string[] }) {
+  return (
+    <Button size="icon" variant="ghost">
+      <BiLink className="w-6 h-6" />
+    </Button>
+  );
+}
+
+function ChangeNodeColor({ selected }: { selected: string[] }) {
   const setColor = useMutation(
     (
       { storage },
@@ -37,43 +59,34 @@ export function NodePanel() {
     if (!node) return;
     node.delete("color");
   }, []);
-
   return (
-    <div>
-      {selected.length === 1 ? (
-        <div className="grid gap-1 border rounded shadow-lg">
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button size="icon" variant="ghost">
-                <BiPaint className="w-6 h-6 text-blue-500" />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent side="right" align="start" className="!w-auto p-3">
-              <div className="grid gap-2">
-                <ColorButton
-                  key={"none"}
-                  color="0, 0%, 0%"
-                  onClick={() => removeColor(selected[0])}
-                />
-                {nodeColors.map((color) => (
-                  <ColorButton
-                    key={color.name}
-                    color={color.color}
-                    onClick={() =>
-                      setColor({ color: color.color, id: selected[0] })
-                    }
-                  />
-                ))}
-              </div>
-            </PopoverContent>
-          </Popover>
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button size="icon" variant="ghost">
+          <BiPalette className="w-6 h-6" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent side="top" align="center" className="!w-auto p-3">
+        <div className="flex gap-2">
+          <SingleColorButton
+            key={"none"}
+            color="0, 0%, 0%"
+            onClick={() => removeColor(selected[0])}
+          />
+          {nodeColors.map((color) => (
+            <SingleColorButton
+              key={color.name}
+              color={color.color}
+              onClick={() => setColor({ color: color.color, id: selected[0] })}
+            />
+          ))}
         </div>
-      ) : null}
-    </div>
+      </PopoverContent>
+    </Popover>
   );
 }
 
-function ColorButton({
+function SingleColorButton({
   color,
   ...props
 }: { color: string } & React.DetailedHTMLProps<

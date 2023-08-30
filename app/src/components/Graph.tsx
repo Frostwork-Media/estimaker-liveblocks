@@ -284,7 +284,7 @@ function GraphInner() {
         fitView
       >
         <Controls />
-        <Panel position="top-left">
+        <Panel position="bottom-center">
           <NodePanel />
         </Panel>
         {/* <Background
