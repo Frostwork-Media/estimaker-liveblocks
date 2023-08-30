@@ -1,4 +1,4 @@
-import { BiLink, BiPalette } from "react-icons/bi";
+import { BiPalette } from "react-icons/bi";
 import { Button } from "./ui/button";
 import { useGraphStore } from "@/lib/useGraphStore";
 import {
@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/popover";
 import { nodeColors } from "@/lib/constants";
 import { useMutation } from "@/liveblocks.config";
+import { LinkToMarket } from "./LinkToMarket";
 
 export function NodePanel() {
   const selected = useGraphStore((state) => state.selected);
@@ -21,14 +22,6 @@ export function NodePanel() {
         <LinkToMarket selected={selected} />
       </PopoverContent>
     </Popover>
-  );
-}
-
-function LinkToMarket({ selected }: { selected: string[] }) {
-  return (
-    <Button size="icon" variant="ghost">
-      <BiLink className="w-6 h-6" />
-    </Button>
   );
 }
 
