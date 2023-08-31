@@ -13,8 +13,7 @@ import {
 import { Graph } from "../components/Graph";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { BiShareAlt } from "react-icons/bi";
-import { useQuery, useMutation as useRQMutation } from "@tanstack/react-query";
+import { useMutation as useRQMutation } from "@tanstack/react-query";
 import AutosizeInput from "react-input-autosize";
 import { useSquigglePlaygroundUrl } from "@/lib/helpers";
 import {
@@ -23,6 +22,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { ShareList } from "@/components/ShareList";
+import { PublishModal } from "@/components/PublishModal";
 
 function Inner() {
   const status = useStatus();
@@ -30,15 +30,16 @@ function Inner() {
 
   return (
     <div className="h-screen grid grid-rows-[auto_minmax(0,1fr)]">
-      <header className="flex items-center gap-4 px-6 border-b">
+      <header className="flex items-center gap-4 pl-6 pr-1 border-b">
         <Link to="/" className="text-blue-500 text-sm justify-self-start">
           ← Back Home
         </Link>
         <PageTitle />
-        <div className="ml-auto flex gap-2">
+        <div className="ml-auto flex gap-1">
           <UsersInRoom />
           <SquigglePlayground />
           <ShareList />
+          <PublishModal />
         </div>
       </header>
       <Graph />
@@ -49,10 +50,9 @@ function Inner() {
 function SquigglePlayground() {
   const url = useSquigglePlaygroundUrl();
   return (
-    <Button asChild variant="ghost">
+    <Button asChild variant="secondary" size="icon">
       <a href={url} target="_blank" rel="noopener noreferrer">
-        <BiShareAlt className="mr-2 w-6 h-6" />
-        Squiggle Playground
+        <img className="w-6 h-6" src="/squiggle-logo.png" />
       </a>
     </Button>
   );
@@ -178,7 +178,7 @@ function UsersInRoom() {
   const self = useSelf((state) => state.info);
   const others = useOthers().map(({ info, id }) => ({ ...info, id }));
   return (
-    <div className="flex">
+    <div className="flex mr-4">
       {self && <UserInRoom {...self} />}
       {others.map((user) => (
         <UserInRoom key={user.id} {...user} />

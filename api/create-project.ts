@@ -1,6 +1,7 @@
 import { VercelApiHandler } from "@vercel/node";
 import { nanoid } from "nanoid";
 import { LIVEBLOCKS_SECRET_KEY } from "./_config";
+import { ProjectMetadata } from "shared";
 
 const handler: VercelApiHandler = async (req, res) => {
   // In this case the userId is the email address, that's our unique identifier in liveblocks land
@@ -12,12 +13,16 @@ const handler: VercelApiHandler = async (req, res) => {
 
   const id = `room-${nanoid()}`;
 
+  const metadata: ProjectMetadata = {
+    name: "Untitled",
+    public: "false",
+    slug: "",
+  };
+
   const body = {
     id,
     defaultAccesses: [],
-    metadata: {
-      name: "Untitled",
-    },
+    metadata,
     usersAccesses: {
       [userId]: ["room:write"],
     },

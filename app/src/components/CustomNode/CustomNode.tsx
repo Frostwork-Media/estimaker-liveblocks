@@ -64,8 +64,6 @@ export function CustomNode({ data, id }: NodeProps<AppNodeData>) {
     }
   );
 
-  console.log(metaculusQuery.data?.title);
-
   const [editing, setEditing] = useState(false);
   const [currentLabel, setCurrentLabel] = useState(label);
   const setLabel = useMutation(

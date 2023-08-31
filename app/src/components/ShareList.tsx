@@ -42,15 +42,14 @@ export function ShareList() {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button>
-          <BiGroup className="mr-2 w-6 h-6" />
-          Share
+        <Button size="icon" variant="secondary">
+          <BiGroup className="w-6 h-6" />
         </Button>
       </PopoverTrigger>
       <PopoverContent align="end">
         <div className="grid gap-3">
           <div className="flex items-center gap-1">
-            <h3 className="text-lg font-bold">Share</h3>
+            <h3 className="text-lg font-bold">Collaborate</h3>
             {users.isFetching || addUserMutation.isLoading ? (
               <SmallSpinner />
             ) : null}
