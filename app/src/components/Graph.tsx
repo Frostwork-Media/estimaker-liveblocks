@@ -31,8 +31,6 @@ import { NodePanel } from "./NodePanel";
 import { useGraphStore } from "../lib/useGraphStore";
 import { toReactFlowNodes } from "../lib/toReactFlowNodes";
 
-const snapGrid = [25, 25] as [number, number];
-
 // const edgeTypes = {
 //buttonedge: ButtonEdge,
 //};

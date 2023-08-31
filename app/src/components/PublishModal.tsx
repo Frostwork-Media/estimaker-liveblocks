@@ -1,4 +1,3 @@
-import { BiWorld } from "react-icons/bi";
 import { Button } from "./ui/button";
 import {
   Popover,
