@@ -43,7 +43,6 @@ const handler: VercelApiHandler = async (req, res) => {
       nameIsValid = false;
     while (!nameIsValid) {
       const test = i === 0 ? baseName : `${baseName}-${i}`;
-      console.log(test);
 
       // Check if the slug is taken
       // in order to test metadata querying try listing all rooms with a specific title
@@ -69,8 +68,6 @@ const handler: VercelApiHandler = async (req, res) => {
         return;
       }
 
-      console.log(found);
-
       if (found.data.length === 0) {
         nameIsValid = true;
         slug = test;
@@ -89,7 +86,6 @@ const handler: VercelApiHandler = async (req, res) => {
 
   // Update the room with the new slug and being public
   if (!isPublicReady) {
-    console.log("Made it here!");
     const room = await fetch(`https://api.liveblocks.io/v2/rooms/${id}`, {
       method: "POST",
       headers: {
