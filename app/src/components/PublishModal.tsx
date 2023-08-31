@@ -13,6 +13,8 @@ import { useRoomMetadata } from "@/lib/hooks";
 import { SmallSpinner } from "./SmallSpinner";
 import { Input } from "./ui/input";
 import { queryClient } from "@/lib/queryClient";
+import { WorldSvg } from "./WorldSvg";
+import classNames from "classnames";
 
 export function PublishModal() {
   const room = useRoom();
@@ -40,11 +42,45 @@ export function PublishModal() {
       },
     }
   );
+
+  const makeNotPublicMutation = useMutation(
+    async () => {
+      if (!room.id) return;
+      const response = await fetch("/api/make-not-public", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id: room.id }),
+      });
+      if (!response.ok) {
+        throw new Error("Something went wrong");
+      }
+      const updatedRoomMetadata = await response.json();
+      return updatedRoomMetadata;
+    },
+    {
+      onSuccess: (updatedRoomMetadata) => {
+        // Set this metadata in the cache
+        queryClient.setQueryData(["metadata", room.id], updatedRoomMetadata);
+      },
+    }
+  );
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button size="icon" variant="secondary">
-          <BiWorld className="w-6 h-6" />
+        <Button
+          size="icon"
+          variant="secondary"
+          className={classNames(
+            {
+              "bg-blue-100 hover:bg-blue-200":
+                roomMetadataQuery.data?.public === "true",
+            },
+            "transition-colors duration-1000"
+          )}
+        >
+          <WorldSvg isPublic={roomMetadataQuery.data?.public === "true"} />
         </Button>
       </PopoverTrigger>
       <PopoverContent align="end">
@@ -66,11 +102,14 @@ export function PublishModal() {
                   onCheckedChange={(checked) => {
                     if (checked) {
                       makePublicMutation.mutate();
+                    } else {
+                      makeNotPublicMutation.mutate();
                     }
                   }}
                 />
                 <Label htmlFor="publish">Publish</Label>
-                {makePublicMutation.isLoading && <SmallSpinner />}
+                {(makePublicMutation.isLoading ||
+                  makeNotPublicMutation.isLoading) && <SmallSpinner />}
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="slug">Slug</Label>
