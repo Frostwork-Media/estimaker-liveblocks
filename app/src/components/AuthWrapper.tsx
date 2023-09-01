@@ -35,7 +35,7 @@ export function AuthWrapper() {
                 Profile
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem asChild>
+            <DropdownMenuItem>
               <SignOutButton>
                 <div className="flex">
                   <BiLogOut className="w-4 h-4 mr-2" />

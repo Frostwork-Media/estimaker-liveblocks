@@ -5,3 +5,8 @@ export type ProjectMetadata = {
   public: "true" | "false";
   slug: string;
 };
+
+/**
+ * This is the unsafeMetadata stored on the clerk user
+ */
+export type UserMetadata = { username: string };

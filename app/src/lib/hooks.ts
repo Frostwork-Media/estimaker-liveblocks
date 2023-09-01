@@ -20,3 +20,10 @@ export function useRoomMetadata(roomId: string) {
     }
   );
 }
+
+export function useUserMetadata() {
+  return useQuery<{ username: string }>(["user-metadata"], async () => {
+    const res = await fetch("/api/user/meta");
+    return res.json();
+  });
+}
