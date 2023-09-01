@@ -1,5 +1,5 @@
 import { useUser, SignOutButton } from "@clerk/clerk-react";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,9 +8,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { BiFolder, BiLogOut, BiMenu, BiUser } from "react-icons/bi";
 import { Button } from "./ui/button";
+import { Suspense } from "react";
+import { LargeSpinner } from "./SmallSpinner";
 
 export function AuthWrapper() {
   const user = useUser();
+  const navigate = useNavigate();
   if (!user) return null;
   return (
     <div className="h-screen grid grid-rows-[auto,minmax(0,1fr)]">
@@ -24,19 +27,23 @@ export function AuthWrapper() {
           </DropdownMenuTrigger>
           <DropdownMenuContent side="bottom" align="start">
             <DropdownMenuItem asChild>
-              <Link to="/">
+              <Link to="/app/projects">
                 <BiFolder className="w-4 h-4 mr-2" />
                 Projects
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link to="/profile">
+              <Link to="/app/profile">
                 <BiUser className="w-4 h-4 mr-2" />
                 Profile
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem>
-              <SignOutButton>
+              <SignOutButton
+                signOutCallback={() => {
+                  navigate("/");
+                }}
+              >
                 <div className="flex">
                   <BiLogOut className="w-4 h-4 mr-2" />
                   Sign Out
@@ -46,7 +53,15 @@ export function AuthWrapper() {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <Outlet />
+      <Suspense
+        fallback={
+          <div className="flex justify-center items-center">
+            <LargeSpinner />
+          </div>
+        }
+      >
+        <Outlet />
+      </Suspense>
     </div>
   );
 }

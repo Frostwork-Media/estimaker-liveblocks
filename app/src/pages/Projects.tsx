@@ -14,7 +14,7 @@ export interface Project {
   };
 }
 
-export function Home() {
+export default function Projects() {
   const navigate = useNavigate();
   const userId = useLiveblocksUserId();
   const projects = useQuery<Project[], Error>(
@@ -59,7 +59,7 @@ export function Home() {
     },
     {
       onSuccess: (data) => {
-        if (data.id) navigate(`/projects/${data.id}`);
+        if (data.id) navigate(`/app/projects/${data.id}`);
       },
     }
   );
@@ -87,7 +87,7 @@ export function Home() {
             <Link
               key={project.id}
               className="p-4 border rounded-md flex items-center justify-between hover:bg-neutral-100"
-              to={`/projects/${project.id}`}
+              to={`/project/${project.id}`}
             >
               <div className="flex items-center gap-2">
                 <div className="bg-blue-600 rounded-md h-2 w-2" />

@@ -131,7 +131,7 @@ function PublicLink({ slug }: { slug: string }) {
   if (!slug) return null;
   if (!userMetadata.data?.username) {
     return (
-      <Link className="text-xs underline text-blue-500" to="/profile">
+      <Link className="text-xs underline text-blue-500" to="/app/profile">
         Don't forget to set a username!
       </Link>
     );

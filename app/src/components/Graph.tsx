@@ -43,7 +43,7 @@ const edgeTypes: EdgeTypes = {
   [REMOVABLE_EDGE]: RemovableEdge,
 };
 
-export function Graph() {
+export default function Graph() {
   return (
     <ReactFlowProvider>
       <GraphInner />

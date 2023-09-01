@@ -10,8 +10,7 @@ import {
   useStatus,
   useStorage,
 } from "../liveblocks.config";
-import { Graph } from "../components/Graph";
-import { useState } from "react";
+import { lazy, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useMutation as useRQMutation } from "@tanstack/react-query";
 import AutosizeInput from "react-input-autosize";
@@ -23,16 +22,27 @@ import {
 } from "@/components/ui/tooltip";
 import { ShareList } from "@/components/ShareList";
 import { PublishModal } from "@/components/PublishModal";
+import { BiLeftArrowAlt } from "react-icons/bi";
+const Graph = lazy(() => import("../components/Graph"));
 
 function Inner() {
   const status = useStatus();
-  if (status === "connecting") return <div>Connecting...</div>;
+  if (status === "connecting")
+    return (
+      <div className="h-screen flex justify-center items-center">
+        <span className="text-2xl">Connecting...</span>
+      </div>
+    );
 
   return (
     <div className="h-screen grid grid-rows-[auto_minmax(0,1fr)]">
       <header className="flex items-center gap-4 pl-6 pr-1 border-b">
-        <Link to="/" className="text-blue-500 text-sm justify-self-start">
-          ← Back Home
+        <Link
+          to="/app/projects"
+          className="text-blue-500 text-sm justify-self-start mt-1"
+        >
+          <BiLeftArrowAlt className="w-4 h-4 inline mr-1" />
+          Back Home
         </Link>
         <PageTitle />
         <div className="ml-auto flex gap-1">
@@ -154,7 +164,7 @@ function PageTitle() {
 //   );
 // }
 
-export function Project() {
+export default function Project() {
   const { id } = useParams<{ id: string }>();
   if (!id) throw new Error("Missing ID");
   return (
