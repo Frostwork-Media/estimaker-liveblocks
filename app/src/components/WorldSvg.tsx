@@ -1,10 +1,11 @@
 import classNames from "classnames";
 
-export function WorldSvg(
-  props: React.SVGProps<SVGSVGElement> & {
-    isPublic: boolean;
-  }
-) {
+export function WorldSvg({
+  isPublic,
+  ...props
+}: React.SVGProps<SVGSVGElement> & {
+  isPublic: boolean;
+}) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -23,8 +24,8 @@ export function WorldSvg(
         stroke="red"
         className={classNames(
           {
-            "fill-green-300": props.isPublic,
-            "fill-[transparent]": !props.isPublic,
+            "fill-green-300": isPublic,
+            "fill-[transparent]": !isPublic,
           },
           "transition-colors duration-1000"
         )}
@@ -33,8 +34,8 @@ export function WorldSvg(
         stroke="none"
         className={classNames(
           {
-            "fill-blue-600": props.isPublic,
-            "fill-[currentColor]": !props.isPublic,
+            "fill-blue-600": isPublic,
+            "fill-[currentColor]": !isPublic,
           },
           "transition-colors duration-1000"
         )}

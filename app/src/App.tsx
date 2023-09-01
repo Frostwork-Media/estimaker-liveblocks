@@ -12,7 +12,7 @@ import { queryClient } from "./lib/queryClient";
 import { AuthWrapper } from "./components/AuthWrapper";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { lazy } from "react";
+import { Fragment, lazy, Suspense } from "react";
 const Profile = lazy(() => import("./pages/Profile"));
 
 const clerkPubKey = import.meta.env.VITE_APP_CLERK_PUBLISHABLE_KEY;
@@ -41,12 +41,16 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <ClerkProvider publishableKey={clerkPubKey}>
         <TooltipProvider>
-          <SignedIn>
-            <RouterProvider router={router} />
-          </SignedIn>
-          <SignedOut>
-            <RedirectToSignIn />
-          </SignedOut>
+          <Suspense fallback={<div>Loading...</div>}>
+            <Fragment>
+              <SignedIn>
+                <RouterProvider router={router} />
+              </SignedIn>
+              <SignedOut>
+                <RedirectToSignIn />
+              </SignedOut>
+            </Fragment>
+          </Suspense>
         </TooltipProvider>
       </ClerkProvider>
       <ReactQueryDevtools />

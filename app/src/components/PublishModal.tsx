@@ -8,12 +8,14 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useMutation } from "@tanstack/react-query";
 import { useRoom } from "@/liveblocks.config";
-import { useRoomMetadata } from "@/lib/hooks";
+import { useRoomMetadata, useUserMetadata } from "@/lib/hooks";
 import { SmallSpinner } from "./SmallSpinner";
 import { Input } from "./ui/input";
 import { queryClient } from "@/lib/queryClient";
 import { WorldSvg } from "./WorldSvg";
 import classNames from "classnames";
+import { Link } from "react-router-dom";
+import { BiRightArrowAlt } from "react-icons/bi";
 
 export function PublishModal() {
   const room = useRoom();
@@ -116,8 +118,33 @@ export function PublishModal() {
               </div>
             </div>
           )}
+          <PublicLink slug={roomMetadataQuery.data?.slug || ""} />
         </div>
       </PopoverContent>
     </Popover>
+  );
+}
+
+function PublicLink({ slug }: { slug: string }) {
+  const userMetadata = useUserMetadata();
+  if (userMetadata.isLoading) return <SmallSpinner />;
+  if (!slug) return null;
+  if (!userMetadata.data?.username) {
+    return (
+      <Link className="text-xs underline text-blue-500" to="/profile">
+        Don't forget to set a username!
+      </Link>
+    );
+  }
+  return (
+    <a
+      href={`/_/${userMetadata.data.username}/${slug}`}
+      className="text-xs text-blue-500"
+      target="_blank"
+      rel="noreferrer"
+    >
+      View Public Page
+      <BiRightArrowAlt className="inline -mt-px w-4 h-4" />
+    </a>
   );
 }
