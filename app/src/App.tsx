@@ -12,6 +12,8 @@ import { queryClient } from "./lib/queryClient";
 import { AuthWrapper } from "./components/AuthWrapper";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { lazy } from "react";
+const Profile = lazy(() => import("./pages/Profile"));
 
 const clerkPubKey = import.meta.env.VITE_APP_CLERK_PUBLISHABLE_KEY;
 
@@ -23,7 +25,13 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <AuthWrapper />,
-    children: [{ element: <Home />, index: true }],
+    children: [
+      { element: <Home />, index: true },
+      {
+        path: "/profile",
+        element: <Profile />,
+      },
+    ],
   },
   { path: "/projects/:id", element: <Project /> },
 ]);
