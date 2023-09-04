@@ -20,6 +20,7 @@ import { BiRightArrowAlt } from "react-icons/bi";
 export function PublishModal() {
   const room = useRoom();
   const roomMetadataQuery = useRoomMetadata(room.id);
+  const userMetadataQuery = useUserMetadata();
   const makePublicMutation = useMutation(
     async () => {
       if (!room.id) return;
@@ -118,18 +119,19 @@ export function PublishModal() {
               </div>
             </div>
           )}
-          <PublicLink slug={roomMetadataQuery.data?.slug || ""} />
+          <PublicLink
+            slug={roomMetadataQuery.data?.slug || ""}
+            username={userMetadataQuery.data?.username}
+          />
         </div>
       </PopoverContent>
     </Popover>
   );
 }
 
-function PublicLink({ slug }: { slug: string }) {
-  const userMetadata = useUserMetadata();
-  if (userMetadata.isLoading) return <SmallSpinner />;
+function PublicLink({ slug, username }: { slug: string; username?: string }) {
   if (!slug) return null;
-  if (!userMetadata.data?.username) {
+  if (!username) {
     return (
       <Link className="text-xs underline text-blue-500" to="/app/profile">
         Don't forget to set a username!
@@ -138,7 +140,7 @@ function PublicLink({ slug }: { slug: string }) {
   }
   return (
     <a
-      href={`/_/${userMetadata.data.username}/${slug}`}
+      href={`/_/${username}/${slug}`}
       className="text-xs text-blue-500"
       target="_blank"
       rel="noreferrer"

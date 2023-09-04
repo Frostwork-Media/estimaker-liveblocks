@@ -14,11 +14,16 @@ import { BiUser } from "react-icons/bi";
 const Profile = lazy(() => import("../pages/Profile"));
 const Projects = lazy(() => import("../pages/Projects"));
 const Project = lazy(() => import("../pages/Project"));
+const PublicProject = lazy(() => import("../pages/PublicProject"));
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <LandingPage />,
+  },
+  {
+    path: "/_/:user/:project",
+    element: <PublicProject />,
   },
   {
     path: "/app",
@@ -66,7 +71,10 @@ function LandingPage() {
           </Button>
         ) : (
           <Button asChild className="cursor-pointer">
-            <SignInButton>
+            <SignInButton
+              afterSignInUrl="/app/projects"
+              afterSignUpUrl="/app/projects"
+            >
               <div className="flex">
                 <BiUser className="w-4 h-4 mr-2" />
                 Sign In

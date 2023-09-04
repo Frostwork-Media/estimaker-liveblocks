@@ -28,7 +28,9 @@ const handler: VercelApiHandler = async (req, res) => {
     if (!("data" in data)) throw new Error("Missing data");
     res.status(200).json(data.data);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({
+      error: error instanceof Error ? error.message : "Unknown error",
+    });
   }
 };
 

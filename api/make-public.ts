@@ -38,7 +38,7 @@ const handler: VercelApiHandler = async (req, res) => {
   let slug = metadata.slug || "";
   if (!slug) {
     isPublicReady = false;
-    const baseName = slugify(metadata.name);
+    const baseName = slugify(metadata.name || "Untitled Project");
     let i = 0,
       nameIsValid = false;
     while (!nameIsValid) {

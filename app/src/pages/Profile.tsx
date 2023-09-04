@@ -77,8 +77,6 @@ function SetUsernameForm({
         body: JSON.stringify({ username }),
       }).then((res) => res.json());
 
-      console.log(result);
-
       if (result.error) {
         throw new Error(result.error);
       }

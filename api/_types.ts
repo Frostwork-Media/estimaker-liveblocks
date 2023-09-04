@@ -1,9 +1,11 @@
-export interface Room {
+import { ProjectMetadata } from "shared";
+
+export interface Project {
   type: string;
   id: string;
   lastConnectionAt: string;
   createdAt: string;
-  metadata: any;
+  metadata: ProjectMetadata;
   defaultAccesses: string[];
   groupsAccesses: Record<string, string[]>;
   usersAccesses: Record<string, string[]>;

@@ -7,7 +7,8 @@
     "build": "turbo run build",
     "dev": "pnpm -F app dev --",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "env:pull": "vercel env pull app/.env"
+    "env:pull": "vercel env pull app/.env",
+    "check": "pnpm -F app -F api check"
   },
   "keywords": [],
   "author": "",

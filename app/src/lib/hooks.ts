@@ -1,6 +1,6 @@
 import { useUser } from "@clerk/clerk-react";
 import { useQuery } from "@tanstack/react-query";
-import { ProjectMetadata } from "shared";
+import { ProjectMetadata, UserMetadata } from "shared";
 
 /** Gets the email for the current user */
 export function useLiveblocksUserId() {
@@ -22,8 +22,14 @@ export function useRoomMetadata(roomId: string) {
 }
 
 export function useUserMetadata() {
-  return useQuery<{ username: string }>(["user-metadata"], async () => {
-    const res = await fetch("/api/user/meta");
-    return res.json();
-  });
+  return useQuery<UserMetadata>(
+    ["user-metadata"],
+    async () => {
+      const res = await fetch("/api/user/meta");
+      return res.json();
+    },
+    {
+      suspense: true,
+    }
+  );
 }
