@@ -59,7 +59,7 @@ export default function Projects() {
     },
     {
       onSuccess: (data) => {
-        if (data.id) navigate(`/app/projects/${data.id}`);
+        if (data.id) navigate(`/project/${data.id}`);
       },
     }
   );
