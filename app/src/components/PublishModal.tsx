@@ -8,19 +8,17 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useMutation } from "@tanstack/react-query";
 import { useRoom } from "@/liveblocks.config";
-import { useRoomMetadata, useUserMetadata } from "@/lib/hooks";
+import { useRoomMetadata } from "@/lib/hooks";
 import { SmallSpinner } from "./SmallSpinner";
 import { Input } from "./ui/input";
 import { queryClient } from "@/lib/queryClient";
 import { WorldSvg } from "./WorldSvg";
 import classNames from "classnames";
-import { Link } from "react-router-dom";
 import { BiRightArrowAlt } from "react-icons/bi";
 
 export function PublishModal() {
   const room = useRoom();
   const roomMetadataQuery = useRoomMetadata(room.id);
-  const userMetadataQuery = useUserMetadata();
   const makePublicMutation = useMutation(
     async () => {
       if (!room.id) return;
@@ -119,34 +117,22 @@ export function PublishModal() {
               </div>
             </div>
           )}
-          <PublicLink
-            slug={roomMetadataQuery.data?.slug || ""}
-            username={userMetadataQuery.data?.username}
-          />
+          <hr />
+          <PublicLink slug={roomMetadataQuery.data?.slug || ""} />
         </div>
       </PopoverContent>
     </Popover>
   );
 }
 
-function PublicLink({ slug, username }: { slug: string; username?: string }) {
+function PublicLink({ slug }: { slug: string }) {
   if (!slug) return null;
-  if (!username) {
-    return (
-      <Link className="text-xs underline text-blue-500" to="/app/profile">
-        Don't forget to set a username!
-      </Link>
-    );
-  }
   return (
-    <a
-      href={`/_/${username}/${slug}`}
-      className="text-xs text-blue-500"
-      target="_blank"
-      rel="noreferrer"
-    >
-      View Public Page
-      <BiRightArrowAlt className="inline -mt-px w-4 h-4" />
-    </a>
+    <Button variant="secondary" asChild>
+      <a href={`/_/public/${slug}`} target="_blank" rel="noreferrer">
+        Visit Public Page
+        <BiRightArrowAlt className="inline -mt-px w-4 h-4" />
+      </a>
+    </Button>
   );
 }

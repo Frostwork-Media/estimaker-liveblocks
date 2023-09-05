@@ -22,7 +22,7 @@ const router = createBrowserRouter([
     element: <LandingPage />,
   },
   {
-    path: "/_/:user/:project",
+    path: "/_/public/:project",
     element: <Public />,
   },
   {

@@ -3,11 +3,10 @@ import { getProjectBySlug, getProjectStorage } from "./_liveblocks";
 import { VercelApiHandler } from "@vercel/node";
 
 const handler: VercelApiHandler = async (req, res) => {
-  // get user and project query params
-  const user = req.query.user;
+  // get project query params
   const slug = req.query.project;
 
-  if (!user || !slug || Array.isArray(user) || Array.isArray(slug)) {
+  if (!slug || Array.isArray(slug)) {
     res.status(400).send("Invalid query params");
     return;
   }

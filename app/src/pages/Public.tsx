@@ -9,14 +9,13 @@ import { useParams } from "react-router-dom";
 import { PublicProject } from "shared";
 
 export default function Public() {
-  const { user, project } = useParams<{ user: string; project: string }>();
-  if (!user || !project) throw new Error("Missing params");
+  const { project } = useParams<{ user: string; project: string }>();
+  if (!project) throw new Error("Missing params");
   // query for the public project
   const publicProject = useQuery<PublicProject>(
-    ["publicProject", user, project],
+    ["publicProject", project],
     async () => {
       const search = new URLSearchParams();
-      search.set("user", user);
       search.set("project", project);
 
       const res = await fetch(`/api/public?${search.toString()}`);
@@ -26,7 +25,7 @@ export default function Public() {
       return data;
     },
     {
-      enabled: !!user && !!project,
+      enabled: !!project,
       suspense: true,
     }
   );
