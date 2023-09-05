@@ -8,7 +8,7 @@ import { BiX } from "react-icons/bi";
 import { useMutation } from "@/liveblocks.config";
 import { useCallback } from "react";
 
-export default function RemovableEdge({
+export default function EditableCustomEdge({
   id,
   sourceX,
   sourceY,
@@ -66,4 +66,27 @@ export default function RemovableEdge({
       </EdgeLabelRenderer>
     </>
   );
+}
+
+export function FrozenCustomEdge({
+  id,
+  sourceX,
+  sourceY,
+  targetX,
+  targetY,
+  sourcePosition,
+  targetPosition,
+  style = {},
+  markerEnd,
+}: EdgeProps) {
+  const [edgePath, labelX, labelY] = getBezierPath({
+    sourceX,
+    sourceY,
+    sourcePosition,
+    targetX,
+    targetY,
+    targetPosition,
+  });
+
+  return <BaseEdge path={edgePath} markerEnd={markerEnd} style={style} />;
 }

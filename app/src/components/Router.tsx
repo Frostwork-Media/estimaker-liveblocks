@@ -14,7 +14,7 @@ import { BiUser } from "react-icons/bi";
 const Profile = lazy(() => import("../pages/Profile"));
 const Projects = lazy(() => import("../pages/Projects"));
 const Project = lazy(() => import("../pages/Project"));
-const PublicProject = lazy(() => import("../pages/PublicProject"));
+const Public = lazy(() => import("../pages/Public"));
 
 const router = createBrowserRouter([
   {
@@ -23,7 +23,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/_/:user/:project",
-    element: <PublicProject />,
+    element: <Public />,
   },
   {
     path: "/app",

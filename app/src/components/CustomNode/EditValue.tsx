@@ -1,5 +1,7 @@
 import { useMutation, useStorage } from "../../liveblocks.config";
 
+const INPUT_CLASSES =
+  "border-2 py-1 px-2 font-mono rounded text-neutral-600 text-sm w-full h-8";
 export function EditNodeValue({ nodeId }: { nodeId: string }) {
   const node = useStorage((state) => state.nodes.get(nodeId));
 
@@ -10,7 +12,7 @@ export function EditNodeValue({ nodeId }: { nodeId: string }) {
   }, []);
   return (
     <input
-      className="border-2 py-1 px-2 font-mono rounded text-neutral-600 text-sm w-full"
+      className={INPUT_CLASSES}
       type="text"
       value={node?.value ?? ""}
       name="value"
@@ -20,4 +22,8 @@ export function EditNodeValue({ nodeId }: { nodeId: string }) {
       }}
     />
   );
+}
+
+export function StaticNodeValue({ value }: { value: string }) {
+  return <span className={INPUT_CLASSES}>{value}</span>;
 }

@@ -1,34 +1,39 @@
 import { Handle, Position } from "reactflow";
 import type { NodeProps } from "reactflow";
 import { AppNodeData } from "../../lib/types";
-import { EditNodeValue } from "./EditValue";
+import { EditNodeValue, StaticNodeValue } from "./EditValue";
 import { RxBarChart, RxCross1 } from "react-icons/rx";
-import { useMutation, useStorage } from "../../liveblocks.config";
+import { useMutation } from "../../liveblocks.config";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";
 import * as ToggleGroup from "@radix-ui/react-toggle-group";
-import { CustomNodeGraph } from "./CustomNodeGraph";
+import { CustomNodeGraph, StaticCustomNodeGraph } from "./CustomNodeGraph";
 import { getVarName } from "@/lib/getVarName";
 import { customNodeWidthClass } from "@/lib/constants";
 import { useQuery } from "@tanstack/react-query";
 import { fetchManifoldData } from "@/lib/fetchManifoldData";
-import { SmallSpinner } from "../SmallSpinner";
-import { numberToPercentage } from "@/lib/numberToPercentage";
 import { fetchMetaculusData } from "@/lib/fetchMetaculusData";
+import { MarketLink } from "./MarketLink";
+import classNames from "classnames";
 
-const titleClasses =
-  "text-left hover:bg-neutral-200 py-2 rounded leading-7 text-4xl leading-tight resize-none focus:outline-none focus:ring-0 focus:border-transparent bg-transparent";
-
-const toggleGroupItemClasses =
+const TITLE_CLASSES =
+  "text-left py-2 rounded leading-7 text-4xl leading-tight resize-none focus:outline-none focus:ring-0 focus:border-transparent bg-transparent";
+const TITLE_CLASSES_INTERACTIVE = "hover:bg-neutral-200";
+const TOGGLE_GROUP_CLASSES = "flex justify-center rounded space-x-px mt-1";
+const TOGGLE_GROUP_ITEM_CLASSES =
   "bg-neutral-100 hover:bg-neutral-300 color-neutral-600 data-[state=on]:bg-blue-700 data-[state=on]:text-neutral-100 flex h-8 w-8 items-center justify-center bg-white text-base leading-4 first:rounded-l last:rounded-r focus:z-10 focus:outline-none";
 
 const _handleStyle = {
   width: 12,
   height: 12,
-  // backgroundColor: "#ccc",
 };
-export function CustomNode({ data, id }: NodeProps<AppNodeData>) {
-  const { label, variableName, showing } = data;
+
+const NODE_CONTAINER_CLASSES =
+  "px-2 py-3 rounded-md border bg-white grid gap-3 shadow-sm";
+const VARIABLE_NAME_CLASSES =
+  "font-mono text-blue-600 text-sm text-left tracking-wider w-full overflow-hidden whitespace-nowrap overflow-ellipsis";
+export function EditableCustomNode({ data, id }: NodeProps<AppNodeData>) {
+  const { label, variableName, showing, manifold, metaculus } = data;
   const deleteNode = useMutation(
     ({ storage }) => {
       if (!window.confirm("Are you sure you want to delete this node?")) return;
@@ -38,7 +43,6 @@ export function CustomNode({ data, id }: NodeProps<AppNodeData>) {
     [id]
   );
 
-  const manifold = useStorage((state) => state.nodes.get(id)?.manifold);
   const manifoldQuery = useQuery(
     ["manifold", manifold],
     () => {
@@ -51,7 +55,6 @@ export function CustomNode({ data, id }: NodeProps<AppNodeData>) {
     }
   );
 
-  const metaculus = useStorage((state) => state.nodes.get(id)?.metaculus);
   const metaculusQuery = useQuery(
     ["metaculus", metaculus],
     () => {
@@ -156,7 +159,7 @@ export function CustomNode({ data, id }: NodeProps<AppNodeData>) {
         </div>
         {editing ? (
           <TextareaAutosize
-            className={titleClasses}
+            className={classNames(TITLE_CLASSES, TITLE_CLASSES_INTERACTIVE)}
             value={currentLabel}
             ref={titleInputRef}
             onChange={(e) => {
@@ -174,7 +177,7 @@ export function CustomNode({ data, id }: NodeProps<AppNodeData>) {
           />
         ) : (
           <button
-            className={titleClasses}
+            className={classNames(TITLE_CLASSES, TITLE_CLASSES_INTERACTIVE)}
             data-rename-button
             style={data.color ? { color: `hsl(${data.color})` } : {}}
             onClick={() => {
@@ -184,9 +187,9 @@ export function CustomNode({ data, id }: NodeProps<AppNodeData>) {
             {label}
           </button>
         )}
-        <div className="px-2 py-3 rounded-md border bg-white grid gap-3 shadow-sm">
+        <div className={NODE_CONTAINER_CLASSES}>
           <button
-            className="font-mono text-blue-600 text-sm text-left tracking-wider w-full overflow-hidden whitespace-nowrap overflow-ellipsis"
+            className={VARIABLE_NAME_CLASSES}
             onClick={() => {
               // copy variable name to clipboard
               navigator.clipboard.writeText(variableName);
@@ -196,7 +199,7 @@ export function CustomNode({ data, id }: NodeProps<AppNodeData>) {
           </button>
           <EditNodeValue nodeId={id} />
           <ToggleGroup.Root
-            className="flex justify-center rounded space-x-px mt-1"
+            className={TOGGLE_GROUP_CLASSES}
             type="single"
             value={showing}
             onValueChange={(showing) => {
@@ -204,7 +207,7 @@ export function CustomNode({ data, id }: NodeProps<AppNodeData>) {
             }}
           >
             <ToggleGroup.Item
-              className={toggleGroupItemClasses}
+              className={TOGGLE_GROUP_ITEM_CLASSES}
               value="graph"
               aria-label="Left aligned"
             >
@@ -244,54 +247,55 @@ export function CustomNode({ data, id }: NodeProps<AppNodeData>) {
   );
 }
 
-function MarketLink({
-  isLoading,
-  url,
-  title,
-  probability,
-  error,
-  community,
-}: {
-  isLoading: boolean;
-  url?: string;
-  title?: string;
-  probability?: number;
-  error: boolean;
-  community: "Manifold" | "Metaculus";
-}) {
+export function FrozenCustomNode({ data, id }: NodeProps<AppNodeData>) {
+  const { label, variableName, showing, manifold, metaculus, color } = data;
+  const handleStyle = useMemo(() => {
+    return {
+      ..._handleStyle,
+      backgroundColor: data.color ? `hsl(${data.color})` : undefined,
+    };
+  }, [data.color]);
   return (
-    <div className="grid gap-1">
-      <div className="flex items-center gap-1">
-        <img
-          src="/manifold-market-logo.svg"
-          className="w-6 h-6 -translate-y-px"
-          alt="Manifold Markets Logo"
-        />
-
-        <div className="text-sm text-slate-500">{community}</div>
-      </div>
-      {isLoading ? (
-        <SmallSpinner />
-      ) : error ? (
-        <span className="text-red-500 text-center text-sm rounded-full p-1 bg-red-100">
-          Error
-        </span>
-      ) : title && url && probability != null ? (
-        <a
-          className="grid gap-1 text-slate-600"
-          href={url}
-          target="_blank"
-          rel="noreferrer"
+    <>
+      <Handle type="target" position={Position.Top} style={handleStyle} />
+      <div
+        className={classNames(
+          "bg-transparent grid gap-1",
+          "nodrag",
+          customNodeWidthClass
+        )}
+      >
+        <h2
+          className={TITLE_CLASSES}
+          style={color ? { color: `hsl(${data.color})` } : {}}
         >
-          <span className="text-sm grow">{title}</span>
-          <span
-            className="bg-slate-100 text-center font-mono overflow-hidden whitespace-nowrap overflow-ellipsis"
-            title={probability.toString()}
+          {label}
+        </h2>
+        <div className={NODE_CONTAINER_CLASSES}>
+          <span className={VARIABLE_NAME_CLASSES}>{`{${variableName}}`}</span>
+          <StaticNodeValue value={data.value} />
+          <ToggleGroup.Root
+            className={TOGGLE_GROUP_CLASSES}
+            type="single"
+            value={showing}
           >
-            {numberToPercentage(probability)}
-          </span>
-        </a>
-      ) : null}
-    </div>
+            <ToggleGroup.Item
+              className={TOGGLE_GROUP_ITEM_CLASSES}
+              value="graph"
+              aria-label="Left aligned"
+            >
+              <RxBarChart />
+            </ToggleGroup.Item>
+          </ToggleGroup.Root>
+          <StaticCustomNodeGraph showing={showing === "graph"} nodeId={id} />
+        </div>
+      </div>
+      <Handle
+        type="source"
+        position={Position.Bottom}
+        id="a"
+        style={handleStyle}
+      />
+    </>
   );
 }

@@ -22,8 +22,8 @@ import {
 } from "@/components/ui/tooltip";
 import { ShareList } from "@/components/ShareList";
 import { PublishModal } from "@/components/PublishModal";
-import { BiLeftArrowAlt } from "react-icons/bi";
-const Graph = lazy(() => import("../components/Graph"));
+import { BiCheck, BiLeftArrowAlt } from "react-icons/bi";
+const Graph = lazy(() => import("../components/graphs/Graph"));
 
 function Inner() {
   const status = useStatus();
@@ -177,7 +177,15 @@ export default function Project() {
         suggestedEdges: new LiveMap([]),
       })}
     >
-      <ClientSideSuspense fallback={<div>Loading...</div>}>
+      <ClientSideSuspense
+        fallback={
+          <div className="h-screen flex justify-center items-center">
+            <span className="text-2xl">
+              Connected <BiCheck className="inline-block w-6 h-6" />
+            </span>
+          </div>
+        }
+      >
         {() => <Inner />}
       </ClientSideSuspense>
     </RoomProvider>
