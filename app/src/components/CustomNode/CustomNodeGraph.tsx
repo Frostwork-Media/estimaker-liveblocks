@@ -40,7 +40,6 @@ export function StaticCustomNodeGraph({
 function StaticCustomNodeInner({ nodeId }: { nodeId: string }) {
   const nodes = usePublicStoreOrThrow((s) => s.storage.data.nodes);
   const code = getSquiggleCodeStatic(nodes, nodeId);
-  console.log(code);
   return (
     <div className="w-full">
       <SquiggleChart code={code} enableLocalSettings />
@@ -105,7 +104,7 @@ function getSquiggleCode(nodes: LiveNodes | undefined, nodeId: string) {
 function getSquiggleCodeStatic(nodes: Nodes, nodeId: string) {
   if (!nodes) return "";
   // check if nodes is map
-  const nodesArray = Object.entries(nodes);
+  const nodesArray = Object.entries(nodes.data);
   const idsToCheck = [nodeId];
   const deps: [string, string][] = [];
   const nodeIds: string[] = [];
@@ -132,7 +131,7 @@ function getSquiggleCodeStatic(nodes: Nodes, nodeId: string) {
     for (const variableName of variablesInValue) {
       // find the node with this variable name
       const foundNode = nodesArray.find(([_id, node]) => {
-        return node.variableName === variableName;
+        return node.data.variableName === variableName;
       });
       if (!foundNode) continue;
       const [sourceNodeId] = foundNode;

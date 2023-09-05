@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 import { useMutation } from "../../liveblocks.config";
 import ReactFlow, {
   Controls,
@@ -10,9 +10,7 @@ import ReactFlow, {
 } from "reactflow";
 import type { OnNodesChange, OnConnectStart } from "reactflow";
 import "reactflow/dist/style.css";
-import { AppEdge } from "../../lib/types";
-import { CUSTOM_EDGE, customNodeWidth } from "../../lib/constants";
-import { getVariables } from "../../lib/helpers";
+import { customNodeWidth } from "../../lib/constants";
 import { LiveObject } from "@liveblocks/client";
 import { nanoid } from "nanoid";
 import {

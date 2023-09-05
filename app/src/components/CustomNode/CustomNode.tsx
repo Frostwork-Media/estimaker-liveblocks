@@ -255,6 +255,31 @@ export function FrozenCustomNode({ data, id }: NodeProps<AppNodeData>) {
       backgroundColor: data.color ? `hsl(${data.color})` : undefined,
     };
   }, [data.color]);
+
+  const manifoldQuery = useQuery(
+    ["manifold", manifold],
+    () => {
+      if (manifold) return fetchManifoldData(manifold);
+    },
+    {
+      enabled: !!manifold,
+      // Refetch every 10 minutes
+      refetchInterval: 10 * 60 * 1000,
+    }
+  );
+
+  const metaculusQuery = useQuery(
+    ["metaculus", metaculus],
+    () => {
+      if (metaculus) return fetchMetaculusData(metaculus);
+    },
+    {
+      enabled: !!metaculus,
+      // Refetch every 10 minutes
+      refetchInterval: 10 * 60 * 1000,
+    }
+  );
+
   return (
     <>
       <Handle type="target" position={Position.Top} style={handleStyle} />
@@ -288,6 +313,26 @@ export function FrozenCustomNode({ data, id }: NodeProps<AppNodeData>) {
             </ToggleGroup.Item>
           </ToggleGroup.Root>
           <StaticCustomNodeGraph showing={showing === "graph"} nodeId={id} />
+          {manifold ? (
+            <MarketLink
+              isLoading={manifoldQuery.isLoading}
+              url={manifoldQuery.data?.url}
+              title={manifoldQuery.data?.question}
+              probability={manifoldQuery.data?.probability}
+              error={!!manifoldQuery.error}
+              community="Manifold"
+            />
+          ) : null}
+          {metaculus ? (
+            <MarketLink
+              isLoading={metaculusQuery.isLoading}
+              url={metaculusQuery.data?.url}
+              title={metaculusQuery.data?.title}
+              probability={metaculusQuery.data?.community_prediction.full.q2}
+              error={!!metaculusQuery.error}
+              community="Metaculus"
+            />
+          ) : null}
         </div>
       </div>
       <Handle

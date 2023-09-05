@@ -1,3 +1,4 @@
+import { PublicRoomProvider } from "@/components/PublicRoomProvider";
 import { PublicGraph } from "@/components/graphs/PublicGraph";
 import { PublicStoreContext, createPublicStore } from "@/lib/usePublicStore";
 import { useQuery } from "@tanstack/react-query";
@@ -18,7 +19,9 @@ export default function Public() {
 
       const res = await fetch(`/api/public?${search.toString()}`);
       if (!res.ok) throw new Error("Failed to fetch public project");
-      return res.json();
+      const data = (await res.json()) as PublicProject;
+      // storageToLive(data.storage);
+      return data;
     },
     {
       enabled: !!user && !!project,
@@ -32,13 +35,15 @@ export default function Public() {
   const store = useRef(createPublicStore(publicProject.data)).current;
 
   return (
-    <PublicStoreContext.Provider value={store}>
-      <div className="h-screen w-full">
-        <PublicGraph
-          nodes={publicProject.data.storage.data.nodes.data}
-          suggestedEdges={publicProject.data.storage.data.suggestedEdges.data}
-        />
-      </div>
-    </PublicStoreContext.Provider>
+    <PublicRoomProvider>
+      <PublicStoreContext.Provider value={store}>
+        <div className="h-screen w-full">
+          <PublicGraph
+            nodes={publicProject.data.storage.data.nodes.data}
+            suggestedEdges={publicProject.data.storage.data.suggestedEdges.data}
+          />
+        </div>
+      </PublicStoreContext.Provider>
+    </PublicRoomProvider>
   );
 }
