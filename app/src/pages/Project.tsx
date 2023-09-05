@@ -23,6 +23,8 @@ import {
 import { ShareList } from "@/components/ShareList";
 import { PublishModal } from "@/components/PublishModal";
 import { BiCheck, BiLeftArrowAlt } from "react-icons/bi";
+import classNames from "classnames";
+import { PROJECT_HEADER_STYLES } from "../lib/sharedProjectStyles";
 const Graph = lazy(() => import("../components/graphs/Graph"));
 
 function Inner() {
@@ -36,7 +38,7 @@ function Inner() {
 
   return (
     <div className="h-screen grid grid-rows-[auto_minmax(0,1fr)]">
-      <header className="flex items-center gap-4 pl-6 pr-1 border-b">
+      <header className={classNames(PROJECT_HEADER_STYLES, "pr-1")}>
         <Link
           to="/app/projects"
           className="text-blue-500 text-sm justify-self-start mt-1"

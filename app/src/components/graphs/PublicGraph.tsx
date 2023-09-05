@@ -40,6 +40,7 @@ function GraphInner(props: GraphProps) {
         nodes={nodes}
         edges={edges}
         draggable={false}
+        minZoom={-Infinity}
         fitView
       />
     </div>
