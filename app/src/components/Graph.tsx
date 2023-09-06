@@ -26,7 +26,7 @@ import {
 import { NodePanel } from "./NodePanel";
 import { useGraphStore } from "../lib/useGraphStore";
 import { createNodes } from "../lib/createNodes";
-import { useEdgesLive } from "@/lib/useEdges";
+import { useEdges } from "@/lib/useEdges";
 import { GraphNode } from "./GraphNode";
 import GraphEdge from "./GraphEdge";
 
@@ -54,7 +54,10 @@ function GraphInner() {
   const liveSuggestedEdges = useLiveSuggestedEdges();
 
   // Create edges for react flow
-  const edges = useEdgesLive(liveNodes, liveSuggestedEdges);
+  const edges = useEdges(
+    Array.from(liveNodes.entries()) as any,
+    Array.from(liveSuggestedEdges.entries()) as any
+  );
 
   const updateNodePosition = useMutation(
     ({ storage }, id: string, position: { x: number; y: number }) => {

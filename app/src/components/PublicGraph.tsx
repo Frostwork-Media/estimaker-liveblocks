@@ -2,7 +2,7 @@ import "reactflow/dist/style.css";
 import { createNodesImmutable } from "@/lib/createNodes";
 import ReactFlow, { EdgeTypes, NodeTypes, ReactFlowProvider } from "reactflow";
 import { SimplifiedStorage } from "shared";
-import { useEdgesStatic } from "@/lib/useEdges";
+import { useEdges } from "@/lib/useEdges";
 import { CUSTOM_EDGE, CUSTOM_NODE } from "@/lib/constants";
 import { GraphNodeImmutable } from "./GraphNode";
 import { GraphEdgeImmutable } from "./GraphEdge";
@@ -26,7 +26,10 @@ export function PublicGraph(props: SimplifiedStorage) {
 function GraphInner(props: SimplifiedStorage) {
   const nodes = createNodesImmutable(props.nodes);
   const suggestedEdges = props.suggestedEdges;
-  const edges = useEdgesStatic(props.nodes, suggestedEdges);
+  const edges = useEdges(
+    Object.entries(props.nodes),
+    Object.entries(suggestedEdges)
+  );
   return (
     <div className="w-full h-full">
       <ReactFlow
