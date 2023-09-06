@@ -20,7 +20,6 @@ export default function Public() {
       const res = await fetch(`/api/public?${search.toString()}`);
       if (!res.ok) throw new Error("Failed to fetch public project");
       const data = (await res.json()) as PublicProject;
-      // storageToLive(data.storage);
       return data;
     },
     {
