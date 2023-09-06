@@ -1,5 +1,5 @@
 import { LiveNodes, useLiveNodes } from "@/lib/useLive";
-import { getVariables } from "../../lib/helpers";
+import { getVariables } from "../lib/helpers";
 import { SquiggleChart } from "@quri/squiggle-components";
 import toposort from "toposort";
 import { Nodes } from "shared";

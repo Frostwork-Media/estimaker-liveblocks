@@ -1,4 +1,4 @@
-import { SmallSpinner } from "../SmallSpinner";
+import { SmallSpinner } from "./SmallSpinner";
 import { numberToPercentage } from "@/lib/numberToPercentage";
 
 export function MarketLink({

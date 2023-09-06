@@ -1,4 +1,4 @@
-import { PublicGraph } from "@/components/graphs/PublicGraph";
+import { PublicGraph } from "@/components/PublicGraph";
 import { PROJECT_HEADER_STYLES } from "@/lib/sharedProjectStyles";
 import { PublicStoreContext, createPublicStore } from "@/lib/usePublicStore";
 import { useQuery } from "@tanstack/react-query";

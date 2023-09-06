@@ -25,7 +25,7 @@ import { PublishModal } from "@/components/PublishModal";
 import { BiCheck, BiLeftArrowAlt } from "react-icons/bi";
 import classNames from "classnames";
 import { PROJECT_HEADER_STYLES } from "../lib/sharedProjectStyles";
-const Graph = lazy(() => import("../components/graphs/Graph"));
+const Graph = lazy(() => import("../components/Graph"));
 
 function Inner() {
   const status = useStatus();

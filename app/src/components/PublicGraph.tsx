@@ -1,25 +1,25 @@
 import "reactflow/dist/style.css";
 import { fromPublicToReactFlowNodes } from "@/lib/toReactFlowNodes";
-import ReactFlow, { ReactFlowProvider } from "reactflow";
+import ReactFlow, { EdgeTypes, NodeTypes, ReactFlowProvider } from "reactflow";
 import { PublicProject } from "shared";
-import { publicEdgeTypes, publicNodeTypes } from "./shared";
 import { useEdgesStatic } from "@/lib/useEdges";
+import { CUSTOM_EDGE, CUSTOM_NODE } from "@/lib/constants";
+import { FrozenCustomNode } from "./CustomNode";
+import { FrozenCustomEdge } from "./CustomEdge";
 
-/**
- * In theory, these should be the shared graph props
- * which work for both the public and private graphs
- */
+const nodeTypes: NodeTypes = {
+  [CUSTOM_NODE]: FrozenCustomNode,
+};
+
+const edgeTypes: EdgeTypes = {
+  [CUSTOM_EDGE]: FrozenCustomEdge,
+};
+
 type GraphProps = {
   nodes: PublicProject["storage"]["data"]["nodes"]["data"];
   suggestedEdges: PublicProject["storage"]["data"]["suggestedEdges"]["data"];
 };
 
-/**
- * This is the public graph, it should be kept in sync
- * with the main graph as much as possible where they
- * share their rendering but one work with liveblocks
- * storage and the other works with the static version
- */
 export function PublicGraph(props: GraphProps) {
   return (
     <ReactFlowProvider>
@@ -35,8 +35,8 @@ function GraphInner(props: GraphProps) {
   return (
     <div className="w-full h-full">
       <ReactFlow
-        nodeTypes={publicNodeTypes}
-        edgeTypes={publicEdgeTypes}
+        nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
         nodes={nodes}
         edges={edges}
         draggable={false}

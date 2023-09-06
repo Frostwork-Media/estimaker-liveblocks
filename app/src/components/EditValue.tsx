@@ -1,4 +1,4 @@
-import { useMutation, useStorage } from "../../liveblocks.config";
+import { useMutation, useStorage } from "../liveblocks.config";
 
 const INPUT_CLASSES =
   "border-2 py-1 px-2 font-mono rounded text-neutral-600 text-sm w-full h-8";

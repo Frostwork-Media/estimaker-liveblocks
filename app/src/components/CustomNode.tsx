@@ -1,9 +1,9 @@
 import { Handle, Position } from "reactflow";
 import type { NodeProps } from "reactflow";
-import { AppNodeData } from "../../lib/types";
+import { AppNodeData } from "../lib/types";
 import { EditNodeValue, StaticNodeValue } from "./EditValue";
 import { RxBarChart, RxCross1 } from "react-icons/rx";
-import { useMutation } from "../../liveblocks.config";
+import { useMutation } from "../liveblocks.config";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";
 import * as ToggleGroup from "@radix-ui/react-toggle-group";

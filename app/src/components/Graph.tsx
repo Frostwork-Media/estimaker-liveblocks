@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useMutation } from "../../liveblocks.config";
+import { useMutation } from "../liveblocks.config";
 import ReactFlow, {
   Controls,
   OnConnect,
@@ -8,9 +8,14 @@ import ReactFlow, {
   ReactFlowProvider,
   useReactFlow,
 } from "reactflow";
-import type { OnNodesChange, OnConnectStart } from "reactflow";
+import type {
+  OnNodesChange,
+  OnConnectStart,
+  NodeTypes,
+  EdgeTypes,
+} from "reactflow";
 import "reactflow/dist/style.css";
-import { customNodeWidth } from "../../lib/constants";
+import { CUSTOM_EDGE, CUSTOM_NODE, customNodeWidth } from "../lib/constants";
 import { LiveObject } from "@liveblocks/client";
 import { nanoid } from "nanoid";
 import {
@@ -18,15 +23,20 @@ import {
   useLiveNodes,
   useLiveSuggestedEdges,
 } from "@/lib/useLive";
-import { NodePanel } from "../NodePanel";
-import { useGraphStore } from "../../lib/useGraphStore";
-import { toReactFlowNodes } from "../../lib/toReactFlowNodes";
-import { edgeTypes, nodeTypes } from "./shared";
+import { NodePanel } from "./NodePanel";
+import { useGraphStore } from "../lib/useGraphStore";
+import { toReactFlowNodes } from "../lib/toReactFlowNodes";
 import { useEdgesLive } from "@/lib/useEdges";
+import { EditableCustomNode } from "./CustomNode";
+import EditableCustomEdge from "./CustomEdge";
 
-// const edgeTypes = {
-//buttonedge: ButtonEdge,
-//};
+const nodeTypes: NodeTypes = {
+  [CUSTOM_NODE]: EditableCustomNode,
+};
+
+const edgeTypes: EdgeTypes = {
+  [CUSTOM_EDGE]: EditableCustomEdge,
+};
 
 export default function Graph() {
   return (
