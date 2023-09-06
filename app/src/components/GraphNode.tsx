@@ -151,7 +151,7 @@ export function GraphNode({ data, id }: NodeProps<AppNodeData>) {
   }, [data.color]);
 
   const liveNodes = useLiveNodes();
-  const nodes = Array.from(liveNodes.entries()) as any;
+  const nodesArray = Array.from(liveNodes.entries());
 
   return (
     <>
@@ -220,7 +220,7 @@ export function GraphNode({ data, id }: NodeProps<AppNodeData>) {
             </ToggleGroup.Item>
           </ToggleGroup.Root>
           {showing === "graph" ? (
-            <SquiggleGraph nodes={nodes} nodeId={id} />
+            <SquiggleGraph nodes={nodesArray} nodeId={id} />
           ) : null}
           {manifold ? (
             <MarketLink
