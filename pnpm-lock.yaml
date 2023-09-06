@@ -146,9 +146,6 @@ importers:
       reactflow:
         specifier: ^11.7.4
         version: 11.7.4(react-dom@18.2.0)(react@18.2.0)
-      renderer:
-        specifier: workspace:*
-        version: link:../renderer
       shared:
         specifier: workspace:*
         version: link:../shared
@@ -222,28 +219,6 @@ importers:
       vite:
         specifier: ^4.3.9
         version: 4.3.9(@types/node@20.4.5)
-
-  renderer:
-    dependencies:
-      cytoscape:
-        specifier: ^3.25.0
-        version: 3.25.0
-      cytoscape-dagre:
-        specifier: ^2.5.0
-        version: 2.5.0(cytoscape@3.25.0)
-      cytoscape-layers:
-        specifier: ^2.4.0
-        version: 2.4.0(cytoscape@3.25.0)
-    devDependencies:
-      '@types/cytoscape':
-        specifier: ^3.19.10
-        version: 3.19.10
-      '@types/cytoscape-dagre':
-        specifier: ^2.3.0
-        version: 2.3.0
-      typescript:
-        specifier: ^5.0.2
-        version: 5.0.2
 
   shared:
     devDependencies:
@@ -2206,6 +2181,7 @@ packages:
 
   /@types/cytoscape@3.19.10:
     resolution: {integrity: sha512-PLsKQcsUd05nz4PYyulIhjkLnlq9oD2WYpswrWOjoqtFZEuuBje0f9fi2zTG5/yfTf5+Gpllf/MPcFmfDzZ24w==}
+    dev: true
 
   /@types/d3-array@3.0.5:
     resolution: {integrity: sha512-Qk7fpJ6qFp+26VeQ47WY0mkwXaiq8+76RJcncDEfMc2ocRzXLO67bLFRNI4OX1aGBoPzsM5Y2T+/m1pldOgD+A==}
@@ -3146,15 +3122,6 @@ packages:
     dependencies:
       cytoscape: 3.25.0
       dagre: 0.8.5
-    dev: false
-
-  /cytoscape-layers@2.4.0(cytoscape@3.25.0):
-    resolution: {integrity: sha512-J/DkOZOH7gcRTvRu/CAAi06gvo6xBG8gdfyVWRwg965Q1Iy/YLYLX3SY8mZH3TC0wiEu6kNhc8chCP984FC1Dg==}
-    peerDependencies:
-      cytoscape: ^3.23.0
-    dependencies:
-      '@types/cytoscape': 3.19.10
-      cytoscape: 3.25.0
     dev: false
 
   /cytoscape@3.25.0:
