@@ -1,33 +1,14 @@
-import { LiveNodes, useLiveNodes } from "@/lib/useLive";
-import { getVariables } from "../../lib/helpers";
-import { SquiggleChart } from "@quri/squiggle-components";
+import { getVariables } from "./helpers";
+import { StaticNodeData } from "shared";
 import toposort from "toposort";
+import { LiveNode } from "./useLive";
 
-export function CustomNodeGraph({
-  showing,
-  nodeId,
-}: {
-  showing: boolean;
-  nodeId: string;
-}) {
-  if (!showing) return null;
-  return <CustomNodeInner nodeId={nodeId} />;
-}
-
-function CustomNodeInner({ nodeId }: { nodeId: string }) {
-  const nodes = useLiveNodes();
-  const code = getSquiggleCode(nodes, nodeId);
-  return (
-    <div className="w-full">
-      <SquiggleChart code={code} enableLocalSettings />
-    </div>
-  );
-}
-
-/** Returns all the squiggle code needed to run for a given node */
-function getSquiggleCode(nodes: LiveNodes | undefined, nodeId: string) {
-  if (!nodes) return "";
-  const nodesArray = Array.from(nodes.entries());
+export function getSquiggleCode(
+  nodesArray: [string, LiveNode][] | [string, StaticNodeData][] | undefined,
+  nodeId: string
+) {
+  if (!nodesArray?.length) return "";
+  // check if nodes is map
   const idsToCheck = [nodeId];
   const deps: [string, string][] = [];
   const nodeIds: string[] = [];
@@ -41,12 +22,13 @@ function getSquiggleCode(nodes: LiveNodes | undefined, nodeId: string) {
   while (idsToCheck.length) {
     const id = idsToCheck.pop();
     if (!id) continue;
-    const node = nodes.get(id);
-    if (!node) continue;
+    const nodeArr = nodesArray.find(([nodeId]) => nodeId === id);
+    if (!nodeArr) continue;
     // Don't check nodes twice
     if (id in nodeIds) continue;
     nodeIds.push(id);
 
+    const node = nodeArr[1];
     const value = node.value ?? "";
     idToVarNameAndValue[id] = [node.variableName, value];
 

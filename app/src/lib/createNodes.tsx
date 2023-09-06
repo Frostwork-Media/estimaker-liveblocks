@@ -1,12 +1,15 @@
 import { AppNode } from "./types";
 import { CUSTOM_NODE } from "./constants";
-import { LiveNodes } from "@/lib/useLive";
+import { LiveNode } from "@/lib/useLive";
+import { StaticNodeData } from "shared";
 
-export function toReactFlowNodes(
-  liveNodes: LiveNodes,
+/**
+ * Converts LiveNodes and selectedIds to ReactFlow nodes
+ */
+export function createNodes(
+  nodesArray: [string, LiveNode][] | [string, StaticNodeData][],
   selectedIds: string[]
 ): AppNode[] {
-  const nodesArray = Array.from(liveNodes.entries());
   const nodes: AppNode[] = [];
 
   for (const [id, node] of nodesArray) {

@@ -1,13 +1,16 @@
 import { getProjectBySlug, getProjectStorage } from "./_liveblocks";
 
 import { VercelApiHandler } from "@vercel/node";
+import { simplifyStorage } from "./user/_simplifyStorage";
 
+/**
+ * Returns a public project's metadata and storage
+ */
 const handler: VercelApiHandler = async (req, res) => {
-  // get user and project query params
-  const user = req.query.user;
+  // get project query params
   const slug = req.query.project;
 
-  if (!user || !slug || Array.isArray(user) || Array.isArray(slug)) {
+  if (!slug || Array.isArray(slug)) {
     res.status(400).send("Invalid query params");
     return;
   }
@@ -32,12 +35,14 @@ const handler: VercelApiHandler = async (req, res) => {
     return;
   }
 
+  const simplifiedStorage = simplifyStorage(storage);
+
   // Return the metadata and storage
   // Cache the response for 1 hour
   res.setHeader("Cache-Control", "s-maxage=3600");
   res.status(200).json({
     metadata: project.metadata,
-    storage: storage,
+    storage: simplifiedStorage,
   });
 };
 

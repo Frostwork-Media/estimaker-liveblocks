@@ -6,6 +6,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Suspense } from "react";
 import { Router } from "./components/Router";
+import { LargeSpinner } from "./components/SmallSpinner";
 
 const clerkPubKey = import.meta.env.VITE_APP_CLERK_PUBLISHABLE_KEY;
 
@@ -18,7 +19,13 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <ClerkProvider publishableKey={clerkPubKey}>
         <TooltipProvider>
-          <Suspense fallback={<div>Loading...</div>}>
+          <Suspense
+            fallback={
+              <div className="h-screen flex justify-center items-center">
+                <LargeSpinner />
+              </div>
+            }
+          >
             <Router />
           </Suspense>
         </TooltipProvider>

@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 import { useMutation } from "../liveblocks.config";
 import ReactFlow, {
   Controls,
@@ -10,15 +10,12 @@ import ReactFlow, {
 } from "reactflow";
 import type {
   OnNodesChange,
-  NodeTypes,
   OnConnectStart,
+  NodeTypes,
   EdgeTypes,
 } from "reactflow";
 import "reactflow/dist/style.css";
-import { AppEdge } from "../lib/types";
-import { CUSTOM_NODE, REMOVABLE_EDGE, customNodeWidth } from "../lib/constants";
-import { CustomNode } from "./CustomNode/CustomNode";
-import { getVariables } from "../lib/helpers";
+import { CUSTOM_EDGE, CUSTOM_NODE, customNodeWidth } from "../lib/constants";
 import { LiveObject } from "@liveblocks/client";
 import { nanoid } from "nanoid";
 import {
@@ -26,21 +23,19 @@ import {
   useLiveNodes,
   useLiveSuggestedEdges,
 } from "@/lib/useLive";
-import RemovableEdge from "./RemovableEdge";
 import { NodePanel } from "./NodePanel";
 import { useGraphStore } from "../lib/useGraphStore";
-import { toReactFlowNodes } from "../lib/toReactFlowNodes";
-
-// const edgeTypes = {
-//buttonedge: ButtonEdge,
-//};
+import { createNodes } from "../lib/createNodes";
+import { useEdges } from "@/lib/useEdges";
+import { GraphNode } from "./GraphNode";
+import GraphEdge from "./GraphEdge";
 
 const nodeTypes: NodeTypes = {
-  [CUSTOM_NODE]: CustomNode,
+  [CUSTOM_NODE]: GraphNode,
 };
 
 const edgeTypes: EdgeTypes = {
-  [REMOVABLE_EDGE]: RemovableEdge,
+  [CUSTOM_EDGE]: GraphEdge,
 };
 
 export default function Graph() {
@@ -53,8 +48,15 @@ export default function Graph() {
 
 function GraphInner() {
   const liveNodes = useLiveNodes();
+  const liveNodesArray = Array.from(liveNodes.entries());
   const selectedIds = useGraphStore((state) => state.selected);
-  const nodes = toReactFlowNodes(liveNodes, selectedIds);
+  const nodes = createNodes(liveNodesArray, selectedIds);
+
+  const liveSuggestedEdges = useLiveSuggestedEdges();
+  const liveSuggestedEdgesArray = Array.from(liveSuggestedEdges.entries());
+
+  // Create edges for react flow
+  const edges = useEdges(liveNodesArray, liveSuggestedEdgesArray);
 
   const updateNodePosition = useMutation(
     ({ storage }, id: string, position: { x: number; y: number }) => {
@@ -102,56 +104,6 @@ function GraphInner() {
     },
     [updateNodePosition]
   );
-
-  const liveSuggestedEdges = useLiveSuggestedEdges();
-
-  // Create edges for react flow
-  const edges = useMemo<AppEdge[]>(() => {
-    const nodesArray = Array.from(liveNodes.entries() ?? []);
-    // from, to, userId
-    const edges: AppEdge[] = [];
-    for (const [id, node] of nodesArray) {
-      const value = node.value;
-      if (!value) continue;
-      const variablesInValue = getVariables(value);
-      for (const variableName of variablesInValue) {
-        // find the node with this variable name
-        const foundNode = nodesArray.find(([_id, node]) => {
-          return node.variableName === variableName;
-        });
-        if (!foundNode) continue;
-        const [sourceNodeId] = foundNode;
-        edges.push({
-          id: `${sourceNodeId}-${id}`,
-          source: sourceNodeId,
-          target: id,
-          style: {
-            stroke: foundNode[1].color ? `hsl(${foundNode[1].color})` : "#ccc",
-            strokeWidth: "2px",
-          },
-        });
-      }
-    }
-
-    // Add suggested edges which are not yet in the graph
-    const suggestedEdgesArray = Array.from(liveSuggestedEdges.entries());
-    for (const [id, [sourceNodeId, targetNodeId]] of suggestedEdgesArray) {
-      const foundEdge = edges.find((edge) => {
-        return edge.id === id;
-      });
-      if (foundEdge) continue;
-      edges.push({
-        id,
-        source: sourceNodeId,
-        target: targetNodeId,
-        style: { stroke: "#ccc", strokeWidth: "2px" },
-        animated: true,
-        type: REMOVABLE_EDGE,
-      });
-    }
-
-    return edges;
-  }, [liveNodes, liveSuggestedEdges]);
 
   const addNode = useMutation(
     ({ storage }, position: { x: number; y: number }) => {
@@ -267,11 +219,11 @@ function GraphInner() {
   return (
     <div className="w-full h-full bg-[white]">
       <ReactFlow
+        nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
         nodes={nodes}
         edges={edges}
         onNodesChange={onNodesChange}
-        nodeTypes={nodeTypes}
-        edgeTypes={edgeTypes}
         // snapToGrid={true}
         // snapGrid={snapGrid}
         zoomOnDoubleClick={false}

@@ -8,19 +8,19 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useMutation } from "@tanstack/react-query";
 import { useRoom } from "@/liveblocks.config";
-import { useRoomMetadata, useUserMetadata } from "@/lib/hooks";
+import { useRoomMetadata } from "@/lib/hooks";
 import { SmallSpinner } from "./SmallSpinner";
 import { Input } from "./ui/input";
 import { queryClient } from "@/lib/queryClient";
 import { WorldSvg } from "./WorldSvg";
 import classNames from "classnames";
-import { Link } from "react-router-dom";
 import { BiRightArrowAlt } from "react-icons/bi";
+import { useEffect, useState } from "react";
+import { Save } from "lucide-react";
 
 export function PublishModal() {
   const room = useRoom();
   const roomMetadataQuery = useRoomMetadata(room.id);
-  const userMetadataQuery = useUserMetadata();
   const makePublicMutation = useMutation(
     async () => {
       if (!room.id) return;
@@ -30,12 +30,17 @@ export function PublishModal() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ id: room.id }),
-      });
-      if (!response.ok) {
-        throw new Error("Something went wrong");
+      })
+        .then((res) => res.json())
+        .catch((err) => {
+          console.log(err);
+        });
+
+      if ("error" in response) {
+        throw new Error(response.error);
       }
-      const updatedRoomMetadata = await response.json();
-      return updatedRoomMetadata;
+
+      return response;
     },
     {
       onSuccess: (updatedRoomMetadata) => {
@@ -68,6 +73,42 @@ export function PublishModal() {
       },
     }
   );
+
+  const slugOnServer = roomMetadataQuery.data?.slug;
+  const [slug, setSlug] = useState(slugOnServer);
+  useEffect(() => {
+    setSlug(slugOnServer);
+  }, [slugOnServer]);
+
+  const updateSlugMutation = useMutation<string, Error>(
+    async () => {
+      if (!room.id) return "";
+
+      const response = await fetch("/api/project/update-slug", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id: room.id, slug }),
+      }).then((res) => res.json());
+
+      if ("error" in response) {
+        throw new Error(response.error);
+      }
+
+      // return updatedRoomMetadata;
+      return response;
+    },
+    {
+      onSuccess: (metadata) => {
+        // Set this metadata in the cache
+        queryClient.setQueryData(["metadata", room.id], metadata);
+      },
+    }
+  );
+
+  const isPublic = roomMetadataQuery.data?.public === "true";
+
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -86,7 +127,7 @@ export function PublishModal() {
         </Button>
       </PopoverTrigger>
       <PopoverContent align="end">
-        <div className="grid gap-3">
+        <div className="grid gap-4">
           <div className="flex items-center gap-1">
             <h3 className="text-lg font-bold">Publish</h3>
           </div>
@@ -96,7 +137,7 @@ export function PublishModal() {
           {roomMetadataQuery.isLoading || !roomMetadataQuery.data ? (
             <SmallSpinner />
           ) : (
-            <div className="gap-6 grid">
+            <div className="gap-4 grid">
               <div className="flex items-center gap-2">
                 <Switch
                   id="publish"
@@ -113,40 +154,70 @@ export function PublishModal() {
                 {(makePublicMutation.isLoading ||
                   makeNotPublicMutation.isLoading) && <SmallSpinner />}
               </div>
-              <div className="grid gap-2">
-                <Label htmlFor="slug">Slug</Label>
-                <Input defaultValue={roomMetadataQuery.data.slug} id="slug" />
-              </div>
+              {isPublic ? (
+                <>
+                  <div className="grid gap-1">
+                    <Label htmlFor="slug">Slug</Label>
+                    <Input
+                      value={slug}
+                      onChange={(e) => {
+                        const validSlug = e.target.value
+                          .toLowerCase()
+                          .replace(/[^a-z0-9-]/g, "-")
+                          .replace(/-+/g, "-");
+
+                        setSlug(validSlug);
+                      }}
+                      id="slug"
+                      /** Trigger mutation on enter */
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          updateSlugMutation.mutate();
+                        }
+                      }}
+                    />
+                    {slug !== slugOnServer ? (
+                      <Button
+                        onClick={() => {
+                          updateSlugMutation.mutate();
+                        }}
+                      >
+                        <div className="mr-2">
+                          {updateSlugMutation.isLoading ? (
+                            <SmallSpinner />
+                          ) : (
+                            <Save className="w-4 h-4" />
+                          )}
+                        </div>
+                        Update Slug
+                      </Button>
+                    ) : null}
+                    {updateSlugMutation.isError && (
+                      <p className="text-red-500 text-sm text-center">
+                        {updateSlugMutation.error.message}
+                      </p>
+                    )}
+                  </div>
+                  <hr />
+                </>
+              ) : null}
             </div>
           )}
-          <PublicLink
-            slug={roomMetadataQuery.data?.slug || ""}
-            username={userMetadataQuery.data?.username}
-          />
+          <PublicLink slug={roomMetadataQuery.data?.slug || ""} />
         </div>
       </PopoverContent>
     </Popover>
   );
 }
 
-function PublicLink({ slug, username }: { slug: string; username?: string }) {
+function PublicLink({ slug }: { slug: string }) {
   if (!slug) return null;
-  if (!username) {
-    return (
-      <Link className="text-xs underline text-blue-500" to="/app/profile">
-        Don't forget to set a username!
-      </Link>
-    );
-  }
   return (
-    <a
-      href={`/_/${username}/${slug}`}
-      className="text-xs text-blue-500"
-      target="_blank"
-      rel="noreferrer"
-    >
-      View Public Page
-      <BiRightArrowAlt className="inline -mt-px w-4 h-4" />
-    </a>
+    <Button variant="secondary" asChild>
+      <a href={`/_/public/${slug}`} target="_blank" rel="noreferrer">
+        Visit Public Page
+        <BiRightArrowAlt className="inline -mt-px w-4 h-4" />
+      </a>
+    </Button>
   );
 }

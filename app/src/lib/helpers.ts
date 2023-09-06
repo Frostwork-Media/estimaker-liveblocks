@@ -81,3 +81,16 @@ export function useSquigglePlaygroundUrl() {
   const hash = `#code=${encodeURIComponent(fromByteArray(compressed))}`;
   return `https://www.squiggle-language.com/playground${hash}`;
 }
+
+/**
+ * This is not used but feel it may come in handy later
+ */
+export function readonlyMapToObject<K extends string, V>(
+  map: ReadonlyMap<K, V>
+): Record<K, V> {
+  const obj = {} as Record<K, V>;
+  for (const [key, value] of map) {
+    obj[key] = value;
+  }
+  return obj;
+}

@@ -32,3 +32,7 @@ html {
 .squiggle > div > div:nth-child(2) > div > div > div:not(:first-child) {
   display: none;
 }
+
+.react-flow__attribution {
+  display: none;
+}

@@ -54,3 +54,51 @@ export async function getProjectStorage(id: string) {
 
   return response;
 }
+
+export async function updateProjectMetadata(
+  id: string,
+  update: Partial<ProjectMetadata>,
+  initial?: Partial<ProjectMetadata>
+): Promise<ProjectMetadata | null> {
+  let baseMetadata = initial;
+  if (!baseMetadata) {
+    const project = await fetch(`https://api.liveblocks.io/v2/rooms/${id}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${LIVEBLOCKS_SECRET_KEY}`,
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .catch((err) => {
+        console.error(err);
+        return null;
+      });
+    if (!project) return null;
+
+    baseMetadata = project.metadata;
+  }
+
+  const metadata = {
+    ...baseMetadata,
+    ...update,
+  };
+
+  const room = await fetch(`https://api.liveblocks.io/v2/rooms/${id}`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${LIVEBLOCKS_SECRET_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      metadata,
+    }),
+  })
+    .then((res) => res.json())
+    .catch((err) => {
+      console.error(err);
+      return null;
+    });
+
+  return room.metadata;
+}

@@ -11,6 +11,8 @@ export function useLiveSuggestedEdges() {
   return useStorage((state) => state.suggestedEdges);
 }
 
+export type LiveSuggestedEdges = ReturnType<typeof useLiveSuggestedEdges>;
+
 export function useLiveAddSuggestedEdge() {
   return useMutation(({ storage }, dependency: [string, string]) => {
     const suggestedEdges = storage.get("suggestedEdges");

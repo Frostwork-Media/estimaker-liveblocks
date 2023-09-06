@@ -2,4 +2,3 @@ packages:
   - "app"
   - "api"
   - "shared"
-  - "renderer"

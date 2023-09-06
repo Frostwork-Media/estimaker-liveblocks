@@ -8,7 +8,10 @@ import { BiX } from "react-icons/bi";
 import { useMutation } from "@/liveblocks.config";
 import { useCallback } from "react";
 
-export default function RemovableEdge({
+/** Use this to change the path for both edges */
+const getPath = getBezierPath;
+
+export default function GraphEdge({
   id,
   sourceX,
   sourceY,
@@ -19,7 +22,7 @@ export default function RemovableEdge({
   style = {},
   markerEnd,
 }: EdgeProps) {
-  const [edgePath, labelX, labelY] = getBezierPath({
+  const [edgePath, labelX, labelY] = getPath({
     sourceX,
     sourceY,
     sourcePosition,
@@ -65,5 +68,35 @@ export default function RemovableEdge({
         </div>
       </EdgeLabelRenderer>
     </>
+  );
+}
+
+export function GraphEdgeImmutable({
+  id,
+  sourceX,
+  sourceY,
+  targetX,
+  targetY,
+  sourcePosition,
+  targetPosition,
+  style = {},
+  markerEnd,
+}: EdgeProps) {
+  const [edgePath] = getPath({
+    sourceX,
+    sourceY,
+    sourcePosition,
+    targetX,
+    targetY,
+    targetPosition,
+  });
+
+  return (
+    <BaseEdge
+      path={edgePath}
+      markerEnd={markerEnd}
+      style={style}
+      data-edge-id={id}
+    />
   );
 }
