@@ -2,7 +2,8 @@ import { useMutation, useStorage } from "../liveblocks.config";
 
 const INPUT_CLASSES =
   "border-2 py-1 px-2 font-mono rounded text-neutral-600 text-sm w-full h-8";
-export function EditNodeValue({ nodeId }: { nodeId: string }) {
+
+export function NodeValue({ nodeId }: { nodeId: string }) {
   const node = useStorage((state) => state.nodes.get(nodeId));
 
   const setNodeValue = useMutation(({ storage }, value: string) => {
@@ -24,6 +25,6 @@ export function EditNodeValue({ nodeId }: { nodeId: string }) {
   );
 }
 
-export function StaticNodeValue({ value }: { value: string }) {
+export function NodeValueImmutable({ value }: { value: string }) {
   return <span className={INPUT_CLASSES}>{value}</span>;
 }

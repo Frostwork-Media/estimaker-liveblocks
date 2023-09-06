@@ -1,7 +1,7 @@
 import { Handle, Position } from "reactflow";
 import type { NodeProps } from "reactflow";
 import { AppNodeData } from "../lib/types";
-import { EditNodeValue, StaticNodeValue } from "./EditValue";
+import { NodeValue, NodeValueImmutable } from "./NodeValue";
 import { RxBarChart, RxCross1 } from "react-icons/rx";
 import { useMutation } from "../liveblocks.config";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -34,16 +34,18 @@ const NODE_CONTAINER_CLASSES =
   "px-2 py-3 rounded-md border bg-white grid gap-3 shadow-sm";
 const VARIABLE_NAME_CLASSES =
   "font-mono text-blue-600 text-sm text-left tracking-wider w-full overflow-hidden whitespace-nowrap overflow-ellipsis";
+
+/**
+ * An individual node in the graphical editor
+ */
 export function GraphNode({ data, id }: NodeProps<AppNodeData>) {
   const { label, variableName, showing, manifold, metaculus } = data;
-  const deleteNode = useMutation(
-    ({ storage }) => {
-      if (!window.confirm("Are you sure you want to delete this node?")) return;
-      const nodes = storage.get("nodes");
-      nodes.delete(id);
-    },
-    [id]
-  );
+  const handleStyle = useMemo(() => {
+    return {
+      ..._handleStyle,
+      backgroundColor: data.color ? `hsl(${data.color})` : undefined,
+    };
+  }, [data.color]);
 
   const manifoldQuery = useQuery(
     ["manifold", manifold],
@@ -67,6 +69,20 @@ export function GraphNode({ data, id }: NodeProps<AppNodeData>) {
       // Refetch every 10 minutes
       refetchInterval: 10 * 60 * 1000,
     }
+  );
+
+  const liveNodes = useLiveNodes();
+  const nodesArray = Array.from(liveNodes.entries());
+
+  /** -- Here is where mutation related code begins -- */
+
+  const deleteNode = useMutation(
+    ({ storage }) => {
+      if (!window.confirm("Are you sure you want to delete this node?")) return;
+      const nodes = storage.get("nodes");
+      nodes.delete(id);
+    },
+    [id]
   );
 
   const [editing, setEditing] = useState(false);
@@ -143,16 +159,6 @@ export function GraphNode({ data, id }: NodeProps<AppNodeData>) {
     [changeNodeVarName, setLabel, variableName]
   );
 
-  const handleStyle = useMemo(() => {
-    return {
-      ..._handleStyle,
-      backgroundColor: data.color ? `hsl(${data.color})` : undefined,
-    };
-  }, [data.color]);
-
-  const liveNodes = useLiveNodes();
-  const nodesArray = Array.from(liveNodes.entries());
-
   return (
     <>
       <Handle type="target" position={Position.Top} style={handleStyle} />
@@ -202,7 +208,7 @@ export function GraphNode({ data, id }: NodeProps<AppNodeData>) {
           >
             {`{${variableName}}`}
           </button>
-          <EditNodeValue nodeId={id} />
+          <NodeValue nodeId={id} />
           <ToggleGroup.Root
             className={TOGGLE_GROUP_CLASSES}
             type="single"
@@ -287,7 +293,9 @@ export function GraphNodeImmutable({ data, id }: NodeProps<AppNodeData>) {
     }
   );
 
-  const nodes = usePublicStoreOrThrow((s) => s.storage.nodes);
+  const nodesArray = usePublicStoreOrThrow((s) =>
+    Object.entries(s.storage.nodes)
+  );
 
   return (
     <>
@@ -307,7 +315,7 @@ export function GraphNodeImmutable({ data, id }: NodeProps<AppNodeData>) {
         </h2>
         <div className={NODE_CONTAINER_CLASSES}>
           <span className={VARIABLE_NAME_CLASSES}>{`{${variableName}}`}</span>
-          <StaticNodeValue value={data.value} />
+          <NodeValueImmutable value={data.value} />
           <ToggleGroup.Root
             className={TOGGLE_GROUP_CLASSES}
             type="single"
@@ -322,7 +330,7 @@ export function GraphNodeImmutable({ data, id }: NodeProps<AppNodeData>) {
             </ToggleGroup.Item>
           </ToggleGroup.Root>
           {showing === "graph" ? (
-            <SquiggleGraph nodes={Object.entries(nodes)} nodeId={id} />
+            <SquiggleGraph nodes={nodesArray} nodeId={id} />
           ) : null}
 
           {manifold ? (
