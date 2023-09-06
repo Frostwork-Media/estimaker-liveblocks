@@ -1,5 +1,5 @@
 import "reactflow/dist/style.css";
-import { createNodesImmutable } from "@/lib/createNodes";
+import { createNodes } from "@/lib/createNodes";
 import ReactFlow, { EdgeTypes, NodeTypes, ReactFlowProvider } from "reactflow";
 import { SimplifiedStorage } from "shared";
 import { useEdges } from "@/lib/useEdges";
@@ -24,12 +24,11 @@ export function PublicGraph(props: SimplifiedStorage) {
 }
 
 function GraphInner(props: SimplifiedStorage) {
-  const nodes = createNodesImmutable(props.nodes);
+  const nodesArray = Object.entries(props.nodes);
+  const nodes = createNodes(nodesArray, []);
   const suggestedEdges = props.suggestedEdges;
-  const edges = useEdges(
-    Object.entries(props.nodes),
-    Object.entries(suggestedEdges)
-  );
+  const suggestedEdgesArray = Object.entries(suggestedEdges);
+  const edges = useEdges(nodesArray, suggestedEdgesArray);
   return (
     <div className="w-full h-full">
       <ReactFlow

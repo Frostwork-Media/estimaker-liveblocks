@@ -48,16 +48,15 @@ export default function Graph() {
 
 function GraphInner() {
   const liveNodes = useLiveNodes();
+  const liveNodesArray = Array.from(liveNodes.entries());
   const selectedIds = useGraphStore((state) => state.selected);
-  const nodes = createNodes(liveNodes, selectedIds);
+  const nodes = createNodes(liveNodesArray, selectedIds);
 
   const liveSuggestedEdges = useLiveSuggestedEdges();
+  const liveSuggestedEdgesArray = Array.from(liveSuggestedEdges.entries());
 
   // Create edges for react flow
-  const edges = useEdges(
-    Array.from(liveNodes.entries()) as any,
-    Array.from(liveSuggestedEdges.entries()) as any
-  );
+  const edges = useEdges(liveNodesArray, liveSuggestedEdgesArray);
 
   const updateNodePosition = useMutation(
     ({ storage }, id: string, position: { x: number; y: number }) => {

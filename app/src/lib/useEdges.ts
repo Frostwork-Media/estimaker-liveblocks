@@ -2,13 +2,14 @@ import { useMemo } from "react";
 import { AppEdge } from "./types";
 import { getVariables } from "./helpers";
 import { CUSTOM_EDGE } from "./constants";
-import { SimplifiedStorage } from "shared";
+import { StaticNodeData } from "shared";
+import { LiveNode } from "./useLive";
 
 /**
  * Converts the live nodes and suggested edges into a list of react flow edges
  */
 export function useEdges(
-  nodesArray: [string, SimplifiedStorage["nodes"][string]][],
+  nodesArray: [string, LiveNode][] | [string, StaticNodeData][],
   suggestedEdgesArray: [string, string[]][]
 ) {
   return useMemo<AppEdge[]>(() => {
