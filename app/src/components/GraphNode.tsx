@@ -7,7 +7,7 @@ import { useMutation } from "../liveblocks.config";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";
 import * as ToggleGroup from "@radix-ui/react-toggle-group";
-import { SquiggleGraph, SquiggleGraphImmutable } from "./SquiggleGraph";
+import { SquiggleGraph } from "./SquiggleGraph";
 import { getVarName } from "@/lib/getVarName";
 import { customNodeWidthClass } from "@/lib/constants";
 import { useQuery } from "@tanstack/react-query";
@@ -15,6 +15,8 @@ import { fetchManifoldData } from "@/lib/fetchManifoldData";
 import { fetchMetaculusData } from "@/lib/fetchMetaculusData";
 import { MarketLink } from "./MarketLink";
 import classNames from "classnames";
+import { useLiveNodes } from "@/lib/useLive";
+import { usePublicStoreOrThrow } from "@/lib/usePublicStore";
 
 const TITLE_CLASSES =
   "text-left py-2 rounded leading-7 text-4xl leading-tight resize-none focus:outline-none focus:ring-0 focus:border-transparent bg-transparent";
@@ -148,6 +150,9 @@ export function GraphNode({ data, id }: NodeProps<AppNodeData>) {
     };
   }, [data.color]);
 
+  const liveNodes = useLiveNodes();
+  const nodes = Array.from(liveNodes.entries()) as any;
+
   return (
     <>
       <Handle type="target" position={Position.Top} style={handleStyle} />
@@ -214,7 +219,9 @@ export function GraphNode({ data, id }: NodeProps<AppNodeData>) {
               <RxBarChart />
             </ToggleGroup.Item>
           </ToggleGroup.Root>
-          <SquiggleGraph showing={showing === "graph"} nodeId={id} />
+          {showing === "graph" ? (
+            <SquiggleGraph nodes={nodes} nodeId={id} />
+          ) : null}
           {manifold ? (
             <MarketLink
               isLoading={manifoldQuery.isLoading}
@@ -280,6 +287,8 @@ export function GraphNodeImmutable({ data, id }: NodeProps<AppNodeData>) {
     }
   );
 
+  const nodes = usePublicStoreOrThrow((s) => s.storage.nodes);
+
   return (
     <>
       <Handle type="target" position={Position.Top} style={handleStyle} />
@@ -312,7 +321,10 @@ export function GraphNodeImmutable({ data, id }: NodeProps<AppNodeData>) {
               <RxBarChart />
             </ToggleGroup.Item>
           </ToggleGroup.Root>
-          <SquiggleGraphImmutable showing={showing === "graph"} nodeId={id} />
+          {showing === "graph" ? (
+            <SquiggleGraph nodes={Object.entries(nodes)} nodeId={id} />
+          ) : null}
+
           {manifold ? (
             <MarketLink
               isLoading={manifoldQuery.isLoading}
