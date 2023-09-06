@@ -7,7 +7,7 @@ import { useMutation } from "../liveblocks.config";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";
 import * as ToggleGroup from "@radix-ui/react-toggle-group";
-import { CustomNodeGraph, StaticCustomNodeGraph } from "./CustomNodeGraph";
+import { SquiggleGraph, SquiggleGraphImmutable } from "./SquiggleGraph";
 import { getVarName } from "@/lib/getVarName";
 import { customNodeWidthClass } from "@/lib/constants";
 import { useQuery } from "@tanstack/react-query";
@@ -32,7 +32,7 @@ const NODE_CONTAINER_CLASSES =
   "px-2 py-3 rounded-md border bg-white grid gap-3 shadow-sm";
 const VARIABLE_NAME_CLASSES =
   "font-mono text-blue-600 text-sm text-left tracking-wider w-full overflow-hidden whitespace-nowrap overflow-ellipsis";
-export function EditableCustomNode({ data, id }: NodeProps<AppNodeData>) {
+export function GraphNode({ data, id }: NodeProps<AppNodeData>) {
   const { label, variableName, showing, manifold, metaculus } = data;
   const deleteNode = useMutation(
     ({ storage }) => {
@@ -214,7 +214,7 @@ export function EditableCustomNode({ data, id }: NodeProps<AppNodeData>) {
               <RxBarChart />
             </ToggleGroup.Item>
           </ToggleGroup.Root>
-          <CustomNodeGraph showing={showing === "graph"} nodeId={id} />
+          <SquiggleGraph showing={showing === "graph"} nodeId={id} />
           {manifold ? (
             <MarketLink
               isLoading={manifoldQuery.isLoading}
@@ -247,7 +247,7 @@ export function EditableCustomNode({ data, id }: NodeProps<AppNodeData>) {
   );
 }
 
-export function FrozenCustomNode({ data, id }: NodeProps<AppNodeData>) {
+export function GraphNodeImmutable({ data, id }: NodeProps<AppNodeData>) {
   const { label, variableName, showing, manifold, metaculus, color } = data;
   const handleStyle = useMemo(() => {
     return {
@@ -312,7 +312,7 @@ export function FrozenCustomNode({ data, id }: NodeProps<AppNodeData>) {
               <RxBarChart />
             </ToggleGroup.Item>
           </ToggleGroup.Root>
-          <StaticCustomNodeGraph showing={showing === "graph"} nodeId={id} />
+          <SquiggleGraphImmutable showing={showing === "graph"} nodeId={id} />
           {manifold ? (
             <MarketLink
               isLoading={manifoldQuery.isLoading}

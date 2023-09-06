@@ -39,10 +39,7 @@ export default function Public() {
         <header className={classNames(PROJECT_HEADER_STYLES, "py-2")}>
           <h1 className="text-xl">{publicProject.data.metadata.name}</h1>
         </header>
-        <PublicGraph
-          nodes={publicProject.data.storage.data.nodes.data}
-          suggestedEdges={publicProject.data.storage.data.suggestedEdges.data}
-        />
+        <PublicGraph {...publicProject.data.storage} />
       </div>
     </PublicStoreContext.Provider>
   );

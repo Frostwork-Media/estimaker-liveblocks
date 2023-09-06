@@ -1,12 +1,12 @@
 import { AppNode } from "./types";
 import { CUSTOM_NODE } from "./constants";
 import { LiveNodes } from "@/lib/useLive";
-import { PublicProject } from "shared";
+import { SimplifiedStorage } from "shared";
 
 /**
  * Converts LiveNodes and selectedIds to ReactFlow nodes
  */
-export function toReactFlowNodes(
+export function createNodes(
   liveNodes: LiveNodes,
   selectedIds: string[]
 ): AppNode[] {
@@ -33,13 +33,13 @@ export function toReactFlowNodes(
 /**
  * Converts static nodes to ReactFlow nodes
  */
-export function fromPublicToReactFlowNodes(
-  nodes: PublicProject["storage"]["data"]["nodes"]["data"]
+export function createNodesImmutable(
+  nodes: SimplifiedStorage["nodes"]
 ): AppNode[] {
   const nodesArray = Array.from(Object.entries(nodes));
   const reactFlowNodes: AppNode[] = [];
 
-  for (const [id, { data: node }] of nodesArray) {
+  for (const [id, node] of nodesArray) {
     reactFlowNodes.push({
       id,
       data: {

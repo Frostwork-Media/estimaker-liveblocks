@@ -1,54 +1,10 @@
-import { LiveNodes, useLiveNodes } from "@/lib/useLive";
-import { getVariables } from "../lib/helpers";
-import { SquiggleChart } from "@quri/squiggle-components";
+import { LiveNodes } from "@/lib/useLive";
+import { getVariables } from "./helpers";
+import { SimplifiedStorage } from "shared";
 import toposort from "toposort";
-import { Nodes } from "shared";
-import { usePublicStoreOrThrow } from "@/lib/usePublicStore";
-
-export function CustomNodeGraph({
-  showing,
-  nodeId,
-}: {
-  showing: boolean;
-  nodeId: string;
-}) {
-  if (!showing) return null;
-  return <CustomNodeInner nodeId={nodeId} />;
-}
-
-function CustomNodeInner({ nodeId }: { nodeId: string }) {
-  const nodes = useLiveNodes();
-  const code = getSquiggleCode(nodes, nodeId);
-  return (
-    <div className="w-full">
-      <SquiggleChart code={code} enableLocalSettings />
-    </div>
-  );
-}
-
-export function StaticCustomNodeGraph({
-  showing,
-  nodeId,
-}: {
-  showing: boolean;
-  nodeId: string;
-}) {
-  if (!showing) return null;
-  return <StaticCustomNodeInner nodeId={nodeId} />;
-}
-
-function StaticCustomNodeInner({ nodeId }: { nodeId: string }) {
-  const nodes = usePublicStoreOrThrow((s) => s.storage.data.nodes);
-  const code = getSquiggleCodeStatic(nodes, nodeId);
-  return (
-    <div className="w-full">
-      <SquiggleChart code={code} enableLocalSettings />
-    </div>
-  );
-}
 
 /** Returns all the squiggle code needed to run for a given node */
-function getSquiggleCode(nodes: LiveNodes | undefined, nodeId: string) {
+export function getSquiggleCode(nodes: LiveNodes | undefined, nodeId: string) {
   if (!nodes) return "";
   // check if nodes is map
   const nodesArray = Array.from(nodes.entries());
@@ -98,13 +54,14 @@ function getSquiggleCode(nodes: LiveNodes | undefined, nodeId: string) {
       .join("\n") + `\n${idToVarNameAndValue[nodeId][0]}`;
 
   return code;
-}
-
-/** Returns all the squiggle code needed to run for a given node */
-function getSquiggleCodeStatic(nodes: Nodes, nodeId: string) {
+} /** Returns all the squiggle code needed to run for a given node */
+export function getSquiggleCodeImmutable(
+  nodes: SimplifiedStorage["nodes"],
+  nodeId: string
+) {
   if (!nodes) return "";
   // check if nodes is map
-  const nodesArray = Object.entries(nodes.data);
+  const nodesArray = Object.entries(nodes);
   const idsToCheck = [nodeId];
   const deps: [string, string][] = [];
   const nodeIds: string[] = [];
@@ -118,20 +75,20 @@ function getSquiggleCodeStatic(nodes: Nodes, nodeId: string) {
   while (idsToCheck.length) {
     const id = idsToCheck.pop();
     if (!id) continue;
-    const node = nodes.data[id];
+    const node = nodes[id];
     if (!node) continue;
     // Don't check nodes twice
     if (id in nodeIds) continue;
     nodeIds.push(id);
 
-    const value = node.data.value ?? "";
-    idToVarNameAndValue[id] = [node.data.variableName, value];
+    const value = node.value ?? "";
+    idToVarNameAndValue[id] = [node.variableName, value];
 
     const variablesInValue = getVariables(value);
     for (const variableName of variablesInValue) {
       // find the node with this variable name
       const foundNode = nodesArray.find(([_id, node]) => {
-        return node.data.variableName === variableName;
+        return node.variableName === variableName;
       });
       if (!foundNode) continue;
       const [sourceNodeId] = foundNode;

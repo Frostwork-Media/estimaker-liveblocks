@@ -3,7 +3,7 @@ import { AppEdge } from "./types";
 import { getVariables } from "./helpers";
 import { LiveNodes, LiveSuggestedEdges } from "./useLive";
 import { CUSTOM_EDGE } from "./constants";
-import { StaticNode } from "shared";
+import { SimplifiedStorage } from "shared";
 
 /**
  * Converts the live nodes and suggested edges into a list of react flow edges
@@ -64,9 +64,7 @@ export function useEdgesLive(
  * Creates react flow edges from static nodes and suggested edges
  */
 export function useEdgesStatic(
-  nodes: {
-    [key: string]: StaticNode;
-  },
+  nodes: SimplifiedStorage["nodes"],
   suggestedEdges: {
     [key: string]: string[];
   }
@@ -76,13 +74,13 @@ export function useEdgesStatic(
     // from, to, userId
     const edges: AppEdge[] = [];
     for (const [id, node] of nodesArray) {
-      const value = node.data.value;
+      const value = node.value;
       if (!value) continue;
       const variablesInValue = getVariables(value);
       for (const variableName of variablesInValue) {
         // find the node with this variable name
         const foundNode = nodesArray.find(([_id, node]) => {
-          return node.data.variableName === variableName;
+          return node.variableName === variableName;
         });
         if (!foundNode) continue;
         const [sourceNodeId] = foundNode;
@@ -91,9 +89,7 @@ export function useEdgesStatic(
           source: sourceNodeId,
           target: id,
           style: {
-            stroke: foundNode[1].data.color
-              ? `hsl(${foundNode[1].data.color})`
-              : "#ccc",
+            stroke: foundNode[1].color ? `hsl(${foundNode[1].color})` : "#ccc",
             strokeWidth: "2px",
           },
         });

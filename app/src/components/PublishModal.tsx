@@ -101,7 +101,6 @@ export function PublishModal() {
     },
     {
       onSuccess: (metadata) => {
-        console.log({ metadata });
         // Set this metadata in the cache
         queryClient.setQueryData(["metadata", room.id], metadata);
       },

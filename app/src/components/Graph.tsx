@@ -25,17 +25,17 @@ import {
 } from "@/lib/useLive";
 import { NodePanel } from "./NodePanel";
 import { useGraphStore } from "../lib/useGraphStore";
-import { toReactFlowNodes } from "../lib/toReactFlowNodes";
+import { createNodes } from "../lib/createNodes";
 import { useEdgesLive } from "@/lib/useEdges";
-import { EditableCustomNode } from "./CustomNode";
-import EditableCustomEdge from "./CustomEdge";
+import { GraphNode } from "./GraphNode";
+import GraphEdge from "./GraphEdge";
 
 const nodeTypes: NodeTypes = {
-  [CUSTOM_NODE]: EditableCustomNode,
+  [CUSTOM_NODE]: GraphNode,
 };
 
 const edgeTypes: EdgeTypes = {
-  [CUSTOM_EDGE]: EditableCustomEdge,
+  [CUSTOM_EDGE]: GraphEdge,
 };
 
 export default function Graph() {
@@ -49,7 +49,7 @@ export default function Graph() {
 function GraphInner() {
   const liveNodes = useLiveNodes();
   const selectedIds = useGraphStore((state) => state.selected);
-  const nodes = toReactFlowNodes(liveNodes, selectedIds);
+  const nodes = createNodes(liveNodes, selectedIds);
 
   const liveSuggestedEdges = useLiveSuggestedEdges();
 

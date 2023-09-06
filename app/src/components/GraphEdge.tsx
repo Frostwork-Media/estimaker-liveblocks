@@ -8,7 +8,10 @@ import { BiX } from "react-icons/bi";
 import { useMutation } from "@/liveblocks.config";
 import { useCallback } from "react";
 
-export default function EditableCustomEdge({
+/** Use this to change the path for both edges */
+const getPath = getBezierPath;
+
+export default function GraphEdge({
   id,
   sourceX,
   sourceY,
@@ -19,7 +22,7 @@ export default function EditableCustomEdge({
   style = {},
   markerEnd,
 }: EdgeProps) {
-  const [edgePath, labelX, labelY] = getBezierPath({
+  const [edgePath, labelX, labelY] = getPath({
     sourceX,
     sourceY,
     sourcePosition,
@@ -68,7 +71,7 @@ export default function EditableCustomEdge({
   );
 }
 
-export function FrozenCustomEdge({
+export function GraphEdgeImmutable({
   id,
   sourceX,
   sourceY,
@@ -79,7 +82,7 @@ export function FrozenCustomEdge({
   style = {},
   markerEnd,
 }: EdgeProps) {
-  const [edgePath] = getBezierPath({
+  const [edgePath] = getPath({
     sourceX,
     sourceY,
     sourcePosition,

@@ -1,5 +1,3 @@
-export const testExport = 100;
-
 export type ProjectMetadata = {
   name: string;
   public: "true" | "false";
@@ -13,12 +11,18 @@ export type UserMetadata = { username: string };
 
 export interface PublicProject {
   metadata: ProjectMetadata;
-  storage: Storage;
+  storage: SimplifiedStorage;
 }
 
 export interface Storage {
   liveblocksType: string;
   data: StorageData;
+}
+
+export interface SimplifiedStorage {
+  title: string;
+  nodes: { [key: string]: StaticNodeData };
+  suggestedEdges: { [key: string]: string[] };
 }
 
 export interface StorageData {
