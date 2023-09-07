@@ -1,5 +1,5 @@
 import { VercelApiHandler } from "@vercel/node";
-import { userFromSession } from "../_userFromSession";
+import { userFromSession } from "../_auth";
 
 /**
  * Get user metadata

@@ -42,16 +42,13 @@ export default function Projects() {
     }
   );
 
-  const createProjectMutation = useMutation<{ id: string }>(
+  const createProjectMutation = useMutation(
     async () => {
       const res = await fetch("/api/create-project", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          userId,
-        }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -83,7 +80,7 @@ export default function Projects() {
             {createProjectMutation.isLoading ? (
               <SmallSpinner colorClass="text-white" />
             ) : (
-              <BiPlus className="w-6 h-6" />
+              <BiPlus className="w-4 h-4" />
             )}
           </span>
           <span className="text-lg">Create a new project</span>

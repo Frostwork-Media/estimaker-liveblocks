@@ -11,7 +11,7 @@ import { useQuery, useMutation as useRQMutation } from "@tanstack/react-query";
 import { queryClient } from "@/lib/queryClient";
 import { SmallSpinner } from "./SmallSpinner";
 
-export function ShareList() {
+export function Collaborate() {
   const room = useRoom();
   const users = useQuery<string[]>(
     ["project-users", room.id],

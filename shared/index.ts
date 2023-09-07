@@ -2,6 +2,10 @@ export type ProjectMetadata = {
   name: string;
   public: "true" | "false";
   slug: string;
+  /**
+   * This is the clerk Id of the user that created the project
+   */
+  ownerId: string;
 };
 
 /**

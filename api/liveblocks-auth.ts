@@ -1,6 +1,6 @@
 import { liveblocks } from "./_liveblocks";
 import { VercelApiHandler } from "@vercel/node";
-import { userFromSession } from "./_userFromSession";
+import { userFromSession } from "./_auth";
 
 const handler: VercelApiHandler = async (req, res) => {
   // get user based on session

@@ -1,3 +1,4 @@
+import { useRoom } from "@/liveblocks.config";
 import { useUser } from "@clerk/clerk-react";
 import { useQuery } from "@tanstack/react-query";
 import { ProjectMetadata, UserMetadata } from "shared";
@@ -17,6 +18,7 @@ export function useRoomMetadata(roomId: string) {
     },
     {
       enabled: !!roomId,
+      suspense: true,
     }
   );
 }
@@ -32,4 +34,14 @@ export function useUserMetadata() {
       suspense: true,
     }
   );
+}
+
+/**
+ * Requires room context
+ */
+export function useIsOwner() {
+  const room = useRoom();
+  const metadata = useRoomMetadata(room.id);
+  const { user } = useUser();
+  return user && metadata.data && metadata.data.ownerId === user.id;
 }

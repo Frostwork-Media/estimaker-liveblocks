@@ -1,5 +1,5 @@
 import { VercelApiHandler } from "@vercel/node";
-import { userFromSession } from "./_userFromSession";
+import { userFromSession } from "./_auth";
 import { LIVEBLOCKS_SECRET_KEY } from "./_config";
 import { Project } from "./_types";
 import { getProjectById } from "./_liveblocks";

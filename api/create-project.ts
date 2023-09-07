@@ -2,12 +2,12 @@ import { VercelApiHandler } from "@vercel/node";
 import { nanoid } from "nanoid";
 import { LIVEBLOCKS_SECRET_KEY } from "./_config";
 import { ProjectMetadata } from "shared";
+import { userFromSession } from "./_auth";
 
 const handler: VercelApiHandler = async (req, res) => {
-  // In this case the userId is the email address, that's our unique identifier in liveblocks land
-  const userId = req.body.userId;
-  if (!userId) {
-    res.status(400).end("Missing userId");
+  const [user, email] = await userFromSession(req);
+  if (!user) {
+    res.status(401).end("Unauthorized");
     return;
   }
 
@@ -17,6 +17,7 @@ const handler: VercelApiHandler = async (req, res) => {
     name: "Untitled",
     public: "false",
     slug: "",
+    ownerId: user.id,
   };
 
   const body = {
@@ -24,7 +25,7 @@ const handler: VercelApiHandler = async (req, res) => {
     defaultAccesses: [],
     metadata,
     usersAccesses: {
-      [userId]: ["room:write"],
+      [email]: ["room:write"],
     },
     groupsAccesses: {},
   };

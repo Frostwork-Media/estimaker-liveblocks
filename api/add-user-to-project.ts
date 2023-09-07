@@ -1,5 +1,5 @@
 import { VercelApiHandler } from "@vercel/node";
-import { userFromSession } from "./_userFromSession";
+import { userFromSession, userOwnsRoom } from "./_auth";
 import { LIVEBLOCKS_SECRET_KEY } from "./_config";
 import { getProjectById } from "./_liveblocks";
 
@@ -32,11 +32,8 @@ const handler: VercelApiHandler = async (req, res) => {
   }
 
   // Make sure the user is allowed to add users to the room
-  const hasAccess =
-    email in room.usersAccesses
-      ? room.usersAccesses[email].includes("room:write")
-      : false;
-  if (!hasAccess) {
+  const isOwner = userOwnsRoom(room, user.id, email);
+  if (!isOwner) {
     res.status(401).end("Unauthorized");
     return;
   }

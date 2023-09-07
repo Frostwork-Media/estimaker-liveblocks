@@ -1,6 +1,6 @@
 import { VercelApiHandler } from "@vercel/node";
 import { clerkClient } from "@clerk/clerk-sdk-node";
-import { userFromSession } from "../_userFromSession";
+import { userFromSession } from "../_auth";
 import { UserMetadata } from "shared";
 
 const handler: VercelApiHandler = async (req, res) => {

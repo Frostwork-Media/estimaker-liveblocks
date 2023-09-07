@@ -1,6 +1,7 @@
 import { VercelApiHandler } from "@vercel/node";
 import { LIVEBLOCKS_SECRET_KEY } from "./_config";
 import { ProjectMetadata } from "shared";
+import { getProjectById } from "./_liveblocks";
 
 const handler: VercelApiHandler = async (req, res) => {
   const id = req.body.id;
@@ -10,22 +11,10 @@ const handler: VercelApiHandler = async (req, res) => {
   }
 
   // Loop Up the room
-  const room = await fetch(`https://api.liveblocks.io/v2/rooms/${id}`, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${LIVEBLOCKS_SECRET_KEY}`,
-      "Content-Type": "application/json",
-    },
-  })
-    .then((res) => res.json())
-    .catch((err) => {
-      console.error(err);
-      res.status(500).end("Error fetching room");
-      return;
-    });
+  const room = await getProjectById(id);
 
   if (!room) {
-    res.status(404).end("Room not found");
+    res.status(404).json({ error: "Room not found" });
     return;
   }
 

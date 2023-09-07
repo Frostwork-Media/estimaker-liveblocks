@@ -20,7 +20,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { ShareList } from "@/components/ShareList";
+import { Collaborate } from "@/components/Collaborate";
 import { PublishModal } from "@/components/PublishModal";
 import {
   BiCheck,
@@ -32,11 +32,13 @@ import classNames from "classnames";
 import { PROJECT_HEADER_STYLES } from "../lib/sharedProjectStyles";
 import { SmallSpinner } from "@/components/SmallSpinner";
 import { ProjectSettings } from "@/components/ProjectSettings";
+import { useIsOwner } from "@/lib/hooks";
 const Graph = lazy(() => import("../components/Graph"));
 
 function Inner() {
   const status = useStatus();
   const title = useStorage((state) => state.title) ?? "Untitled";
+  const isOwner = useIsOwner();
 
   if (status === "connecting")
     return (
@@ -53,17 +55,21 @@ function Inner() {
             <BiChevronLeft className="w-6 h-6 translate-x-px inline mr-1" />
           </Link>
         </Button>
-        <ProjectSettings name={title}>
-          <Button variant="outline" size="icon">
-            <BiDotsVerticalRounded className="w-6 h-6" />
-          </Button>
-        </ProjectSettings>
         <PageTitle />
         <div className="ml-auto flex gap-1">
           <UsersInRoom />
           <SquigglePlayground />
-          <ShareList />
-          <PublishModal />
+          {isOwner ? (
+            <>
+              <Collaborate />
+              <PublishModal />
+              <ProjectSettings name={title}>
+                <Button variant="secondary" size="icon">
+                  <BiDotsVerticalRounded className="w-6 h-6" />
+                </Button>
+              </ProjectSettings>
+            </>
+          ) : null}
         </div>
       </header>
       <Graph />

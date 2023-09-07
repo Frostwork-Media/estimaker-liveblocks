@@ -1,5 +1,5 @@
 import { VercelApiHandler } from "@vercel/node";
-import { userFromSession } from "./_userFromSession";
+import { userFromSession, userOwnsRoom } from "./_auth";
 import { deleteProject, getProjectById } from "./_liveblocks";
 
 const handler: VercelApiHandler = async (req, res) => {
@@ -26,12 +26,8 @@ const handler: VercelApiHandler = async (req, res) => {
     return;
   }
 
-  const hasAccess =
-    email in room.usersAccesses
-      ? room.usersAccesses[email].includes("room:write")
-      : false;
-
-  if (!hasAccess) {
+  const isOwner = userOwnsRoom(room, user.id, email);
+  if (!isOwner) {
     res.status(401).json({ error: "Error deleting room" });
     return;
   }
