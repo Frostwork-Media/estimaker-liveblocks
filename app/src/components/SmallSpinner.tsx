@@ -1,9 +1,22 @@
+import classNames from "classnames";
 import { BiLoaderAlt } from "react-icons/bi";
 
-export function SmallSpinner() {
-  return <BiLoaderAlt className="animate-spin w-4 h-4 text-neutral-300" />;
+export function SmallSpinner({
+  colorClass = "text-slate-300",
+}: {
+  colorClass?: string;
+}) {
+  return (
+    <BiLoaderAlt className={classNames("animate-spin w-4 h-4", colorClass)} />
+  );
 }
 
-export function LargeSpinner() {
-  return <BiLoaderAlt className="animate-spin w-8 h-8 text-neutral-300" />;
+export function LargeSpinner({
+  colorClass = "text-slate-300",
+}: {
+  colorClass?: string;
+}) {
+  return (
+    <BiLoaderAlt className={classNames("animate-spin w-8 h-8", colorClass)} />
+  );
 }

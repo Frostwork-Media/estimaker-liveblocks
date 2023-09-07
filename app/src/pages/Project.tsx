@@ -22,13 +22,22 @@ import {
 } from "@/components/ui/tooltip";
 import { ShareList } from "@/components/ShareList";
 import { PublishModal } from "@/components/PublishModal";
-import { BiCheck, BiLeftArrowAlt } from "react-icons/bi";
+import {
+  BiCheck,
+  BiChevronLeft,
+  BiDotsVerticalRounded,
+  BiSave,
+} from "react-icons/bi";
 import classNames from "classnames";
 import { PROJECT_HEADER_STYLES } from "../lib/sharedProjectStyles";
+import { SmallSpinner } from "@/components/SmallSpinner";
+import { ProjectSettings } from "@/components/ProjectSettings";
 const Graph = lazy(() => import("../components/Graph"));
 
 function Inner() {
   const status = useStatus();
+  const title = useStorage((state) => state.title) ?? "Untitled";
+
   if (status === "connecting")
     return (
       <div className="h-screen flex justify-center items-center">
@@ -39,13 +48,16 @@ function Inner() {
   return (
     <div className="h-screen grid grid-rows-[auto_minmax(0,1fr)]">
       <header className={classNames(PROJECT_HEADER_STYLES, "pr-1")}>
-        <Link
-          to="/app/projects"
-          className="text-blue-500 text-sm justify-self-start mt-1"
-        >
-          <BiLeftArrowAlt className="w-4 h-4 inline mr-1" />
-          Back Home
-        </Link>
+        <Button variant="ghost" size="icon" asChild>
+          <Link to="/app/projects">
+            <BiChevronLeft className="w-6 h-6 translate-x-px inline mr-1" />
+          </Link>
+        </Button>
+        <ProjectSettings name={title}>
+          <Button variant="outline" size="icon">
+            <BiDotsVerticalRounded className="w-6 h-6" />
+          </Button>
+        </ProjectSettings>
         <PageTitle />
         <div className="ml-auto flex gap-1">
           <UsersInRoom />
@@ -116,11 +128,22 @@ function PageTitle() {
         value={newTitle}
         onChange={(e) => setNewTitle(e.target.value)}
         disabled={setProjectNameMutation.isLoading}
-        inputClassName="text-2xl bg-transparent py-2 px-1 focus:bg-neutral-200 focus:outline-none"
+        inputClassName="text-2xl bg-transparent p-2 focus:bg-slate-100 focus:outline-none border-x focus:shadow-inner"
       />
       {title !== newTitle && (
-        <Button type="submit" disabled={setProjectNameMutation.isLoading}>
-          Save
+        <Button
+          type="submit"
+          disabled={setProjectNameMutation.isLoading}
+          variant="outline"
+        >
+          <span className="inline mr-1">
+            {setProjectNameMutation.isLoading ? (
+              <SmallSpinner />
+            ) : (
+              <BiSave className="w-4 h-4" />
+            )}
+          </span>
+          Update
         </Button>
       )}
     </form>

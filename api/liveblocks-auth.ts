@@ -4,15 +4,8 @@ import { userFromSession } from "./_userFromSession";
 
 const handler: VercelApiHandler = async (req, res) => {
   // get user based on session
-  const user = await userFromSession(req);
-  if (!user) {
-    res.status(401).end("Unauthorized");
-    return;
-  }
-
-  const emailAddress = user.emailAddresses[0]?.emailAddress;
-
-  if (!emailAddress) {
+  const [user, email] = await userFromSession(req);
+  if (!user || !email) {
     res.status(401).end("Unauthorized");
     return;
   }
@@ -21,7 +14,7 @@ const handler: VercelApiHandler = async (req, res) => {
   // email and name in the user info
   const { status, body } = await liveblocks.identifyUser(
     {
-      userId: emailAddress,
+      userId: email,
       groupIds: [],
     },
     {

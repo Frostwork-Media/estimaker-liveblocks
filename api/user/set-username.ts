@@ -13,7 +13,7 @@ const handler: VercelApiHandler = async (req, res) => {
     return;
   }
 
-  const user = await userFromSession(req);
+  const [user] = await userFromSession(req);
 
   if (!user) {
     res.status(401).json({

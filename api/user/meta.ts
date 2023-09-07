@@ -5,7 +5,7 @@ import { userFromSession } from "../_userFromSession";
  * Get user metadata
  */
 const handler: VercelApiHandler = async (req, res) => {
-  const user = await userFromSession(req);
+  const [user] = await userFromSession(req);
   if (!user) {
     res.status(401).json({
       error: "Unauthorized",

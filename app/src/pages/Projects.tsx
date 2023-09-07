@@ -3,6 +3,8 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { useLiveblocksUserId } from "@/lib/hooks";
 import { StaticPageWrapper } from "@/components/StaticPageWrapper";
+import { BiPlus } from "react-icons/bi";
+import { SmallSpinner } from "@/components/SmallSpinner";
 
 export interface Project {
   type: string;
@@ -76,7 +78,16 @@ export default function Projects() {
           createProjectMutation.mutate();
         }}
       >
-        <Button>Create a new project</Button>
+        <Button>
+          <span className="mr-2">
+            {createProjectMutation.isLoading ? (
+              <SmallSpinner colorClass="text-white" />
+            ) : (
+              <BiPlus className="w-6 h-6" />
+            )}
+          </span>
+          <span className="text-lg">Create a new project</span>
+        </Button>
       </form>
       {projects.isError && <ErrorMessage error={projects.error} />}
       {projects.isLoading ? (
@@ -86,7 +97,7 @@ export default function Projects() {
           {projects.data?.map((project) => (
             <Link
               key={project.id}
-              className="p-4 border rounded-md flex items-center justify-between hover:bg-neutral-100"
+              className="p-4 border rounded-md flex items-center justify-between hover:bg-slate-100 transition-colors duration-200 hover:shadow-sm"
               to={`/project/${project.id}`}
             >
               <div className="flex items-center gap-2">
@@ -95,7 +106,7 @@ export default function Projects() {
                   {project.metadata.name ?? "Untitled"}
                 </div>
               </div>
-              <div className="text-sm text-neutral-400">
+              <div className="text-sm text-slate-400">
                 {new Date(project.createdAt).toLocaleDateString()}
               </div>
             </Link>
@@ -114,7 +125,7 @@ function ErrorMessage({ error }: { error: Error }) {
 
 function NoProjects() {
   return (
-    <div className="text-xl text-neutral-400 max-w-2xl">
+    <div className="text-xl text-slate-400 max-w-2xl">
       You don't have any projects yet.
     </div>
   );

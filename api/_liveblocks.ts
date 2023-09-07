@@ -33,6 +33,42 @@ export async function getProjectBySlug(slug: string): Promise<Project | null> {
 }
 
 /**
+ * Get room by id
+ */
+export async function getProjectById(id: string): Promise<Project | null> {
+  const response = await fetch(`https://api.liveblocks.io/v2/rooms/${id}`, {
+    headers: {
+      Authorization: `Bearer ${LIVEBLOCKS_SECRET_KEY}`,
+      "Content-Type": "application/json",
+    },
+  })
+    .then((res) => res.json())
+    .catch((err) => {
+      console.error(err);
+      return null;
+    });
+
+  if ("error" in response) {
+    return null;
+  }
+
+  return response;
+}
+
+/**
+ * Delete a project given the id
+ */
+export function deleteProject(id: string) {
+  return fetch(`https://api.liveblocks.io/v2/rooms/${id}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${LIVEBLOCKS_SECRET_KEY}`,
+      "Content-Type": "application/json",
+    },
+  });
+}
+
+/**
  * User the room id to get the storage
  * by sending a get request to https://api.liveblocks.io/v2/rooms/{roomId}/storage
  */

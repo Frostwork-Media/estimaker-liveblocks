@@ -2,6 +2,7 @@ import { VercelApiHandler } from "@vercel/node";
 import { userFromSession } from "./_userFromSession";
 import { LIVEBLOCKS_SECRET_KEY } from "./_config";
 import { Project } from "./_types";
+import { getProjectById } from "./_liveblocks";
 
 interface RequestBody {
   roomId: string;
@@ -12,33 +13,23 @@ const setProjectName: VercelApiHandler = async (req, res) => {
   const { roomId, newName } = req.body as RequestBody;
 
   // Get the user from the session
-  const user = await userFromSession(req);
-  if (!user) {
+  const [user, email] = await userFromSession(req);
+  if (!user || !email) {
     res.status(401).end("Unauthorized");
     return;
   }
 
-  const userEmail = user.emailAddresses[0]?.emailAddress;
-
   // Load the room and check if the user has access
-  let response = await fetch(`https://api.liveblocks.io/v2/rooms/${roomId}`, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${LIVEBLOCKS_SECRET_KEY}`,
-      "Content-Type": "application/json",
-    },
-  });
-  if (!response.ok) {
+  const room = await getProjectById(roomId);
+  if (!room) {
     res.status(500).end("Error loading room");
     return;
   }
 
-  const room = (await response.json()) as Project;
-
   // Make sure the user is allowed to add users to the room
   const hasAccess =
-    userEmail in room.usersAccesses
-      ? room.usersAccesses[userEmail].includes("room:write")
+    email in room.usersAccesses
+      ? room.usersAccesses[email].includes("room:write")
       : false;
 
   if (!hasAccess) {
@@ -50,7 +41,7 @@ const setProjectName: VercelApiHandler = async (req, res) => {
   const metadata = { ...room.metadata, name: newName };
 
   // Update the room with the new metadata
-  response = await fetch(`https://api.liveblocks.io/v2/rooms/${roomId}`, {
+  const response = await fetch(`https://api.liveblocks.io/v2/rooms/${roomId}`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${LIVEBLOCKS_SECRET_KEY}`,

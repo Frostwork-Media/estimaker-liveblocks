@@ -3,7 +3,7 @@ import { JWT_PUBLIC_KEY } from "./_config";
 import { verify } from "jsonwebtoken";
 import { clerkClient } from "@clerk/clerk-sdk-node";
 
-export function userFromSession(req: VercelRequest) {
+export async function userFromSession(req: VercelRequest) {
   // lookup clerk public key
   const splitPem = JWT_PUBLIC_KEY.match(/.{1,64}/g);
   if (!splitPem) {
@@ -19,28 +19,32 @@ export function userFromSession(req: VercelRequest) {
 
   // if the session is undefined, return null
   if (!session) {
-    return null;
+    return [null, null] as const;
   }
 
   // verify the JWT
   const decoded = verify(session, publicKey);
 
   if (typeof decoded === "string") {
-    return null;
+    return [null, null] as const;
   }
 
   // check exp and nbf
   if (decoded.exp && decoded.nbf) {
     const now = Math.floor(Date.now() / 1000);
     if (now < decoded.nbf || now > decoded.exp) {
-      return null;
+      return [null, null] as const;
     }
   }
 
   const userId = decoded.sub;
   if (!userId) {
-    return null;
+    return [null, null] as const;
   }
 
-  return clerkClient.users.getUser(userId);
+  const user = await clerkClient.users.getUser(userId);
+  const email = user.emailAddresses[0]?.emailAddress;
+  if (!user || !email) return [null, null] as const;
+
+  return [user, email] as const;
 }
