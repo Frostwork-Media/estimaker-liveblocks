@@ -36,3 +36,7 @@ html {
 .react-flow__attribution {
   display: none;
 }
+
+.black-and-white {
+  filter: grayscale(100%);
+}
