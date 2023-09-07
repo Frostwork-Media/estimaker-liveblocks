@@ -7,11 +7,16 @@ const Projects = lazy(() => import("../pages/Projects"));
 const Project = lazy(() => import("../pages/Project"));
 const Public = lazy(() => import("../pages/Public"));
 const Home = lazy(() => import("../pages/Home"));
+const Ai = lazy(() => import("../pages/Ai"));
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Home />,
+  },
+  {
+    path: "/ai",
+    element: <Ai />,
   },
   {
     path: "/_/public/:project",
