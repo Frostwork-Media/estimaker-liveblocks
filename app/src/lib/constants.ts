@@ -9,17 +9,9 @@ export const customNodeWidthClass = "w-[350px]";
 
 export const squiggleReservedWords = ["to"];
 
-/**
- * #2fbe6f -> hsl(145, 60%, 47%)
-#ef3e36 -> hsl(3, 85%, 54%)
-#00a6f3 -> hsl(204, 100%, 50%)
-#fbec5e -> hsl(56, 93%, 66%)
-#ff8c42 -> hsl(25, 100%, 63%)
- */
 export const nodeColors: { name: string; color: string }[] = [
-  { name: "green", color: "145, 60%, 47%" },
-  { name: "red", color: "3, 85%, 54%" },
-  { name: "blue", color: "204, 100%, 50%" },
-  { name: "burgundy", color: "24, 78%, 36%" },
-  { name: "orange", color: "25, 100%, 63%" },
+  { name: "teal", color: "160, 100%, 30%" },
+  { name: "blue", color: "204, 100%, 40%" },
+  { name: "magenta", color: "330, 45%, 50%" },
+  { name: "red", color: "20, 80%, 50%" },
 ];
