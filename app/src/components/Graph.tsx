@@ -29,6 +29,8 @@ import { createNodes } from "../lib/createNodes";
 import { useEdges } from "@/lib/useEdges";
 import { GraphNode } from "./GraphNode";
 import GraphEdge from "./GraphEdge";
+import { useForwardSlashListener } from "@/lib/hooks";
+import { FloatingPopover } from "./FloatingPopover";
 
 const nodeTypes: NodeTypes = {
   [CUSTOM_NODE]: GraphNode,
@@ -216,34 +218,39 @@ function GraphInner() {
     [addNode, liveAddSuggestedEdge, reactFlowInstance]
   );
 
+  const ref = useForwardSlashListener();
+
   return (
-    <div className="w-full h-full bg-[white]">
-      <ReactFlow
-        nodeTypes={nodeTypes}
-        edgeTypes={edgeTypes}
-        nodes={nodes}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        // snapToGrid={true}
-        // snapGrid={snapGrid}
-        zoomOnDoubleClick={false}
-        onDoubleClick={addNodeOnDblClick}
-        onConnect={onConnect}
-        onConnectStart={onConnectStart}
-        onConnectEnd={onConnectEnd}
-        fitView
-      >
-        <Controls />
-        <Panel position="bottom-center">
-          <NodePanel />
-        </Panel>
-        {/* <Background
+    <>
+      <div className="w-full h-full bg-[white]" ref={ref}>
+        <ReactFlow
+          nodeTypes={nodeTypes}
+          edgeTypes={edgeTypes}
+          nodes={nodes}
+          edges={edges}
+          onNodesChange={onNodesChange}
+          // snapToGrid={true}
+          // snapGrid={snapGrid}
+          zoomOnDoubleClick={false}
+          onDoubleClick={addNodeOnDblClick}
+          onConnect={onConnect}
+          onConnectStart={onConnectStart}
+          onConnectEnd={onConnectEnd}
+          fitView
+        >
+          <Controls />
+          <Panel position="bottom-center">
+            <NodePanel />
+          </Panel>
+          {/* <Background
           variant={BackgroundVariant.Lines}
           gap={25}
           size={1}
           color="#f3f3f3"
         /> */}
-      </ReactFlow>
-    </div>
+        </ReactFlow>
+      </div>
+      <FloatingPopover />
+    </>
   );
 }

@@ -7,7 +7,6 @@ import {
   useOthers,
   useRoom,
   useSelf,
-  useStatus,
   useStorage,
 } from "../liveblocks.config";
 import { lazy, useState } from "react";
@@ -22,12 +21,7 @@ import {
 } from "@/components/ui/tooltip";
 import { Collaborate } from "@/components/Collaborate";
 import { PublishModal } from "@/components/PublishModal";
-import {
-  BiCheck,
-  BiChevronLeft,
-  BiDotsVerticalRounded,
-  BiSave,
-} from "react-icons/bi";
+import { BiChevronLeft, BiDotsVerticalRounded, BiSave } from "react-icons/bi";
 import classNames from "classnames";
 import { PROJECT_HEADER_STYLES } from "../lib/sharedProjectStyles";
 import { SmallSpinner } from "@/components/SmallSpinner";
@@ -36,16 +30,8 @@ import { useIsOwner } from "@/lib/hooks";
 const Graph = lazy(() => import("../components/Graph"));
 
 function Inner() {
-  const status = useStatus();
   const title = useStorage((state) => state.title) ?? "Untitled";
   const isOwner = useIsOwner();
-
-  if (status === "connecting")
-    return (
-      <div className="h-screen flex justify-center items-center">
-        <span className="text-2xl">Connecting...</span>
-      </div>
-    );
 
   return (
     <div className="h-screen grid grid-rows-[auto_minmax(0,1fr)]">
@@ -172,8 +158,8 @@ export default function Project() {
       <ClientSideSuspense
         fallback={
           <div className="h-screen flex justify-center items-center">
-            <span className="text-2xl">
-              Connected <BiCheck className="inline-block w-6 h-6" />
+            <span className="text-2xl animate-pulse text-purple-500">
+              Connecting...
             </span>
           </div>
         }
