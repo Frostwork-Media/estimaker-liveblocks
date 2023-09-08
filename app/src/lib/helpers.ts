@@ -94,3 +94,27 @@ export function readonlyMapToObject<K extends string, V>(
   }
   return obj;
 }
+
+/**
+ * Whether or not the user is editing something
+ */
+export function isEditing() {
+  return [
+    "INPUT",
+    "TEXTAREA",
+    "SELECT",
+    "BUTTON",
+    "A",
+    "LABEL",
+    "SUMMARY",
+    "DETAILS",
+    "TEXTAREA",
+    "OPTION",
+    "OPTGROUP",
+    "PROGRESS",
+    "METER",
+    "OUTPUT",
+    "SELECT",
+    "TEXTAREA",
+  ].some((tagName) => document.activeElement?.tagName === tagName);
+}

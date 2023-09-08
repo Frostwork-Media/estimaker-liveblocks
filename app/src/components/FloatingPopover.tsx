@@ -1,6 +1,6 @@
 import { useClientStore } from "@/lib/useClientStore";
 import classNames from "classnames";
-import { CSSProperties, useEffect, useState } from "react";
+import { CSSProperties, useCallback, useEffect, useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,6 +10,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { BiPlus } from "react-icons/bi";
+import { useAddSquiggleNodeAtPosition } from "@/lib/useLive";
+import { useReactFlow } from "reactflow";
 
 export function FloatingPopover() {
   const floatingPopoverOpen = useClientStore(
@@ -27,6 +29,19 @@ export function FloatingPopover() {
       setOpen(true);
     });
   }, [floatingPopoverOpen]);
+
+  /** Handlers */
+  const addSquiggleNodeAtPosition = useAddSquiggleNodeAtPosition();
+  const reactFlowInstance = useReactFlow();
+  const addSquiggleNode = useCallback(() => {
+    // get the position
+    const position = useClientStore.getState().floatingPopoverMousePosition;
+    if (!position) return;
+
+    const projectedCoords = reactFlowInstance.project(position);
+
+    addSquiggleNodeAtPosition(projectedCoords);
+  }, [addSquiggleNodeAtPosition, reactFlowInstance]);
 
   return (
     <DropdownMenu
@@ -64,7 +79,7 @@ export function FloatingPopover() {
           Add Node
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
+        <DropdownMenuItem onSelect={addSquiggleNode}>
           <img src="/squiggle-logo.png" className="w-4 h-4 mr-2 inline-block" />
           Squiggle
         </DropdownMenuItem>

@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
 import { ProjectMetadata, UserMetadata } from "shared";
 import { useClientStore } from "./useClientStore";
+import { isEditing } from "./helpers";
 
 /** Gets the email for the current user */
 export function useLiveblocksUserId() {
@@ -64,22 +65,7 @@ export function useForwardSlashListener() {
 
     function onKeyDown(e: KeyboardEvent) {
       if (e.key === "/" && !e.repeat) {
-        if (document.activeElement?.tagName === "INPUT") return;
-        if (document.activeElement?.tagName === "TEXTAREA") return;
-        if (document.activeElement?.tagName === "SELECT") return;
-        if (document.activeElement?.tagName === "BUTTON") return;
-        if (document.activeElement?.tagName === "A") return;
-        if (document.activeElement?.tagName === "LABEL") return;
-        if (document.activeElement?.tagName === "SUMMARY") return;
-        if (document.activeElement?.tagName === "DETAILS") return;
-        if (document.activeElement?.tagName === "TEXTAREA") return;
-        if (document.activeElement?.tagName === "OPTION") return;
-        if (document.activeElement?.tagName === "OPTGROUP") return;
-        if (document.activeElement?.tagName === "PROGRESS") return;
-        if (document.activeElement?.tagName === "METER") return;
-        if (document.activeElement?.tagName === "OUTPUT") return;
-        if (document.activeElement?.tagName === "SELECT") return;
-        if (document.activeElement?.tagName === "TEXTAREA") return;
+        if (isEditing()) return;
 
         useClientStore.setState({
           floatingPopoverOpen: true,
