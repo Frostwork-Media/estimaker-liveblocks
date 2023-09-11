@@ -3,12 +3,14 @@ import { createNodes } from "@/lib/createNodes";
 import ReactFlow, { EdgeTypes, NodeTypes, ReactFlowProvider } from "reactflow";
 import { SimplifiedStorage } from "shared";
 import { useEdges } from "@/lib/useEdges";
-import { CUSTOM_EDGE, CUSTOM_NODE } from "@/lib/constants";
+import { CUSTOM_EDGE, CUSTOM_NODE, MANIFOLD_NODE } from "@/lib/constants";
 import { GraphNodeImmutable } from "./GraphNode";
 import { GraphEdgeImmutable } from "./GraphEdge";
+import { ManifoldNode } from "./ManifoldNode";
 
 const nodeTypes: NodeTypes = {
   [CUSTOM_NODE]: GraphNodeImmutable,
+  [MANIFOLD_NODE]: ManifoldNode,
 };
 
 const edgeTypes: EdgeTypes = {

@@ -15,7 +15,7 @@ import type {
   EdgeTypes,
 } from "reactflow";
 import "reactflow/dist/style.css";
-import { CUSTOM_EDGE, CUSTOM_NODE } from "../lib/constants";
+import { CUSTOM_EDGE, CUSTOM_NODE, MANIFOLD_NODE } from "../lib/constants";
 import {
   useAddSquiggleNodeAtPosition,
   useLiveAddSuggestedEdge,
@@ -30,9 +30,11 @@ import { GraphNode } from "./GraphNode";
 import GraphEdge from "./GraphEdge";
 import { useForwardSlashListener } from "@/lib/hooks";
 import { FloatingPopover } from "./FloatingPopover";
+import { ManifoldNode } from "./ManifoldNode";
 
 const nodeTypes: NodeTypes = {
   [CUSTOM_NODE]: GraphNode,
+  [MANIFOLD_NODE]: ManifoldNode,
 };
 
 const edgeTypes: EdgeTypes = {

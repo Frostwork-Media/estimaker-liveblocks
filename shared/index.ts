@@ -61,3 +61,5 @@ export interface SuggestedEdges {
   liveblocksType: string;
   data: { [key: string]: string[] };
 }
+
+export type NodeType = "squiggle" | "manifold" | "metaculus";

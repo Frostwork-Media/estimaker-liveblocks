@@ -13,6 +13,9 @@ import { BiPlus } from "react-icons/bi";
 import { useAddSquiggleNodeAtPosition } from "@/lib/useLive";
 import { useReactFlow } from "reactflow";
 
+/**
+ * A menu that appears over the graph to add nodes
+ */
 export function FloatingPopover() {
   const floatingPopoverOpen = useClientStore(
     (state) => state.floatingPopoverOpen
@@ -42,6 +45,10 @@ export function FloatingPopover() {
 
     addSquiggleNodeAtPosition(projectedCoords);
   }, [addSquiggleNodeAtPosition, reactFlowInstance]);
+
+  const addManifoldNode = useCallback(() => {
+    console.log("Hello World");
+  }, []);
 
   return (
     <DropdownMenu
@@ -83,7 +90,7 @@ export function FloatingPopover() {
           <img src="/squiggle-logo.png" className="w-4 h-4 mr-2 inline-block" />
           Squiggle
         </DropdownMenuItem>
-        <DropdownMenuItem>
+        <DropdownMenuItem onSelect={addManifoldNode}>
           <img
             src="/manifold-market-logo.svg"
             className="w-4 h-4 mr-2 inline-block"
@@ -97,34 +104,4 @@ export function FloatingPopover() {
       </DropdownMenuContent>
     </DropdownMenu>
   );
-
-  // return (
-  //   <Popover.Root
-  //     open={floatingPopoverOpen}
-  //     onOpenChange={(open) => {
-  //       useClientStore.setState({
-  //         floatingPopoverOpen: open,
-  //       });
-  //     }}
-  //   >
-  //     <Popover.Anchor asChild>
-  //       <div
-  //         style={
-  //           floatingPopoverMousePosition
-  //             ? ({
-  //                 "--x": floatingPopoverMousePosition.x + "px",
-  //                 "--y": floatingPopoverMousePosition.y + "px",
-  //               } as CSSProperties)
-  //             : {}
-  //         }
-  //         className={classNames(
-  //           "w-px h-px absolute top-[var(--y)] left-[var(--x)]"
-  //         )}
-  //       />
-  //     </Popover.Anchor>
-  //     <Popover.Portal>
-  //       <PopoverContent className="p-0">Hello World</PopoverContent>
-  //     </Popover.Portal>
-  //   </Popover.Root>
-  // );
 }

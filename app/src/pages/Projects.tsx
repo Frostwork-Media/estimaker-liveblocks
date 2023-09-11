@@ -5,6 +5,7 @@ import { useLiveblocksUserId } from "@/lib/hooks";
 import { StaticPageWrapper } from "@/components/StaticPageWrapper";
 import { BiPlus } from "react-icons/bi";
 import { SmallSpinner } from "@/components/SmallSpinner";
+import { CreateFromSquiggle } from "@/components/CreateFromSquiggle";
 
 export interface Project {
   type: string;
@@ -83,8 +84,14 @@ export default function Projects() {
               <BiPlus className="w-4 h-4" />
             )}
           </span>
-          <span className="text-lg">Create a new project</span>
+          Create a new project
         </Button>
+        <CreateFromSquiggle>
+          <Button variant="secondary">
+            <img src="/squiggle-logo.png" className="w-4 h-4 mr-2" />
+            Create from Squiggle
+          </Button>
+        </CreateFromSquiggle>
       </form>
       {projects.isError && <ErrorMessage error={projects.error} />}
       {projects.isLoading ? (
