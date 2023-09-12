@@ -1,5 +1,5 @@
 import { useMutation, useStorage } from "@/liveblocks.config";
-import { LiveObject } from "@liveblocks/client";
+import { LiveMap, LiveObject } from "@liveblocks/client";
 import { customNodeWidth } from "./constants";
 import { nanoid } from "nanoid";
 
@@ -58,4 +58,38 @@ export function useAddSquiggleNodeAtPosition() {
     // Return the id of the node so that the caller can use it
     return id;
   }, []);
+}
+
+/**
+ * Add a Market Node at the given position
+ */
+export function useAddMarketNodeAtPosition() {
+  return useMutation(
+    (
+      { storage },
+      position: { x: number; y: number; marketType: "Manifold" | "Metaculus" }
+    ) => {
+      let nodes = storage.get("marketNodes");
+
+      // Create marketNodes if it doesn't exist
+      if (!nodes) {
+        nodes = new LiveMap([]);
+        storage.set("marketNodes", nodes);
+      }
+
+      const node = new LiveObject({
+        x: position.x - customNodeWidth / 2,
+        y: position.y - 50,
+        marketType: position.marketType,
+        link: "",
+      });
+
+      const id = nanoid();
+
+      nodes.set(id, node);
+
+      return id;
+    },
+    []
+  );
 }

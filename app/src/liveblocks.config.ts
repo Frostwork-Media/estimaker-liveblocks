@@ -29,9 +29,19 @@ export type Node = LiveObject<{
   metaculus?: string;
 }>;
 
+export type MarketNode = LiveObject<{
+  x: number;
+  y: number;
+  marketType: "Manifold" | "Metaculus";
+  /** This is what is stored to link to the project */
+  link: string;
+  variableName?: string;
+}>;
+
 type Storage = {
   title: string;
   nodes: LiveMap<string, Node>;
+  marketNodes: LiveMap<string, MarketNode>;
   suggestedEdges: LiveMap<string, string[]>;
 };
 

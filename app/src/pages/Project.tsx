@@ -152,6 +152,7 @@ export default function Project() {
       initialStorage={() => ({
         title: "Untitled",
         nodes: new LiveMap([]),
+        marketNodes: new LiveMap([]),
         suggestedEdges: new LiveMap([]),
       })}
     >

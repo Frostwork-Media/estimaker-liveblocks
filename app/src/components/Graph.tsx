@@ -29,7 +29,7 @@ import { useEdges } from "@/lib/useEdges";
 import { GraphNode } from "./GraphNode";
 import GraphEdge from "./GraphEdge";
 import { useForwardSlashListener } from "@/lib/hooks";
-import { FloatingPopover } from "./FloatingPopover";
+import { FloatingGraphDropdown } from "./FloatingGraphDropdown";
 import { ManifoldNode } from "./ManifoldNode";
 
 const nodeTypes: NodeTypes = {
@@ -215,7 +215,7 @@ function GraphInner() {
         /> */}
         </ReactFlow>
       </div>
-      <FloatingPopover />
+      <FloatingGraphDropdown />
     </>
   );
 }

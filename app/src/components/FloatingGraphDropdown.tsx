@@ -10,13 +10,16 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { BiPlus } from "react-icons/bi";
-import { useAddSquiggleNodeAtPosition } from "@/lib/useLive";
+import {
+  useAddMarketNodeAtPosition,
+  useAddSquiggleNodeAtPosition,
+} from "@/lib/useLive";
 import { useReactFlow } from "reactflow";
 
 /**
  * A menu that appears over the graph to add nodes
  */
-export function FloatingPopover() {
+export function FloatingGraphDropdown() {
   const floatingPopoverOpen = useClientStore(
     (state) => state.floatingPopoverOpen
   );
@@ -46,9 +49,20 @@ export function FloatingPopover() {
     addSquiggleNodeAtPosition(projectedCoords);
   }, [addSquiggleNodeAtPosition, reactFlowInstance]);
 
+  const addMarketNodeAtPosition = useAddMarketNodeAtPosition();
   const addManifoldNode = useCallback(() => {
-    console.log("Hello World");
-  }, []);
+    // get the position
+    const position = useClientStore.getState().floatingPopoverMousePosition;
+    if (!position) return;
+
+    const projectedCoords = reactFlowInstance.project(position);
+
+    addMarketNodeAtPosition({
+      marketType: "Manifold",
+      x: projectedCoords.x,
+      y: projectedCoords.y,
+    });
+  }, [addMarketNodeAtPosition, reactFlowInstance]);
 
   return (
     <DropdownMenu
