@@ -21,6 +21,7 @@ import {
   useLiveAddSuggestedEdge,
   useLiveNodes,
   useLiveSuggestedEdges,
+  useLiveMarketNodes,
 } from "@/lib/useLive";
 import { NodePanel } from "./NodePanel";
 import { useGraphStore } from "../lib/useGraphStore";
@@ -53,7 +54,9 @@ function GraphInner() {
   const liveNodes = useLiveNodes();
   const liveNodesArray = Array.from(liveNodes.entries());
   const selectedIds = useGraphStore((state) => state.selected);
-  const nodes = createNodes(liveNodesArray, selectedIds);
+  const marketNodes = useLiveMarketNodes();
+  const marketNodesArray = Array.from(marketNodes.entries());
+  const nodes = createNodes(liveNodesArray, marketNodesArray, selectedIds);
 
   const liveSuggestedEdges = useLiveSuggestedEdges();
   const liveSuggestedEdgesArray = Array.from(liveSuggestedEdges.entries());

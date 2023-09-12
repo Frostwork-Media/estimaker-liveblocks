@@ -26,6 +26,7 @@ export interface Storage {
 export interface SimplifiedStorage {
   title: string;
   nodes: { [key: string]: StaticNodeData };
+  marketNodes: { [key: string]: any };
   suggestedEdges: { [key: string]: string[] };
 }
 
@@ -61,5 +62,3 @@ export interface SuggestedEdges {
   liveblocksType: string;
   data: { [key: string]: string[] };
 }
-
-export type NodeType = "squiggle" | "manifold" | "metaculus";

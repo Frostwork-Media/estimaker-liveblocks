@@ -1,6 +1,6 @@
 import { AppNode } from "./types";
 import { CUSTOM_NODE } from "./constants";
-import { LiveNode } from "@/lib/useLive";
+import { LiveMarketNode, LiveNode } from "@/lib/useLive";
 import { StaticNodeData } from "shared";
 
 /**
@@ -8,6 +8,7 @@ import { StaticNodeData } from "shared";
  */
 export function createNodes(
   nodesArray: [string, LiveNode][] | [string, StaticNodeData][],
+  marketNodes: [string, LiveMarketNode][],
   selectedIds: string[]
 ): AppNode[] {
   const nodes: AppNode[] = [];

@@ -61,6 +61,18 @@ export function useAddSquiggleNodeAtPosition() {
 }
 
 /**
+ * Get manifold and metaculus nodes
+ */
+export function useLiveMarketNodes() {
+  return useStorage((state) => state.marketNodes);
+}
+
+export type LiveMarketNodes = ReturnType<typeof useLiveMarketNodes>;
+export type LiveMarketNode = LiveMarketNodes extends ReadonlyMap<any, infer V>
+  ? V
+  : never;
+
+/**
  * Add a Market Node at the given position
  */
 export function useAddMarketNodeAtPosition() {

@@ -27,7 +27,8 @@ export function PublicGraph(props: SimplifiedStorage) {
 
 function GraphInner(props: SimplifiedStorage) {
   const nodesArray = Object.entries(props.nodes);
-  const nodes = createNodes(nodesArray, []);
+  // TODO: Add real market nodes here
+  const nodes = createNodes(nodesArray, [], []);
   const suggestedEdges = props.suggestedEdges;
   const suggestedEdgesArray = Object.entries(suggestedEdges);
   const edges = useEdges(nodesArray, suggestedEdgesArray);
