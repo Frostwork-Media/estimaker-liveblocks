@@ -15,7 +15,7 @@ import type {
   EdgeTypes,
 } from "reactflow";
 import "reactflow/dist/style.css";
-import { CUSTOM_EDGE, CUSTOM_NODE, MANIFOLD_NODE } from "../lib/constants";
+import { CUSTOM_EDGE, SQUIGGLE_NODE, MANIFOLD_NODE } from "../lib/constants";
 import {
   useAddSquiggleNodeAtPosition,
   useLiveAddSuggestedEdge,
@@ -30,9 +30,10 @@ import GraphEdge from "./GraphEdge";
 import { useForwardSlashListener } from "@/lib/hooks";
 import { FloatingGraphDropdown } from "./FloatingGraphDropdown";
 import { ManifoldNode } from "./ManifoldNode";
+import { mapToObject } from "@/lib/helpers";
 
 const nodeTypes: NodeTypes = {
-  [CUSTOM_NODE]: GraphNode,
+  [SQUIGGLE_NODE]: GraphNode,
   [MANIFOLD_NODE]: ManifoldNode,
 };
 
@@ -50,27 +51,32 @@ export default function Graph() {
 
 function GraphInner() {
   const squiggleNodes = useStorage((state) => state.squiggle);
-  const liveNodesArray = Array.from(squiggleNodes.entries());
+  const squiggle = Array.from(squiggleNodes.entries());
+  const manifold = useStorage((state) => mapToObject(state.manifold));
   const selectedIds = useGraphStore((state) => state.selected);
-  const nodes = createNodes(liveNodesArray, selectedIds);
+  const nodes = createNodes({ squiggle, selectedIds, manifold });
 
   const liveSuggestedEdges = useLiveSuggestedEdges();
   const liveSuggestedEdgesArray = Array.from(liveSuggestedEdges.entries());
 
   // Create edges for react flow
-  const edges = useEdges(liveNodesArray, liveSuggestedEdgesArray);
+  const edges = useEdges(squiggle, liveSuggestedEdgesArray);
 
   const updateNodePosition = useMutation(
-    ({ storage }, id: string, position: { x: number; y: number }) => {
-      const nodes = storage.get("squiggle");
+    (
+      { storage },
+      id: string,
+      args: { nodeType: "squiggle" | "manifold"; x: number; y: number }
+    ) => {
+      const nodes = storage.get(args.nodeType as any);
       const node = nodes.get(id);
       if (!node) return;
-      node.set("x", position.x);
-      node.set("y", position.y);
+      node.set("x", args.x);
+      node.set("y", args.y);
     },
     []
   );
-
+  const reactFlow = useReactFlow();
   const onNodesChange = useCallback<OnNodesChange>(
     (changes) => {
       for (const change of changes) {
@@ -79,7 +85,13 @@ function GraphInner() {
             const position = change.position;
             if (!position) return;
             const { x, y } = position;
-            updateNodePosition(change.id, { x, y });
+            const node = reactFlow.getNode(change.id);
+            if (node)
+              updateNodePosition(change.id, {
+                x,
+                y,
+                nodeType: node.type as any,
+              });
             break;
           }
           case "select": {
@@ -104,7 +116,7 @@ function GraphInner() {
         }
       }
     },
-    [updateNodePosition]
+    [reactFlow, updateNodePosition]
   );
 
   const addSquiggleNode = useAddSquiggleNodeAtPosition();
@@ -193,8 +205,6 @@ function GraphInner() {
           nodes={nodes}
           edges={edges}
           onNodesChange={onNodesChange}
-          // snapToGrid={true}
-          // snapGrid={snapGrid}
           zoomOnDoubleClick={false}
           onDoubleClick={addNodeOnDblClick}
           onConnect={onConnect}
@@ -206,12 +216,6 @@ function GraphInner() {
           <Panel position="bottom-center">
             <NodePanel />
           </Panel>
-          {/* <Background
-          variant={BackgroundVariant.Lines}
-          gap={25}
-          size={1}
-          color="#f3f3f3"
-        /> */}
         </ReactFlow>
       </div>
       <FloatingGraphDropdown />

@@ -23,7 +23,6 @@ export function CreateFromSquiggle({
 }) {
   const [code, setCode] = useState("");
   const createFromSquiggleMutation = useMutation(async () => {
-    console.log(code);
     // wait 3 seconds then return
     await new Promise((resolve) => setTimeout(resolve, 3000));
   });

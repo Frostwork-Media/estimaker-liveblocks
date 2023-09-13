@@ -37,25 +37,13 @@ const VARIABLE_NAME_CLASSES =
  * An individual node in the graphical editor
  */
 export function GraphNode({ data, id }: NodeProps<AppNodeData>) {
-  const { label, variableName, showing, manifold, metaculus } = data;
+  const { label, variableName, showing, metaculus } = data;
   const handleStyle = useMemo(() => {
     return {
       ..._handleStyle,
       backgroundColor: data.color ? `hsl(${data.color})` : undefined,
     };
   }, [data.color]);
-
-  const manifoldQuery = useQuery(
-    ["manifold", manifold],
-    () => {
-      if (manifold) return fetchManifoldData(manifold);
-    },
-    {
-      enabled: !!manifold,
-      // Refetch every 10 minutes
-      refetchInterval: 10 * 60 * 1000,
-    }
-  );
 
   const metaculusQuery = useQuery(
     ["metaculus", metaculus],
@@ -221,16 +209,6 @@ export function GraphNode({ data, id }: NodeProps<AppNodeData>) {
             </ToggleGroup.Item>
           </ToggleGroup.Root>
           {showing === "graph" ? <SquiggleGraph nodeId={id} /> : null}
-          {manifold ? (
-            <MarketLink
-              isLoading={manifoldQuery.isLoading}
-              url={manifoldQuery.data?.url}
-              title={manifoldQuery.data?.question}
-              probability={manifoldQuery.data?.probability}
-              error={!!manifoldQuery.error}
-              community="Manifold"
-            />
-          ) : null}
           {metaculus ? (
             <MarketLink
               isLoading={metaculusQuery.isLoading}
