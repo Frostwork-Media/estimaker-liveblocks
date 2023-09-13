@@ -32,6 +32,8 @@ const Graph = lazy(() => import("../components/Graph"));
 function Inner() {
   const title = useStorage((state) => state.title) ?? "Untitled";
   const isOwner = useIsOwner();
+  const storage = useStorage((x) => x);
+  console.log(storage);
 
   return (
     <div className="h-screen grid grid-rows-[auto_minmax(0,1fr)]">
@@ -151,8 +153,9 @@ export default function Project() {
       initialPresence={{}}
       initialStorage={() => ({
         title: "Untitled",
-        nodes: new LiveMap([]),
-        marketNodes: new LiveMap([]),
+        squiggle: new LiveMap([]),
+        manifold: new LiveMap([]),
+        metaculus: new LiveMap([]),
         suggestedEdges: new LiveMap([]),
       })}
     >

@@ -2,14 +2,13 @@ import { useMemo } from "react";
 import { AppEdge } from "./types";
 import { getVariables } from "./helpers";
 import { CUSTOM_EDGE } from "./constants";
-import { StaticNodeData } from "shared";
-import { LiveNode } from "./useLive";
+import { SquiggleNode } from "shared";
 
 /**
  * Converts the live nodes and suggested edges into a list of react flow edges
  */
 export function useEdges(
-  nodesArray: [string, LiveNode][] | [string, StaticNodeData][],
+  nodesArray: [string, SquiggleNode][],
   suggestedEdgesArray: [string, string[]][]
 ) {
   return useMemo<AppEdge[]>(() => {

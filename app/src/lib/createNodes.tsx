@@ -1,19 +1,18 @@
 import { AppNode } from "./types";
 import { CUSTOM_NODE } from "./constants";
-import { LiveMarketNode, LiveNode } from "@/lib/useLive";
-import { StaticNodeData } from "shared";
+import { AnyNode } from "shared";
 
 /**
  * Converts LiveNodes and selectedIds to ReactFlow nodes
  */
 export function createNodes(
-  nodesArray: [string, LiveNode][] | [string, StaticNodeData][],
-  marketNodes: [string, LiveMarketNode][],
+  nodesArray: [string, AnyNode][],
   selectedIds: string[]
 ): AppNode[] {
   const nodes: AppNode[] = [];
 
   for (const [id, node] of nodesArray) {
+    if (node.nodeType !== "squiggle") continue;
     nodes.push({
       id,
       data: {

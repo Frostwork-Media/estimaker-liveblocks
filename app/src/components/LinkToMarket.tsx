@@ -9,16 +9,14 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "./ui/input";
-import { useMutation, useStorage } from "@/liveblocks.config";
+import { useMutation } from "@/liveblocks.config";
 import { useState } from "react";
 
 export function LinkToMarket({ selected }: { selected: string[] }) {
   const nodeId = selected[0];
-  const manifold = useStorage((state) => state.nodes.get(nodeId)?.manifold);
-  const metaculus = useStorage((state) => state.nodes.get(nodeId)?.metaculus);
   const linkToMarket = useMutation(
     ({ storage }, market: "manifold" | "metaculus", value: string) => {
-      const nodes = storage.get("nodes");
+      const nodes = storage.get("squiggle");
       const node = nodes.get(nodeId);
       if (!node) return;
       node.set(market, value);
@@ -27,7 +25,7 @@ export function LinkToMarket({ selected }: { selected: string[] }) {
   );
   const removeMarket = useMutation(
     ({ storage }, market: "manifold" | "metaculus") => {
-      const nodes = storage.get("nodes");
+      const nodes = storage.get("squiggle");
       const node = nodes.get(nodeId);
       if (!node) return;
       node.delete(market);
@@ -54,7 +52,6 @@ export function LinkToMarket({ selected }: { selected: string[] }) {
             title="Manifold Markets"
             description="Enter the slug of the market you want to link to."
             placeholder="will-the-lk99-room-temp-ambient-pre"
-            currentValue={manifold}
             save={(value: string) => {
               linkToMarket("manifold", value);
             }}
@@ -64,7 +61,6 @@ export function LinkToMarket({ selected }: { selected: string[] }) {
             title="Metaculus"
             description="Enter the id of the question you want to link to."
             placeholder="11589"
-            currentValue={metaculus}
             save={(value: string) => {
               linkToMarket("metaculus", value);
             }}

@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { useMutation } from "../liveblocks.config";
+import { useMutation, useStorage } from "../liveblocks.config";
 import ReactFlow, {
   Controls,
   OnConnect,
@@ -19,9 +19,7 @@ import { CUSTOM_EDGE, CUSTOM_NODE, MANIFOLD_NODE } from "../lib/constants";
 import {
   useAddSquiggleNodeAtPosition,
   useLiveAddSuggestedEdge,
-  useLiveNodes,
   useLiveSuggestedEdges,
-  useLiveMarketNodes,
 } from "@/lib/useLive";
 import { NodePanel } from "./NodePanel";
 import { useGraphStore } from "../lib/useGraphStore";
@@ -51,12 +49,10 @@ export default function Graph() {
 }
 
 function GraphInner() {
-  const liveNodes = useLiveNodes();
-  const liveNodesArray = Array.from(liveNodes.entries());
+  const squiggleNodes = useStorage((state) => state.squiggle);
+  const liveNodesArray = Array.from(squiggleNodes.entries());
   const selectedIds = useGraphStore((state) => state.selected);
-  const marketNodes = useLiveMarketNodes();
-  const marketNodesArray = Array.from(marketNodes.entries());
-  const nodes = createNodes(liveNodesArray, marketNodesArray, selectedIds);
+  const nodes = createNodes(liveNodesArray, selectedIds);
 
   const liveSuggestedEdges = useLiveSuggestedEdges();
   const liveSuggestedEdgesArray = Array.from(liveSuggestedEdges.entries());
@@ -66,7 +62,7 @@ function GraphInner() {
 
   const updateNodePosition = useMutation(
     ({ storage }, id: string, position: { x: number; y: number }) => {
-      const nodes = storage.get("nodes");
+      const nodes = storage.get("squiggle");
       const node = nodes.get(id);
       if (!node) return;
       node.set("x", position.x);

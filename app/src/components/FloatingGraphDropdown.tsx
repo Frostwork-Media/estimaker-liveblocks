@@ -10,10 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { BiPlus } from "react-icons/bi";
-import {
-  useAddMarketNodeAtPosition,
-  useAddSquiggleNodeAtPosition,
-} from "@/lib/useLive";
+import { useAddSquiggleNodeAtPosition } from "@/lib/useLive";
 import { useReactFlow } from "reactflow";
 
 /**
@@ -48,21 +45,6 @@ export function FloatingGraphDropdown() {
 
     addSquiggleNodeAtPosition(projectedCoords);
   }, [addSquiggleNodeAtPosition, reactFlowInstance]);
-
-  const addMarketNodeAtPosition = useAddMarketNodeAtPosition();
-  const addManifoldNode = useCallback(() => {
-    // get the position
-    const position = useClientStore.getState().floatingPopoverMousePosition;
-    if (!position) return;
-
-    const projectedCoords = reactFlowInstance.project(position);
-
-    addMarketNodeAtPosition({
-      marketType: "Manifold",
-      x: projectedCoords.x,
-      y: projectedCoords.y,
-    });
-  }, [addMarketNodeAtPosition, reactFlowInstance]);
 
   return (
     <DropdownMenu
@@ -104,7 +86,7 @@ export function FloatingGraphDropdown() {
           <img src="/squiggle-logo.png" className="w-4 h-4 mr-2 inline-block" />
           Squiggle
         </DropdownMenuItem>
-        <DropdownMenuItem onSelect={addManifoldNode}>
+        <DropdownMenuItem>
           <img
             src="/manifold-market-logo.svg"
             className="w-4 h-4 mr-2 inline-block"

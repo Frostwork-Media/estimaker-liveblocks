@@ -1,7 +1,7 @@
 import { Handle, Position } from "reactflow";
 import type { NodeProps } from "reactflow";
 import { AppNodeData } from "../lib/types";
-import { NodeValue, NodeValueImmutable } from "./NodeValue";
+import { SquiggleNodeValue, NodeValueImmutable } from "./SquiggleNodeValue";
 import { RxBarChart, RxCross1 } from "react-icons/rx";
 import { useMutation } from "../liveblocks.config";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -15,7 +15,6 @@ import { fetchManifoldData } from "@/lib/fetchManifoldData";
 import { fetchMetaculusData } from "@/lib/fetchMetaculusData";
 import { MarketLink } from "./MarketLink";
 import classNames from "classnames";
-import { useLiveNodes } from "@/lib/useLive";
 import { usePublicStoreOrThrow } from "@/lib/usePublicStore";
 
 const TITLE_CLASSES =
@@ -71,15 +70,12 @@ export function GraphNode({ data, id }: NodeProps<AppNodeData>) {
     }
   );
 
-  const liveNodes = useLiveNodes();
-  const nodesArray = Array.from(liveNodes.entries());
-
   /** -- Here is where mutation related code begins -- */
 
   const deleteNode = useMutation(
     ({ storage }) => {
       if (!window.confirm("Are you sure you want to delete this node?")) return;
-      const nodes = storage.get("nodes");
+      const nodes = storage.get("squiggle");
       nodes.delete(id);
     },
     [id]
@@ -89,7 +85,7 @@ export function GraphNode({ data, id }: NodeProps<AppNodeData>) {
   const [currentLabel, setCurrentLabel] = useState(label);
   const setLabel = useMutation(
     ({ storage }, label: string) => {
-      const nodes = storage.get("nodes");
+      const nodes = storage.get("squiggle");
       const node = nodes.get(id);
       if (!node) return;
       node.set("content", label);
@@ -111,7 +107,7 @@ export function GraphNode({ data, id }: NodeProps<AppNodeData>) {
   // squiggle code
   const setShowing = useMutation(
     ({ storage }, showing?: "graph") => {
-      const nodes = storage.get("nodes");
+      const nodes = storage.get("squiggle");
       const node = nodes.get(id);
       if (!node) return;
       node.set("showing", showing);
@@ -127,7 +123,7 @@ export function GraphNode({ data, id }: NodeProps<AppNodeData>) {
         newVariableName,
       }: { oldVariableName: string; newVariableName: string }
     ) => {
-      const nodes = storage.get("nodes");
+      const nodes = storage.get("squiggle");
       for (const node of nodes.values()) {
         const variableName = node.get("variableName");
         if (variableName === oldVariableName)
@@ -208,7 +204,7 @@ export function GraphNode({ data, id }: NodeProps<AppNodeData>) {
           >
             {`{${variableName}}`}
           </button>
-          <NodeValue nodeId={id} />
+          <SquiggleNodeValue nodeId={id} />
           <ToggleGroup.Root
             className={TOGGLE_GROUP_CLASSES}
             type="single"
@@ -226,8 +222,9 @@ export function GraphNode({ data, id }: NodeProps<AppNodeData>) {
             </ToggleGroup.Item>
           </ToggleGroup.Root>
           {showing === "graph" ? (
-            <SquiggleGraph nodes={nodesArray} nodeId={id} />
-          ) : null}
+            <div>A SQUIGGLE GRAPH COOL</div>
+          ) : // <SquiggleGraph nodes={nodesArray} nodeId={id} />
+          null}
           {manifold ? (
             <MarketLink
               isLoading={manifoldQuery.isLoading}
@@ -293,8 +290,8 @@ export function GraphNodeImmutable({ data, id }: NodeProps<AppNodeData>) {
     }
   );
 
-  const nodesArray = usePublicStoreOrThrow((s) =>
-    Object.entries(s.storage.nodes)
+  const squiggleNodesArray = usePublicStoreOrThrow((s) =>
+    Object.entries(s.storage.squiggle)
   );
 
   return (
@@ -330,7 +327,7 @@ export function GraphNodeImmutable({ data, id }: NodeProps<AppNodeData>) {
             </ToggleGroup.Item>
           </ToggleGroup.Root>
           {showing === "graph" ? (
-            <SquiggleGraph nodes={nodesArray} nodeId={id} />
+            <SquiggleGraph nodes={squiggleNodesArray} nodeId={id} />
           ) : null}
 
           {manifold ? (
