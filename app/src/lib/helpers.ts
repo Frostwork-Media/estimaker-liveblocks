@@ -118,3 +118,16 @@ export function isEditing() {
     "TEXTAREA",
   ].some((tagName) => document.activeElement?.tagName === tagName);
 }
+
+/**
+ * Converts a ReadonlyMap to a regular javascript object
+ */
+export function mapToObject<K extends string, V>(
+  map: ReadonlyMap<K, V>
+): Record<K, V> {
+  const obj = {} as Record<K, V>;
+  for (const [key, value] of map) {
+    obj[key] = value;
+  }
+  return obj;
+}

@@ -15,7 +15,6 @@ import { fetchManifoldData } from "@/lib/fetchManifoldData";
 import { fetchMetaculusData } from "@/lib/fetchMetaculusData";
 import { MarketLink } from "./MarketLink";
 import classNames from "classnames";
-import { usePublicStoreOrThrow } from "@/lib/usePublicStore";
 
 const TITLE_CLASSES =
   "text-left py-2 rounded leading-7 text-4xl leading-tight resize-none focus:outline-none focus:ring-0 focus:border-transparent bg-transparent";
@@ -221,10 +220,7 @@ export function GraphNode({ data, id }: NodeProps<AppNodeData>) {
               <RxBarChart />
             </ToggleGroup.Item>
           </ToggleGroup.Root>
-          {showing === "graph" ? (
-            <div>A SQUIGGLE GRAPH COOL</div>
-          ) : // <SquiggleGraph nodes={nodesArray} nodeId={id} />
-          null}
+          {showing === "graph" ? <SquiggleGraph nodeId={id} /> : null}
           {manifold ? (
             <MarketLink
               isLoading={manifoldQuery.isLoading}
@@ -290,10 +286,6 @@ export function GraphNodeImmutable({ data, id }: NodeProps<AppNodeData>) {
     }
   );
 
-  const squiggleNodesArray = usePublicStoreOrThrow((s) =>
-    Object.entries(s.storage.squiggle)
-  );
-
   return (
     <>
       <Handle type="target" position={Position.Top} style={handleStyle} />
@@ -326,9 +318,7 @@ export function GraphNodeImmutable({ data, id }: NodeProps<AppNodeData>) {
               <RxBarChart />
             </ToggleGroup.Item>
           </ToggleGroup.Root>
-          {showing === "graph" ? (
-            <SquiggleGraph nodes={squiggleNodesArray} nodeId={id} />
-          ) : null}
+          {showing === "graph" ? <SquiggleGraph nodeId={id} /> : null}
 
           {manifold ? (
             <MarketLink

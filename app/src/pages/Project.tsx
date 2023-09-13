@@ -13,7 +13,7 @@ import { lazy, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useMutation as useRQMutation } from "@tanstack/react-query";
 import AutosizeInput from "react-input-autosize";
-import { useSquigglePlaygroundUrl } from "@/lib/helpers";
+import { mapToObject, useSquigglePlaygroundUrl } from "@/lib/helpers";
 import {
   Tooltip,
   TooltipContent,
@@ -27,41 +27,43 @@ import { PROJECT_HEADER_STYLES } from "../lib/sharedProjectStyles";
 import { SmallSpinner } from "@/components/SmallSpinner";
 import { ProjectSettings } from "@/components/ProjectSettings";
 import { useIsOwner } from "@/lib/hooks";
+import { SquiggleNodesProvider } from "@/components/SquiggleNodesProvider";
 const Graph = lazy(() => import("../components/Graph"));
 
 function Inner() {
   const title = useStorage((state) => state.title) ?? "Untitled";
   const isOwner = useIsOwner();
-  const storage = useStorage((x) => x);
-  console.log(storage);
+  const squiggleNodes = useStorage((x) => x.squiggle);
 
   return (
-    <div className="h-screen grid grid-rows-[auto_minmax(0,1fr)]">
-      <header className={classNames(PROJECT_HEADER_STYLES, "pr-1")}>
-        <Button variant="ghost" size="icon" asChild>
-          <Link to="/app/projects">
-            <BiChevronLeft className="w-6 h-6 translate-x-px inline mr-1" />
-          </Link>
-        </Button>
-        <PageTitle />
-        <div className="ml-auto flex gap-1">
-          <UsersInRoom />
-          <SquigglePlayground />
-          {isOwner ? (
-            <>
-              <Collaborate />
-              <PublishModal />
-              <ProjectSettings name={title}>
-                <Button variant="secondary" size="icon">
-                  <BiDotsVerticalRounded className="w-6 h-6" />
-                </Button>
-              </ProjectSettings>
-            </>
-          ) : null}
-        </div>
-      </header>
-      <Graph />
-    </div>
+    <SquiggleNodesProvider nodes={mapToObject(squiggleNodes)}>
+      <div className="h-screen grid grid-rows-[auto_minmax(0,1fr)]">
+        <header className={classNames(PROJECT_HEADER_STYLES, "pr-1")}>
+          <Button variant="ghost" size="icon" asChild>
+            <Link to="/app/projects">
+              <BiChevronLeft className="w-6 h-6 translate-x-px inline mr-1" />
+            </Link>
+          </Button>
+          <PageTitle />
+          <div className="ml-auto flex gap-1">
+            <UsersInRoom />
+            <SquigglePlayground />
+            {isOwner ? (
+              <>
+                <Collaborate />
+                <PublishModal />
+                <ProjectSettings name={title}>
+                  <Button variant="secondary" size="icon">
+                    <BiDotsVerticalRounded className="w-6 h-6" />
+                  </Button>
+                </ProjectSettings>
+              </>
+            ) : null}
+          </div>
+        </header>
+        <Graph />
+      </div>
+    </SquiggleNodesProvider>
   );
 }
 
