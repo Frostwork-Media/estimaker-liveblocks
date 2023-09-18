@@ -1,9 +1,9 @@
 import { useMemo } from "react";
 import { squiggleReservedWords } from "./constants";
-import { useLiveNodes } from "./useLive";
 import { fromByteArray } from "base64-js";
 import { deflate } from "pako";
 import toposort from "toposort";
+import { useStorage } from "@/liveblocks.config";
 
 /** Finds variable names in a value */
 export function getVariables(value: string) {
@@ -18,7 +18,7 @@ export function getVariables(value: string) {
 }
 
 export function useProjectCode() {
-  const liveNodes = useLiveNodes();
+  const liveNodes = useStorage((storage) => storage.squiggle);
   const nodesArray = Array.from(liveNodes.entries());
   const squiggleCode = useMemo(() => {
     try {
@@ -117,4 +117,17 @@ export function isEditing() {
     "SELECT",
     "TEXTAREA",
   ].some((tagName) => document.activeElement?.tagName === tagName);
+}
+
+/**
+ * Converts a ReadonlyMap to a regular javascript object
+ */
+export function mapToObject<K extends string, V>(
+  map: ReadonlyMap<K, V>
+): Record<K, V> {
+  const obj = {} as Record<K, V>;
+  for (const [key, value] of map) {
+    obj[key] = value;
+  }
+  return obj;
 }

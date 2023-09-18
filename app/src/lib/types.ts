@@ -1,10 +1,10 @@
 import type { Node, Edge } from "reactflow";
-import { LiveNode } from "./useLive";
+import { SquiggleNode } from "shared";
 
 export type AppNodeData = {
   label: string;
   selfValue: string;
-} & LiveNode;
+} & SquiggleNode;
 
 export type AppNode = Node<AppNodeData>;
 

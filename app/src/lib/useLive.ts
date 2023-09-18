@@ -2,19 +2,16 @@ import { useMutation, useStorage } from "@/liveblocks.config";
 import { LiveObject } from "@liveblocks/client";
 import { customNodeWidth } from "./constants";
 import { nanoid } from "nanoid";
+import { ManifoldNode, SquiggleNode } from "shared";
 
-export function useLiveNodes() {
-  return useStorage((state) => state.nodes);
-}
-
-export type LiveNodes = ReturnType<typeof useLiveNodes>;
-export type LiveNode = LiveNodes extends ReadonlyMap<any, infer V> ? V : never;
+// export type LiveNodes = ReturnType<typeof useLiveNodes>;
+// export type LiveNode = LiveNodes extends ReadonlyMap<any, infer V> ? V : never;
 
 export function useLiveSuggestedEdges() {
   return useStorage((state) => state.suggestedEdges);
 }
 
-export type LiveSuggestedEdges = ReturnType<typeof useLiveSuggestedEdges>;
+// export type LiveSuggestedEdges = ReturnType<typeof useLiveSuggestedEdges>;
 
 export function useLiveAddSuggestedEdge() {
   return useMutation(({ storage }, dependency: [string, string]) => {
@@ -25,8 +22,9 @@ export function useLiveAddSuggestedEdge() {
 
 export function useAddSquiggleNodeAtPosition() {
   return useMutation(({ storage }, position: { x: number; y: number }) => {
-    const nodes = storage.get("nodes");
-    const node = new LiveObject({
+    const nodes = storage.get("squiggle");
+    const node = new LiveObject<SquiggleNode>({
+      nodeType: "squiggle",
       content: "",
       variableName: `var${nodes.size + 1}`,
       // We move the x position back by half of the node width, so it's centered
@@ -54,6 +52,26 @@ export function useAddSquiggleNodeAtPosition() {
       // click it
       renameButton.click();
     }, 100);
+
+    // Return the id of the node so that the caller can use it
+    return id;
+  }, []);
+}
+
+/**
+ * Add a manifold node at the given position
+ */
+export function useAddManifoldNodeAtPosition() {
+  return useMutation(({ storage }, position: { x: number; y: number }) => {
+    const manifold = storage.get("manifold");
+    const node = new LiveObject<ManifoldNode>({
+      nodeType: "manifold",
+      x: position.x - customNodeWidth / 2,
+      y: position.y - 50,
+      link: "",
+    });
+    const id = nanoid();
+    manifold.set(id, node);
 
     // Return the id of the node so that the caller can use it
     return id;

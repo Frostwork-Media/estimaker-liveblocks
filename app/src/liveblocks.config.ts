@@ -1,5 +1,6 @@
 import { createClient, LiveObject, LiveMap } from "@liveblocks/client";
 import { createRoomContext } from "@liveblocks/react";
+import { ManifoldNode, MetaculusNode, SquiggleNode } from "shared";
 
 export const client = createClient({
   authEndpoint: "/api/liveblocks-auth",
@@ -14,24 +15,15 @@ type Presence = {
   // ...
 };
 
-export type Node = LiveObject<{
-  content: string;
-  variableName: string;
-  x: number;
-  y: number;
-  value: string;
-  showing?: "graph";
-  /** An HSL interior string that can be used to style text or edges */
-  color?: string;
-  /** Link to a manifold market user/slug */
-  manifold?: string;
-  /** Link to a metaculus question id */
-  metaculus?: string;
-}>;
+export type LiveSquiggleNode = LiveObject<SquiggleNode>;
+export type LiveManifoldNode = LiveObject<ManifoldNode>;
+export type LiveMetaculusNode = LiveObject<MetaculusNode>;
 
 type Storage = {
   title: string;
-  nodes: LiveMap<string, Node>;
+  squiggle: LiveMap<string, LiveSquiggleNode>;
+  manifold: LiveMap<string, LiveManifoldNode>;
+  metaculus: LiveMap<string, LiveMetaculusNode>;
   suggestedEdges: LiveMap<string, string[]>;
 };
 

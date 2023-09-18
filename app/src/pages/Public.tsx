@@ -1,4 +1,5 @@
 import { PublicGraph } from "@/components/PublicGraph";
+import { SquiggleNodesProvider } from "@/components/SquiggleNodesProvider";
 import { PROJECT_HEADER_STYLES } from "@/lib/sharedProjectStyles";
 import { PublicStoreContext, createPublicStore } from "@/lib/usePublicStore";
 import { useQuery } from "@tanstack/react-query";
@@ -35,12 +36,14 @@ export default function Public() {
 
   return (
     <PublicStoreContext.Provider value={store}>
-      <div className="h-screen w-full grid grid-rows-[auto_minmax(0,1fr)]">
-        <header className={classNames(PROJECT_HEADER_STYLES, "py-2")}>
-          <h1 className="text-xl">{publicProject.data.metadata.name}</h1>
-        </header>
-        <PublicGraph {...publicProject.data.storage} />
-      </div>
+      <SquiggleNodesProvider nodes={publicProject.data.storage.squiggle}>
+        <div className="h-screen w-full grid grid-rows-[auto_minmax(0,1fr)]">
+          <header className={classNames(PROJECT_HEADER_STYLES, "py-2")}>
+            <h1 className="text-xl">{publicProject.data.metadata.name}</h1>
+          </header>
+          <PublicGraph {...publicProject.data.storage} />
+        </div>
+      </SquiggleNodesProvider>
     </PublicStoreContext.Provider>
   );
 }

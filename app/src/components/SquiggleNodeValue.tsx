@@ -3,11 +3,11 @@ import { useMutation, useStorage } from "../liveblocks.config";
 const INPUT_CLASSES =
   "py-1 px-2 font-mono rounded-r text-neutral-600 text-sm w-full h-8 grow focus:outline-none";
 
-export function NodeValue({ nodeId }: { nodeId: string }) {
-  const node = useStorage((state) => state.nodes.get(nodeId));
+export function SquiggleNodeValue({ nodeId }: { nodeId: string }) {
+  const node = useStorage((state) => state.squiggle.get(nodeId));
 
   const setNodeValue = useMutation(({ storage }, value: string) => {
-    const node = storage.get("nodes").get(nodeId);
+    const node = storage.get("squiggle").get(nodeId);
     if (!node) return;
     node.set("value", value);
   }, []);

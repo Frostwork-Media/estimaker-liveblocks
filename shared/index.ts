@@ -1,3 +1,6 @@
+import { ManifoldNode, MetaculusNode, SquiggleNode } from "./nodes";
+export * from "./nodes";
+
 export type ProjectMetadata = {
   name: string;
   public: "true" | "false";
@@ -18,46 +21,10 @@ export interface PublicProject {
   storage: SimplifiedStorage;
 }
 
-export interface Storage {
-  liveblocksType: string;
-  data: StorageData;
-}
-
 export interface SimplifiedStorage {
   title: string;
-  nodes: { [key: string]: StaticNodeData };
+  squiggle: { [key: string]: SquiggleNode };
+  manifold: { [key: string]: ManifoldNode };
+  metaculus: { [key: string]: MetaculusNode };
   suggestedEdges: { [key: string]: string[] };
-}
-
-export interface StorageData {
-  title: string;
-  nodes: Nodes;
-  suggestedEdges: SuggestedEdges;
-}
-
-export interface Nodes {
-  liveblocksType: string;
-  data: { [key: string]: StaticNode };
-}
-
-export interface StaticNode {
-  liveblocksType: string;
-  data: StaticNodeData;
-}
-
-export interface StaticNodeData {
-  content: string;
-  variableName: string;
-  x: number;
-  y: number;
-  value: string;
-  color: string;
-  showing?: "graph";
-  manifold?: string;
-  metaculus?: string;
-}
-
-export interface SuggestedEdges {
-  liveblocksType: string;
-  data: { [key: string]: string[] };
 }

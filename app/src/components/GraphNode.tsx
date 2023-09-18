@@ -1,7 +1,7 @@
 import { Handle, Position } from "reactflow";
 import type { NodeProps } from "reactflow";
 import { AppNodeData } from "../lib/types";
-import { NodeValue, NodeValueImmutable } from "./NodeValue";
+import { SquiggleNodeValue, NodeValueImmutable } from "./SquiggleNodeValue";
 import { RxBarChart, RxCross1 } from "react-icons/rx";
 import { useMutation } from "../liveblocks.config";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -15,8 +15,6 @@ import { fetchManifoldData } from "@/lib/fetchManifoldData";
 import { fetchMetaculusData } from "@/lib/fetchMetaculusData";
 import { MarketLink } from "./MarketLink";
 import classNames from "classnames";
-import { useLiveNodes } from "@/lib/useLive";
-import { usePublicStoreOrThrow } from "@/lib/usePublicStore";
 
 const TITLE_CLASSES =
   "text-left py-2 rounded leading-7 text-4xl leading-tight resize-none focus:outline-none focus:ring-0 focus:border-transparent bg-transparent";
@@ -39,25 +37,13 @@ const VARIABLE_NAME_CLASSES =
  * An individual node in the graphical editor
  */
 export function GraphNode({ data, id }: NodeProps<AppNodeData>) {
-  const { label, variableName, showing, manifold, metaculus } = data;
+  const { label, variableName, showing, metaculus } = data;
   const handleStyle = useMemo(() => {
     return {
       ..._handleStyle,
       backgroundColor: data.color ? `hsl(${data.color})` : undefined,
     };
   }, [data.color]);
-
-  const manifoldQuery = useQuery(
-    ["manifold", manifold],
-    () => {
-      if (manifold) return fetchManifoldData(manifold);
-    },
-    {
-      enabled: !!manifold,
-      // Refetch every 10 minutes
-      refetchInterval: 10 * 60 * 1000,
-    }
-  );
 
   const metaculusQuery = useQuery(
     ["metaculus", metaculus],
@@ -71,15 +57,12 @@ export function GraphNode({ data, id }: NodeProps<AppNodeData>) {
     }
   );
 
-  const liveNodes = useLiveNodes();
-  const nodesArray = Array.from(liveNodes.entries());
-
   /** -- Here is where mutation related code begins -- */
 
   const deleteNode = useMutation(
     ({ storage }) => {
       if (!window.confirm("Are you sure you want to delete this node?")) return;
-      const nodes = storage.get("nodes");
+      const nodes = storage.get("squiggle");
       nodes.delete(id);
     },
     [id]
@@ -89,7 +72,7 @@ export function GraphNode({ data, id }: NodeProps<AppNodeData>) {
   const [currentLabel, setCurrentLabel] = useState(label);
   const setLabel = useMutation(
     ({ storage }, label: string) => {
-      const nodes = storage.get("nodes");
+      const nodes = storage.get("squiggle");
       const node = nodes.get(id);
       if (!node) return;
       node.set("content", label);
@@ -111,7 +94,7 @@ export function GraphNode({ data, id }: NodeProps<AppNodeData>) {
   // squiggle code
   const setShowing = useMutation(
     ({ storage }, showing?: "graph") => {
-      const nodes = storage.get("nodes");
+      const nodes = storage.get("squiggle");
       const node = nodes.get(id);
       if (!node) return;
       node.set("showing", showing);
@@ -127,7 +110,7 @@ export function GraphNode({ data, id }: NodeProps<AppNodeData>) {
         newVariableName,
       }: { oldVariableName: string; newVariableName: string }
     ) => {
-      const nodes = storage.get("nodes");
+      const nodes = storage.get("squiggle");
       for (const node of nodes.values()) {
         const variableName = node.get("variableName");
         if (variableName === oldVariableName)
@@ -208,7 +191,7 @@ export function GraphNode({ data, id }: NodeProps<AppNodeData>) {
           >
             {`{${variableName}}`}
           </button>
-          <NodeValue nodeId={id} />
+          <SquiggleNodeValue nodeId={id} />
           <ToggleGroup.Root
             className={TOGGLE_GROUP_CLASSES}
             type="single"
@@ -225,19 +208,7 @@ export function GraphNode({ data, id }: NodeProps<AppNodeData>) {
               <RxBarChart />
             </ToggleGroup.Item>
           </ToggleGroup.Root>
-          {showing === "graph" ? (
-            <SquiggleGraph nodes={nodesArray} nodeId={id} />
-          ) : null}
-          {manifold ? (
-            <MarketLink
-              isLoading={manifoldQuery.isLoading}
-              url={manifoldQuery.data?.url}
-              title={manifoldQuery.data?.question}
-              probability={manifoldQuery.data?.probability}
-              error={!!manifoldQuery.error}
-              community="Manifold"
-            />
-          ) : null}
+          {showing === "graph" ? <SquiggleGraph nodeId={id} /> : null}
           {metaculus ? (
             <MarketLink
               isLoading={metaculusQuery.isLoading}
@@ -293,10 +264,6 @@ export function GraphNodeImmutable({ data, id }: NodeProps<AppNodeData>) {
     }
   );
 
-  const nodesArray = usePublicStoreOrThrow((s) =>
-    Object.entries(s.storage.nodes)
-  );
-
   return (
     <>
       <Handle type="target" position={Position.Top} style={handleStyle} />
@@ -329,9 +296,7 @@ export function GraphNodeImmutable({ data, id }: NodeProps<AppNodeData>) {
               <RxBarChart />
             </ToggleGroup.Item>
           </ToggleGroup.Root>
-          {showing === "graph" ? (
-            <SquiggleGraph nodes={nodesArray} nodeId={id} />
-          ) : null}
+          {showing === "graph" ? <SquiggleGraph nodeId={id} /> : null}
 
           {manifold ? (
             <MarketLink

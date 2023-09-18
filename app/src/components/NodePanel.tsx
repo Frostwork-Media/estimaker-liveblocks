@@ -8,7 +8,6 @@ import {
 } from "@/components/ui/popover";
 import { nodeColors } from "@/lib/constants";
 import { useMutation } from "@/liveblocks.config";
-import { LinkToMarket } from "./LinkToMarket";
 
 export function NodePanel() {
   const selected = useGraphStore((state) => state.selected);
@@ -19,7 +18,7 @@ export function NodePanel() {
       </PopoverTrigger>
       <PopoverContent className="flex border border-neutral-300 rounded-lg p-2 shadow bg-white w-auto">
         <ChangeNodeColor selected={selected} />
-        <LinkToMarket selected={selected} />
+        {/* <LinkToMarket selected={selected} /> */}
       </PopoverContent>
     </Popover>
   );
@@ -38,7 +37,7 @@ function ChangeNodeColor({ selected }: { selected: string[] }) {
       }
     ) => {
       if (!id || !color) return;
-      const nodes = storage.get("nodes");
+      const nodes = storage.get("squiggle");
       const node = nodes.get(id);
       if (!node) return;
       node.set("color", color);
@@ -47,7 +46,7 @@ function ChangeNodeColor({ selected }: { selected: string[] }) {
   );
   const removeColor = useMutation(({ storage }, id: string) => {
     if (!id) return;
-    const nodes = storage.get("nodes");
+    const nodes = storage.get("squiggle");
     const node = nodes.get(id);
     if (!node) return;
     node.delete("color");

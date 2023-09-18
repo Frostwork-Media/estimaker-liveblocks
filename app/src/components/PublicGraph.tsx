@@ -3,12 +3,14 @@ import { createNodes } from "@/lib/createNodes";
 import ReactFlow, { EdgeTypes, NodeTypes, ReactFlowProvider } from "reactflow";
 import { SimplifiedStorage } from "shared";
 import { useEdges } from "@/lib/useEdges";
-import { CUSTOM_EDGE, CUSTOM_NODE } from "@/lib/constants";
+import { CUSTOM_EDGE, SQUIGGLE_NODE, MANIFOLD_NODE } from "@/lib/constants";
 import { GraphNodeImmutable } from "./GraphNode";
 import { GraphEdgeImmutable } from "./GraphEdge";
+import { PublicManifoldNode } from "./ManifoldNode";
 
 const nodeTypes: NodeTypes = {
-  [CUSTOM_NODE]: GraphNodeImmutable,
+  [SQUIGGLE_NODE]: GraphNodeImmutable,
+  [MANIFOLD_NODE]: PublicManifoldNode,
 };
 
 const edgeTypes: EdgeTypes = {
@@ -24,8 +26,13 @@ export function PublicGraph(props: SimplifiedStorage) {
 }
 
 function GraphInner(props: SimplifiedStorage) {
-  const nodesArray = Object.entries(props.nodes);
-  const nodes = createNodes(nodesArray, []);
+  const nodesArray = Object.entries(props.squiggle ?? {});
+  // TODO: Add real market nodes here
+  const nodes = createNodes({
+    squiggle: nodesArray,
+    manifold: props.manifold,
+    selectedIds: [],
+  });
   const suggestedEdges = props.suggestedEdges;
   const suggestedEdgesArray = Object.entries(suggestedEdges);
   const edges = useEdges(nodesArray, suggestedEdgesArray);

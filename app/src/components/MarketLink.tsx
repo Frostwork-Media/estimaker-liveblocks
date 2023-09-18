@@ -40,9 +40,9 @@ export function MarketLink({
           target="_blank"
           rel="noreferrer"
         >
-          <span className="text-sm grow">{title}</span>
+          <span className="text-2xl grow">{title}</span>
           <span
-            className="bg-slate-100 text-center font-mono overflow-hidden whitespace-nowrap overflow-ellipsis"
+            className="bg-slate-100 text-center text-xl py-3 font-mono overflow-hidden whitespace-nowrap overflow-ellipsis mt-1"
             title={probability.toString()}
           >
             {numberToPercentage(probability)}

@@ -1,10 +1,9 @@
 import { getVariables } from "./helpers";
-import { StaticNodeData } from "shared";
+import { SquiggleNode } from "shared";
 import toposort from "toposort";
-import { LiveNode } from "./useLive";
 
 export function getSquiggleCode(
-  nodesArray: [string, LiveNode][] | [string, StaticNodeData][] | undefined,
+  nodesArray: [string, SquiggleNode][] | undefined,
   nodeId: string
 ) {
   if (!nodesArray?.length) return "";
