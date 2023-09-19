@@ -30,7 +30,7 @@ import { createNodes } from "../lib/createNodes";
 import { useEdges } from "@/lib/useEdges";
 import { GraphNode } from "./GraphNode";
 import GraphEdge from "./GraphEdge";
-import { useForwardSlashListener } from "@/lib/hooks";
+import { useKeyboardListeners } from "@/lib/hooks";
 import { MetaforecastSearch } from "./MetaforecastSearch";
 import { MetaforecastNode } from "./MetaforecastNode";
 
@@ -201,7 +201,7 @@ function GraphInner() {
     [addSquiggleNode, liveAddSuggestedEdge, reactFlowInstance]
   );
 
-  const ref = useForwardSlashListener();
+  const ref = useKeyboardListeners();
 
   return (
     <>

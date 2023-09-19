@@ -1,10 +1,12 @@
-import { useRoom } from "@/liveblocks.config";
+import { useMutation, useRoom } from "@/liveblocks.config";
 import { useUser } from "@clerk/clerk-react";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
-import { ProjectMetadata, ClerkUserMetadata } from "shared";
+import { ProjectMetadata, ClerkUserMetadata, NodeTypes } from "shared";
 import { useClientStore } from "./useClientStore";
 import { isEditing } from "./helpers";
+import { useReactFlow } from "reactflow";
+import { useGraphStore } from "./useGraphStore";
 
 /** Gets the email for the current user */
 export function useLiveblocksUserId() {
@@ -53,13 +55,25 @@ export function useIsOwner() {
 }
 
 /**
- * Enables the forwardSlash listener
+ * Listens for certain keyboard events on the window
  *
  * When the mouse is over the wrapper, if the user presses the / key, and the user is not typing in an input, alert "hi"
  */
-export function useForwardSlashListener() {
+export function useKeyboardListeners() {
   const mousePosition = useRef({ x: 0, y: 0 });
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const reactFlowInstance = useReactFlow();
+  const deleteNode = useMutation(
+    ({ storage }, selected: string[]) => {
+      for (const id of selected) {
+        const node = reactFlowInstance.getNode(id);
+        if (!node) continue;
+        const nodeType = node.type as NodeTypes;
+        storage.get(nodeType).delete(id);
+      }
+    },
+    [reactFlowInstance]
+  );
   useEffect(() => {
     if (!wrapperRef.current) return;
     function onMouseMouve(e: MouseEvent) {
@@ -74,6 +88,15 @@ export function useForwardSlashListener() {
           floatingPopoverOpen: true,
           floatingPopoverMousePosition: mousePosition.current,
         });
+      }
+
+      // Delete selected nodes when the user presses the backspace key
+      if (e.key === "Backspace") {
+        const selected = useGraphStore.getState().selected;
+        if (selected.length && window.confirm("Are you sure?")) {
+          deleteNode(selected);
+          useGraphStore.setState({ selected: [] });
+        }
       }
     }
 

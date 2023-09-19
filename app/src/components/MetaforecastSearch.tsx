@@ -37,6 +37,18 @@ export function MetaforecastSearch() {
   );
 
   const [open, setOpen] = useState(false);
+  // save coords when popover is opened
+  const [coords, setCoords] = useState<{
+    x: number;
+    y: number;
+  } | null>(null);
+  useEffect(() => {
+    if (floatingPopoverOpen) {
+      setCoords(floatingPopoverMousePosition);
+    } else {
+      setCoords(null);
+    }
+  }, [floatingPopoverOpen, floatingPopoverMousePosition]);
 
   useEffect(() => {
     if (!floatingPopoverOpen) return;
@@ -59,19 +71,21 @@ export function MetaforecastSearch() {
   const isDebouncing = debouncedInput !== input;
   const reactFlowInstance = useReactFlow();
 
-  const addMetaforecastNode = useMutation(({ storage }, link: string) => {
-    const position = useClientStore.getState().floatingPopoverMousePosition;
-    if (!position) return;
-    const projectedCoords = reactFlowInstance.project(position);
-    const id = nanoid();
-    const node: Schema["metaforecast"][string] = {
-      x: projectedCoords.x,
-      y: projectedCoords.y,
-      link,
-      nodeType: "metaforecast",
-    };
-    storage.get("metaforecast").set(id, toLive(node));
-  }, []);
+  const addMetaforecastNode = useMutation(
+    ({ storage }, link: string) => {
+      if (!coords) return;
+      const projectedCoords = reactFlowInstance.project(coords);
+      const id = nanoid();
+      const node: Schema["metaforecast"][string] = {
+        x: projectedCoords.x,
+        y: projectedCoords.y,
+        link,
+        nodeType: "metaforecast",
+      };
+      storage.get("metaforecast").set(id, toLive(node));
+    },
+    [coords]
+  );
 
   return (
     <Popover

@@ -16,3 +16,5 @@ export type MetaforecastNode = {
   nodeType: "metaforecast";
   link: string;
 };
+
+export type NodeTypes = SquiggleNode["nodeType"] | MetaforecastNode["nodeType"];
