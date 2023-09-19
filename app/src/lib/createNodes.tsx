@@ -1,5 +1,6 @@
 import { SQUIGGLE_NODE, MANIFOLD_NODE } from "./constants";
-import { AnyNode, ManifoldNode } from "shared";
+import { Schema } from "shared";
+import { Node } from "reactflow";
 
 /**
  * Converts LiveNodes and selectedIds to ReactFlow nodes
@@ -7,15 +8,15 @@ import { AnyNode, ManifoldNode } from "shared";
 export function createNodes({
   squiggle,
   manifold,
-  selectedIds,
+  selected,
 }: {
-  squiggle: [string, AnyNode][];
-  manifold: Record<string, ManifoldNode>;
-  selectedIds: string[];
-}): any[] {
-  const nodes: any[] = [];
+  squiggle: Schema["squiggle"];
+  manifold: Schema["manifold"];
+  selected: string[];
+}): Node<any>[] {
+  const nodes: Node<any>[] = [];
 
-  for (const [id, node] of squiggle) {
+  for (const [id, node] of Object.entries(squiggle)) {
     if (node.nodeType !== "squiggle") continue;
     nodes.push({
       id,
@@ -26,7 +27,7 @@ export function createNodes({
       },
       position: { x: node.x, y: node.y },
       type: SQUIGGLE_NODE,
-      selected: selectedIds.includes(id),
+      selected: selected.includes(id),
     });
   }
 
@@ -38,7 +39,7 @@ export function createNodes({
       },
       position: { x: node.x, y: node.y },
       type: MANIFOLD_NODE,
-      selected: selectedIds.includes(id),
+      selected: selected.includes(id),
     });
   }
 

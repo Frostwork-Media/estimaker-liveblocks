@@ -1,13 +1,12 @@
 import { Liveblocks } from "@liveblocks/node";
 import { LIVEBLOCKS_SECRET_KEY } from "./_config";
-import { ProjectMetadata } from "shared";
-import { Project } from "./_types";
+import { ProjectMetadata, Room, Schema } from "shared";
 
 export const liveblocks = new Liveblocks({
   secret: LIVEBLOCKS_SECRET_KEY,
 });
 
-export async function getProjectBySlug(slug: string): Promise<Project | null> {
+export async function getProjectBySlug(slug: string): Promise<Room | null> {
   const params = new URLSearchParams();
   params.append("metadata.slug", slug);
   let response = await fetch(
@@ -35,7 +34,7 @@ export async function getProjectBySlug(slug: string): Promise<Project | null> {
 /**
  * Get room by id
  */
-export async function getProjectById(id: string): Promise<Project | null> {
+export async function getProjectById(id: string): Promise<Room | null> {
   const response = await fetch(`https://api.liveblocks.io/v2/rooms/${id}`, {
     headers: {
       Authorization: `Bearer ${LIVEBLOCKS_SECRET_KEY}`,
@@ -72,9 +71,9 @@ export function deleteProject(id: string) {
  * User the room id to get the storage
  * by sending a get request to https://api.liveblocks.io/v2/rooms/{roomId}/storage
  */
-export async function getProjectStorage(id: string) {
+export async function getProjectStorage(id: string): Promise<Schema | null> {
   const response = await fetch(
-    `https://api.liveblocks.io/v2/rooms/${id}/storage`,
+    `https://api.liveblocks.io/v2/rooms/${id}/storage?format=json`,
     {
       headers: {
         Authorization: `Bearer ${LIVEBLOCKS_SECRET_KEY}`,
@@ -137,4 +136,33 @@ export async function updateProjectMetadata(
     });
 
   return room.metadata;
+}
+
+export async function setStorageById(id: string, data: object) {
+  return fetch(`https://api.liveblocks.io/v2/rooms/${id}/storage`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${LIVEBLOCKS_SECRET_KEY}`,
+    },
+    body: JSON.stringify(data),
+  }).then((res) => res.json());
+}
+
+export async function updateRoomById(id: string, data: Partial<Room>) {
+  return fetch(`https://api.liveblocks.io/v2/rooms/${id}`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${LIVEBLOCKS_SECRET_KEY}`,
+    },
+    body: JSON.stringify(data),
+  }).then((res) => res.json());
+}
+
+export async function deleteStorageById(id: string) {
+  return fetch(`https://api.liveblocks.io/v2/rooms/${id}/storage`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${LIVEBLOCKS_SECRET_KEY}`,
+    },
+  });
 }

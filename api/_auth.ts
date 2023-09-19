@@ -2,7 +2,7 @@ import { VercelRequest } from "@vercel/node";
 import { JWT_PUBLIC_KEY } from "./_config";
 import { verify } from "jsonwebtoken";
 import { clerkClient } from "@clerk/clerk-sdk-node";
-import { Project } from "./_types";
+import { Room, RoomAccess } from "shared";
 
 export async function userFromSession(req: VercelRequest) {
   // lookup clerk public key
@@ -53,7 +53,7 @@ export async function userFromSession(req: VercelRequest) {
 /**
  * Whether or not the user owns the room
  */
-export function userOwnsRoom(room: Project, userId: string, email?: string) {
+export function userOwnsRoom(room: Room, userId: string, email?: string) {
   if (room.metadata.ownerId) {
     return room.metadata.ownerId === userId;
   } else {
@@ -62,7 +62,7 @@ export function userOwnsRoom(room: Project, userId: string, email?: string) {
     return (
       email &&
       email in room.usersAccesses &&
-      room.usersAccesses[email].includes("room:write")
+      room.usersAccesses[email]?.includes(RoomAccess.RoomWrite)
     );
   }
 }

@@ -7,7 +7,7 @@ import { queryClient } from "@/lib/queryClient";
 import { useMutation } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { BiSave, BiSolidErrorCircle } from "react-icons/bi";
-import { UserMetadata } from "shared";
+import { UserInfo } from "shared";
 
 export default function Profile() {
   const userMetadata = useUserMetadata();
@@ -81,7 +81,7 @@ function SetUsernameForm({
         throw new Error(result.error);
       }
 
-      return result as UserMetadata;
+      return result as UserInfo;
     },
     {
       onSuccess: (userMetadata) => {

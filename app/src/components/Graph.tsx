@@ -19,7 +19,6 @@ import { CUSTOM_EDGE, SQUIGGLE_NODE, MANIFOLD_NODE } from "../lib/constants";
 import {
   useAddSquiggleNodeAtPosition,
   useLiveAddSuggestedEdge,
-  useLiveSuggestedEdges,
 } from "@/lib/useLive";
 import { NodePanel } from "./NodePanel";
 import { useGraphStore } from "../lib/useGraphStore";
@@ -30,7 +29,6 @@ import GraphEdge from "./GraphEdge";
 import { useForwardSlashListener } from "@/lib/hooks";
 import { FloatingGraphDropdown } from "./FloatingGraphDropdown";
 import { ManifoldNode } from "./ManifoldNode";
-import { mapToObject } from "@/lib/helpers";
 
 const nodeTypes: NodeTypes = {
   [SQUIGGLE_NODE]: GraphNode,
@@ -50,17 +48,17 @@ export default function Graph() {
 }
 
 function GraphInner() {
-  const squiggleNodes = useStorage((state) => state.squiggle);
-  const squiggle = Array.from(squiggleNodes.entries());
-  const manifold = useStorage((state) => mapToObject(state.manifold));
-  const selectedIds = useGraphStore((state) => state.selected);
-  const nodes = createNodes({ squiggle, selectedIds, manifold });
+  const squiggle = useStorage((state) => state.squiggle);
+  const manifold = useStorage((state) => state.manifold);
+  const selected = useGraphStore((state) => state.selected);
+  const nodes = createNodes({ squiggle, selected: selected, manifold });
 
-  const liveSuggestedEdges = useLiveSuggestedEdges();
-  const liveSuggestedEdgesArray = Array.from(liveSuggestedEdges.entries());
+  const suggestedEdges = useStorage((state) =>
+    Object.entries(state.suggestedEdges)
+  ) as [string, string[]][];
 
   // Create edges for react flow
-  const edges = useEdges(squiggle, liveSuggestedEdgesArray);
+  const edges = useEdges(squiggle, suggestedEdges);
 
   const updateNodePosition = useMutation(
     (
@@ -68,11 +66,15 @@ function GraphInner() {
       id: string,
       args: { nodeType: "squiggle" | "manifold"; x: number; y: number }
     ) => {
-      const nodes = storage.get(args.nodeType as any);
-      const node = nodes.get(id);
-      if (!node) return;
-      node.set("x", args.x);
-      node.set("y", args.y);
+      if (args.nodeType === "squiggle") {
+        const node = storage.get("squiggle").get(id);
+        node.set("x", args.x);
+        node.set("y", args.y);
+      } else if (args.nodeType === "manifold") {
+        const node = storage.get("manifold").get(id);
+        node.set("x", args.x);
+        node.set("y", args.y);
+      }
     },
     []
   );
@@ -85,6 +87,7 @@ function GraphInner() {
             const position = change.position;
             if (!position) return;
             const { x, y } = position;
+            // TO DO: Improve typing
             const node = reactFlow.getNode(change.id);
             if (node)
               updateNodePosition(change.id, {

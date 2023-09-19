@@ -37,10 +37,7 @@ function ChangeNodeColor({ selected }: { selected: string[] }) {
       }
     ) => {
       if (!id || !color) return;
-      const nodes = storage.get("squiggle");
-      const node = nodes.get(id);
-      if (!node) return;
-      node.set("color", color);
+      storage.get("squiggle").get(id).set("color", color);
     },
     []
   );

@@ -1,7 +1,7 @@
 import { VercelApiHandler } from "@vercel/node";
 import { clerkClient } from "@clerk/clerk-sdk-node";
 import { userFromSession } from "../_auth";
-import { UserMetadata } from "shared";
+import { ClerkUserMetadata } from "shared";
 
 const handler: VercelApiHandler = async (req, res) => {
   const { username } = req.body;
@@ -28,7 +28,7 @@ const handler: VercelApiHandler = async (req, res) => {
     },
   });
 
-  res.status(200).json(result.unsafeMetadata as UserMetadata);
+  res.status(200).json(result.unsafeMetadata as ClerkUserMetadata);
   return;
 };
 

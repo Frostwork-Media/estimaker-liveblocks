@@ -9,14 +9,11 @@ import { customNodeWidthClass } from "@/lib/constants";
 import { ReactNode } from "react";
 
 export function ManifoldNode(props: NodeProps<{ link: string }>) {
-  const link = useStorage((state) => state.manifold.get(props.id)?.link);
-  // console.log(props);
+  const link = useStorage((state) => state.manifold[props.id]?.link);
+
   const updateLink = useMutation(
     ({ storage }, value: string) => {
-      const nodes = storage.get("manifold");
-      const node = nodes.get(props.id);
-      if (!node) return;
-      node.set("link", value);
+      storage.get("manifold").get(props.id).set("link", value);
     },
     [props.id]
   );
@@ -24,10 +21,7 @@ export function ManifoldNode(props: NodeProps<{ link: string }>) {
   /** Removes the link */
   const removeLink = useMutation(
     ({ storage }) => {
-      const nodes = storage.get("manifold");
-      const node = nodes.get(props.id);
-      if (!node) return;
-      node.set("link", "");
+      storage.get("manifold").get(props.id).set("link", "");
     },
     [props.id]
   );

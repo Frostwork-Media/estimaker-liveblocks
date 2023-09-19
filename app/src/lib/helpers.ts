@@ -19,7 +19,7 @@ export function getVariables(value: string) {
 
 export function useProjectCode() {
   const liveNodes = useStorage((storage) => storage.squiggle);
-  const nodesArray = Array.from(liveNodes.entries());
+  const nodesArray = Object.entries(liveNodes);
   const squiggleCode = useMemo(() => {
     try {
       const deps: [string, string][] = [];
