@@ -20,7 +20,10 @@ import {
 import { useDebouncedValue } from "@/lib/useDebouncedValue";
 import { useQuery } from "@tanstack/react-query";
 import { searchMetaforecast } from "@/lib/searchMetaforecast";
-import { MetaforecastResponse } from "shared";
+import { MetaforecastResponse, Schema, toLive } from "shared";
+import { useMutation } from "@/liveblocks.config";
+import { nanoid } from "nanoid";
+import { useReactFlow } from "reactflow";
 
 /**
  * A menu that appears over the graph to add nodes
@@ -54,6 +57,21 @@ export function MetaforecastSearch() {
   );
 
   const isDebouncing = debouncedInput !== input;
+  const reactFlowInstance = useReactFlow();
+
+  const addMetaforecastNode = useMutation(({ storage }, link: string) => {
+    const position = useClientStore.getState().floatingPopoverMousePosition;
+    if (!position) return;
+    const projectedCoords = reactFlowInstance.project(position);
+    const id = nanoid();
+    const node: Schema["metaforecast"][string] = {
+      x: projectedCoords.x,
+      y: projectedCoords.y,
+      link,
+      nodeType: "metaforecast",
+    };
+    storage.get("metaforecast").set(id, toLive(node));
+  }, []);
 
   return (
     <Popover
@@ -61,13 +79,7 @@ export function MetaforecastSearch() {
       onOpenChange={(open) => {
         setOpen(open);
         if (!open) {
-          setTimeout(() => {
-            useClientStore.setState({
-              floatingPopoverOpen: false,
-              floatingPopoverMousePosition: null,
-            });
-            setInput("");
-          }, 100);
+          close();
         }
       }}
     >
@@ -113,8 +125,11 @@ export function MetaforecastSearch() {
                 {searchQuery.data.map((result) => (
                   <CommandItem
                     key={result.id}
-                    // onSelect={() => {
-                    // }}
+                    onSelect={() => {
+                      addMetaforecastNode(result.id);
+                      setOpen(false);
+                      close();
+                    }}
                   >
                     {result.title}
                   </CommandItem>
@@ -126,4 +141,14 @@ export function MetaforecastSearch() {
       </PopoverContent>
     </Popover>
   );
+
+  function close() {
+    setTimeout(() => {
+      useClientStore.setState({
+        floatingPopoverOpen: false,
+        floatingPopoverMousePosition: null,
+      });
+      setInput("");
+    }, 100);
+  }
 }

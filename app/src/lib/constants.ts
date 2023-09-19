@@ -1,6 +1,7 @@
 export const colors = ["#35a3ce", "#3ca170", "#f45b42", "#d5dee0", "#ffe713"];
 
 export const SQUIGGLE_NODE = "squiggle";
+export const METAFORECAST_NODE = "metaforecast";
 export const CUSTOM_EDGE = "customEdge";
 
 // KEEP THESE TWO IN SYNC

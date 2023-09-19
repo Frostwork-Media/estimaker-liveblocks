@@ -34,7 +34,7 @@ const VARIABLE_NAME_CLASSES =
  * An individual node in the graphical editor
  */
 export function GraphNode({ data, id }: NodeProps<NodeData<SquiggleNode>>) {
-  const { label, variableName, showing } = data;
+  const { label, variableName, showing, content } = data;
   const handleStyle = useMemo(() => {
     return {
       ..._handleStyle,
@@ -54,10 +54,9 @@ export function GraphNode({ data, id }: NodeProps<NodeData<SquiggleNode>>) {
 
   const [editing, setEditing] = useState(false);
 
-  const setLabel = useMutation(
-    ({ storage }, label: string) => {
-      const node = storage.get("squiggle").get(id);
-      node.set("content", label);
+  const setContent = useMutation(
+    ({ storage }, newContent: string) => {
+      storage.get("squiggle").get(id).set("content", newContent);
     },
     [id]
   );
@@ -133,10 +132,10 @@ export function GraphNode({ data, id }: NodeProps<NodeData<SquiggleNode>>) {
 
         <TextareaAutosize
           className={classNames(TITLE_CLASSES, TITLE_CLASSES_INTERACTIVE)}
-          value={label}
+          value={content}
           ref={titleInputRef}
           onChange={(e) => {
-            setLabel(e.target.value);
+            setContent(e.target.value);
           }}
           // catch enter key and set label
           onKeyDown={(e) => {

@@ -10,9 +10,7 @@ export type RecursiveLive<T> = T extends Array<infer U>
   ? T
   : never;
 
-export function createLiveProperties<T extends Lson>(
-  input: T
-): RecursiveLive<T> {
+export function toLive<T extends Lson>(input: T): RecursiveLive<T> {
   if (typeof input !== "object" || input === null) {
     return input as RecursiveLive<T>;
   }
@@ -21,7 +19,7 @@ export function createLiveProperties<T extends Lson>(
     const output = new LiveList<T>();
 
     for (const item of input) {
-      output.push(createLiveProperties(item));
+      output.push(toLive(item));
     }
 
     return output as unknown as RecursiveLive<T>;
@@ -30,7 +28,7 @@ export function createLiveProperties<T extends Lson>(
   const output = new LiveObject();
 
   for (const key in input) {
-    output.set(key, createLiveProperties((input as any)[key]));
+    output.set(key, toLive((input as any)[key]));
   }
 
   return output as RecursiveLive<T>;
@@ -44,7 +42,7 @@ export function jsonToLive<T extends LsonObject>(
   let output: { [K in keyof T]: RecursiveLive<T[K]> } = {} as any;
 
   for (const key in input) {
-    output[key] = createLiveProperties(input[key] as Lson) as any;
+    output[key] = toLive(input[key] as Lson) as any;
   }
 
   return output;

@@ -39,8 +39,8 @@ const query = `query Search($input: SearchInput!) {
 ${questionFragment}
 `;
 
-const singleQuestionQuery = `query Question($input: QuestionInput!) {
-  result: question(input: $input) {
+const singleQuestionQuery = `query Question($id: ID!){
+  question(id: $id){
     ...Question
     __typename
   }
@@ -68,8 +68,7 @@ export async function searchMetaforecast(search: string) {
   return data.result;
 }
 
-export async function getMetaforecast(questionId: string) {
-  const variables = getQuestionVariables(questionId);
+export async function getMetaforecast(id: string) {
   const response = await fetch("https://metaforecast.org/api/graphql", {
     method: "POST",
     headers: {
@@ -77,14 +76,15 @@ export async function getMetaforecast(questionId: string) {
     },
     body: JSON.stringify({
       query: singleQuestionQuery,
-      variables,
+      variables: {
+        id,
+      },
       operationName: "Question",
     }),
   });
 
   const { data } = await response.json();
-  console.log(data);
-  return data.result;
+  return data.question;
 }
 
 function getVariables(query: string) {
@@ -114,14 +114,6 @@ function getVariables(query: string) {
         "xrisk",
       ],
       limit: 71,
-    },
-  };
-}
-
-function getQuestionVariables(questionId: string) {
-  return {
-    input: {
-      questionId,
     },
   };
 }

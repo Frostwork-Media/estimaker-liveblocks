@@ -40,3 +40,8 @@ html {
 .black-and-white {
   filter: grayscale(100%);
 }
+
+.option-amount-fill {
+  @apply top-0 left-0 bottom-0 bg-slate-400 absolute;
+  width: calc(var(--probability) * 100%);
+}
