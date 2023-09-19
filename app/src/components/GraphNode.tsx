@@ -1,6 +1,6 @@
 import { Handle, Position } from "reactflow";
 import type { NodeProps } from "reactflow";
-import { AppNodeData } from "../lib/types";
+import { NodeData } from "../lib/types";
 import { SquiggleNodeValue, NodeValueImmutable } from "./SquiggleNodeValue";
 import { RxBarChart, RxCross1 } from "react-icons/rx";
 import { useMutation } from "../liveblocks.config";
@@ -10,11 +10,8 @@ import * as ToggleGroup from "@radix-ui/react-toggle-group";
 import { SquiggleGraph } from "./SquiggleGraph";
 import { getVarName } from "@/lib/getVarName";
 import { customNodeWidthClass } from "@/lib/constants";
-import { useQuery } from "@tanstack/react-query";
-import { fetchManifoldData } from "@/lib/fetchManifoldData";
-import { fetchMetaculusData } from "@/lib/fetchMetaculusData";
-import { MarketLink } from "./MarketLink";
 import classNames from "classnames";
+import { SquiggleNode } from "shared";
 
 const TITLE_CLASSES =
   "text-left py-2 rounded leading-7 text-4xl leading-tight resize-none focus:outline-none focus:ring-0 focus:border-transparent bg-transparent";
@@ -36,8 +33,8 @@ const VARIABLE_NAME_CLASSES =
 /**
  * An individual node in the graphical editor
  */
-export function GraphNode({ data, id }: NodeProps<AppNodeData>) {
-  const { label, variableName, showing, metaculus } = data;
+export function GraphNode({ data, id }: NodeProps<NodeData<SquiggleNode>>) {
+  const { label, variableName, showing } = data;
   const handleStyle = useMemo(() => {
     return {
       ..._handleStyle,
@@ -45,25 +42,12 @@ export function GraphNode({ data, id }: NodeProps<AppNodeData>) {
     };
   }, [data.color]);
 
-  const metaculusQuery = useQuery(
-    ["metaculus", metaculus],
-    () => {
-      if (metaculus) return fetchMetaculusData(metaculus);
-    },
-    {
-      enabled: !!metaculus,
-      // Refetch every 10 minutes
-      refetchInterval: 10 * 60 * 1000,
-    }
-  );
-
   /** -- Here is where mutation related code begins -- */
 
   const deleteNode = useMutation(
     ({ storage }) => {
       if (!window.confirm("Are you sure you want to delete this node?")) return;
-      const nodes = storage.get("squiggle");
-      nodes.delete(id);
+      storage.get("squiggle").delete(id);
     },
     [id]
   );
@@ -72,9 +56,7 @@ export function GraphNode({ data, id }: NodeProps<AppNodeData>) {
   const [currentLabel, setCurrentLabel] = useState(label);
   const setLabel = useMutation(
     ({ storage }, label: string) => {
-      const nodes = storage.get("squiggle");
-      const node = nodes.get(id);
-      if (!node) return;
+      const node = storage.get("squiggle").get(id);
       node.set("content", label);
     },
     [id]
@@ -94,9 +76,7 @@ export function GraphNode({ data, id }: NodeProps<AppNodeData>) {
   // squiggle code
   const setShowing = useMutation(
     ({ storage }, showing?: "graph") => {
-      const nodes = storage.get("squiggle");
-      const node = nodes.get(id);
-      if (!node) return;
+      const node = storage.get("squiggle").get(id);
       node.set("showing", showing);
     },
     [id]
@@ -111,17 +91,17 @@ export function GraphNode({ data, id }: NodeProps<AppNodeData>) {
       }: { oldVariableName: string; newVariableName: string }
     ) => {
       const nodes = storage.get("squiggle");
-      for (const node of nodes.values()) {
-        const variableName = node.get("variableName");
-        if (variableName === oldVariableName)
+      for (const id in nodes) {
+        const node = nodes.get(id);
+        if (node.get("variableName") === oldVariableName)
           node.set("variableName", newVariableName);
 
         const value = node.get("value");
         if (!value) continue;
         const regex = new RegExp(`\\b${oldVariableName}\\b`, "g");
-        const newValue = value.replace(regex, newVariableName);
-        node.set("value", newValue);
+        node.set("value", value.replace(regex, newVariableName));
       }
+      storage.set("squiggle", nodes);
     },
     []
   );
@@ -209,16 +189,6 @@ export function GraphNode({ data, id }: NodeProps<AppNodeData>) {
             </ToggleGroup.Item>
           </ToggleGroup.Root>
           {showing === "graph" ? <SquiggleGraph nodeId={id} /> : null}
-          {metaculus ? (
-            <MarketLink
-              isLoading={metaculusQuery.isLoading}
-              url={metaculusQuery.data?.url}
-              title={metaculusQuery.data?.title}
-              probability={metaculusQuery.data?.community_prediction.full.q2}
-              error={!!metaculusQuery.error}
-              community="Metaculus"
-            />
-          ) : null}
         </div>
       </div>
       <Handle
@@ -231,38 +201,17 @@ export function GraphNode({ data, id }: NodeProps<AppNodeData>) {
   );
 }
 
-export function GraphNodeImmutable({ data, id }: NodeProps<AppNodeData>) {
-  const { label, variableName, showing, manifold, metaculus, color } = data;
+export function GraphNodeImmutable({
+  data,
+  id,
+}: NodeProps<NodeData<SquiggleNode>>) {
+  const { label, variableName, showing, color } = data;
   const handleStyle = useMemo(() => {
     return {
       ..._handleStyle,
       backgroundColor: data.color ? `hsl(${data.color})` : undefined,
     };
   }, [data.color]);
-
-  const manifoldQuery = useQuery(
-    ["manifold", manifold],
-    () => {
-      if (manifold) return fetchManifoldData(manifold);
-    },
-    {
-      enabled: !!manifold,
-      // Refetch every 10 minutes
-      refetchInterval: 10 * 60 * 1000,
-    }
-  );
-
-  const metaculusQuery = useQuery(
-    ["metaculus", metaculus],
-    () => {
-      if (metaculus) return fetchMetaculusData(metaculus);
-    },
-    {
-      enabled: !!metaculus,
-      // Refetch every 10 minutes
-      refetchInterval: 10 * 60 * 1000,
-    }
-  );
 
   return (
     <>
@@ -297,27 +246,6 @@ export function GraphNodeImmutable({ data, id }: NodeProps<AppNodeData>) {
             </ToggleGroup.Item>
           </ToggleGroup.Root>
           {showing === "graph" ? <SquiggleGraph nodeId={id} /> : null}
-
-          {manifold ? (
-            <MarketLink
-              isLoading={manifoldQuery.isLoading}
-              url={manifoldQuery.data?.url}
-              title={manifoldQuery.data?.question}
-              probability={manifoldQuery.data?.probability}
-              error={!!manifoldQuery.error}
-              community="Manifold"
-            />
-          ) : null}
-          {metaculus ? (
-            <MarketLink
-              isLoading={metaculusQuery.isLoading}
-              url={metaculusQuery.data?.url}
-              title={metaculusQuery.data?.title}
-              probability={metaculusQuery.data?.community_prediction.full.q2}
-              error={!!metaculusQuery.error}
-              community="Metaculus"
-            />
-          ) : null}
         </div>
       </div>
       <Handle

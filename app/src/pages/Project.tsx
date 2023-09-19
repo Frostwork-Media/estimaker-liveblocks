@@ -1,4 +1,3 @@
-import { LiveMap } from "@liveblocks/client";
 import { ClientSideSuspense } from "@liveblocks/react";
 import { useParams, Link } from "react-router-dom";
 import {
@@ -13,7 +12,7 @@ import { lazy, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useMutation as useRQMutation } from "@tanstack/react-query";
 import AutosizeInput from "react-input-autosize";
-import { mapToObject, useSquigglePlaygroundUrl } from "@/lib/helpers";
+import { useSquigglePlaygroundUrl } from "@/lib/helpers";
 import {
   Tooltip,
   TooltipContent,
@@ -28,6 +27,7 @@ import { SmallSpinner } from "@/components/SmallSpinner";
 import { ProjectSettings } from "@/components/ProjectSettings";
 import { useIsOwner } from "@/lib/hooks";
 import { SquiggleNodesProvider } from "@/components/SquiggleNodesProvider";
+import { INITIAL_STORAGE } from "shared";
 const Graph = lazy(() => import("../components/Graph"));
 
 function Inner() {
@@ -36,7 +36,7 @@ function Inner() {
   const squiggleNodes = useStorage((x) => x.squiggle);
 
   return (
-    <SquiggleNodesProvider nodes={mapToObject(squiggleNodes)}>
+    <SquiggleNodesProvider nodes={squiggleNodes}>
       <div className="h-screen grid grid-rows-[auto_minmax(0,1fr)]">
         <header className={classNames(PROJECT_HEADER_STYLES, "pr-1")}>
           <Button variant="ghost" size="icon" asChild>
@@ -150,17 +150,7 @@ export default function Project() {
   const { id } = useParams<{ id: string }>();
   if (!id) throw new Error("Missing ID");
   return (
-    <RoomProvider
-      id={id}
-      initialPresence={{}}
-      initialStorage={() => ({
-        title: "Untitled",
-        squiggle: new LiveMap([]),
-        manifold: new LiveMap([]),
-        metaculus: new LiveMap([]),
-        suggestedEdges: new LiveMap([]),
-      })}
-    >
+    <RoomProvider id={id} initialPresence={{}} initialStorage={INITIAL_STORAGE}>
       <ClientSideSuspense
         fallback={
           <div className="h-screen flex justify-center items-center">

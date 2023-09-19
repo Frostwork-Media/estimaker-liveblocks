@@ -2,16 +2,17 @@ import { useMemo } from "react";
 import { AppEdge } from "./types";
 import { getVariables } from "./helpers";
 import { CUSTOM_EDGE } from "./constants";
-import { SquiggleNode } from "shared";
+import { Schema } from "shared";
 
 /**
  * Converts the live nodes and suggested edges into a list of react flow edges
  */
 export function useEdges(
-  nodesArray: [string, SquiggleNode][],
+  nodes: Schema["squiggle"],
   suggestedEdgesArray: [string, string[]][]
 ) {
   return useMemo<AppEdge[]>(() => {
+    const nodesArray = Object.entries(nodes);
     // from, to, userId
     const edges: AppEdge[] = [];
     for (const [id, node] of nodesArray) {
@@ -54,5 +55,5 @@ export function useEdges(
     }
 
     return edges;
-  }, [nodesArray, suggestedEdgesArray]);
+  }, [nodes, suggestedEdgesArray]);
 }

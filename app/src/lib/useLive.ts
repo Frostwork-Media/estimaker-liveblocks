@@ -1,5 +1,5 @@
-import { useMutation, useStorage } from "@/liveblocks.config";
-import { LiveObject } from "@liveblocks/client";
+import { useMutation } from "@/liveblocks.config";
+import { LiveList, LiveObject } from "@liveblocks/client";
 import { customNodeWidth } from "./constants";
 import { nanoid } from "nanoid";
 import { ManifoldNode, SquiggleNode } from "shared";
@@ -7,26 +7,24 @@ import { ManifoldNode, SquiggleNode } from "shared";
 // export type LiveNodes = ReturnType<typeof useLiveNodes>;
 // export type LiveNode = LiveNodes extends ReadonlyMap<any, infer V> ? V : never;
 
-export function useLiveSuggestedEdges() {
-  return useStorage((state) => state.suggestedEdges);
-}
-
 // export type LiveSuggestedEdges = ReturnType<typeof useLiveSuggestedEdges>;
 
 export function useLiveAddSuggestedEdge() {
   return useMutation(({ storage }, dependency: [string, string]) => {
-    const suggestedEdges = storage.get("suggestedEdges");
-    suggestedEdges.set(dependency.join("-"), dependency);
+    storage
+      .get("suggestedEdges")
+      .set(dependency.join("-"), new LiveList<string>(dependency));
   }, []);
 }
 
 export function useAddSquiggleNodeAtPosition() {
   return useMutation(({ storage }, position: { x: number; y: number }) => {
     const nodes = storage.get("squiggle");
+    const size = Object.keys(nodes.toObject()).length;
     const node = new LiveObject<SquiggleNode>({
       nodeType: "squiggle",
       content: "",
-      variableName: `var${nodes.size + 1}`,
+      variableName: `var${size + 1}`,
       // We move the x position back by half of the node width, so it's centered
       x: position.x - customNodeWidth / 2,
       // Not sure

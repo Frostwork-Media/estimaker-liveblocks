@@ -32,8 +32,7 @@ export default function GraphEdge({
   });
 
   const removeSuggestedEdge = useMutation(({ storage }, id: string) => {
-    const suggestedEdges = storage.get("suggestedEdges") ?? [];
-    suggestedEdges.delete(id);
+    storage.get("suggestedEdges").delete(id);
   }, []);
 
   const onClick = useCallback(

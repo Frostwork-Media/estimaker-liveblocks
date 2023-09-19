@@ -2,7 +2,7 @@ import { useRoom } from "@/liveblocks.config";
 import { useUser } from "@clerk/clerk-react";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
-import { ProjectMetadata, UserMetadata } from "shared";
+import { ProjectMetadata, ClerkUserMetadata } from "shared";
 import { useClientStore } from "./useClientStore";
 import { isEditing } from "./helpers";
 
@@ -26,8 +26,11 @@ export function useRoomMetadata(roomId: string) {
   );
 }
 
+/**
+ * Returns the Clerk user metadata
+ */
 export function useUserMetadata() {
-  return useQuery<UserMetadata>(
+  return useQuery<ClerkUserMetadata>(
     ["user-metadata"],
     async () => {
       const res = await fetch("/api/user/meta");

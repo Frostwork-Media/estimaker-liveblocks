@@ -1,12 +1,8 @@
-import type { Node, Edge } from "reactflow";
-import { SquiggleNode } from "shared";
+import type { Edge } from "reactflow";
 
-export type AppNodeData = {
+export type NodeData<T> = {
   label: string;
-  selfValue: string;
-} & SquiggleNode;
-
-export type AppNode = Node<AppNodeData>;
+} & T;
 
 export type AppEdgeData = Record<string, never>;
 

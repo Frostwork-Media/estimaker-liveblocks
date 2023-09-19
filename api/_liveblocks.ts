@@ -74,7 +74,7 @@ export function deleteProject(id: string) {
  */
 export async function getProjectStorage(id: string) {
   const response = await fetch(
-    `https://api.liveblocks.io/v2/rooms/${id}/storage`,
+    `https://api.liveblocks.io/v2/rooms/${id}/storage?format=json`,
     {
       headers: {
         Authorization: `Bearer ${LIVEBLOCKS_SECRET_KEY}`,

@@ -1,12 +1,12 @@
 import "reactflow/dist/style.css";
 import { createNodes } from "@/lib/createNodes";
 import ReactFlow, { EdgeTypes, NodeTypes, ReactFlowProvider } from "reactflow";
-import { SimplifiedStorage } from "shared";
 import { useEdges } from "@/lib/useEdges";
 import { CUSTOM_EDGE, SQUIGGLE_NODE, MANIFOLD_NODE } from "@/lib/constants";
 import { GraphNodeImmutable } from "./GraphNode";
 import { GraphEdgeImmutable } from "./GraphEdge";
 import { PublicManifoldNode } from "./ManifoldNode";
+import { Schema } from "shared";
 
 const nodeTypes: NodeTypes = {
   [SQUIGGLE_NODE]: GraphNodeImmutable,
@@ -17,7 +17,7 @@ const edgeTypes: EdgeTypes = {
   [CUSTOM_EDGE]: GraphEdgeImmutable,
 };
 
-export function PublicGraph(props: SimplifiedStorage) {
+export function PublicGraph(props: Schema) {
   return (
     <ReactFlowProvider>
       <GraphInner {...props} />
@@ -25,17 +25,16 @@ export function PublicGraph(props: SimplifiedStorage) {
   );
 }
 
-function GraphInner(props: SimplifiedStorage) {
-  const nodesArray = Object.entries(props.squiggle ?? {});
-  // TODO: Add real market nodes here
+function GraphInner({ squiggle, suggestedEdges, manifold }: Schema) {
+  // TO DO: Add real market nodes here
   const nodes = createNodes({
-    squiggle: nodesArray,
-    manifold: props.manifold,
-    selectedIds: [],
+    squiggle,
+    manifold,
+    selected: [],
   });
-  const suggestedEdges = props.suggestedEdges;
+
   const suggestedEdgesArray = Object.entries(suggestedEdges);
-  const edges = useEdges(nodesArray, suggestedEdgesArray);
+  const edges = useEdges(squiggle, suggestedEdgesArray);
   return (
     <div className="w-full h-full">
       <ReactFlow

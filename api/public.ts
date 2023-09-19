@@ -1,7 +1,7 @@
+import { Schema } from "shared";
 import { getProjectBySlug, getProjectStorage } from "./_liveblocks";
 
 import { VercelApiHandler } from "@vercel/node";
-import { simplifyStorage } from "./user/_simplifyStorage";
 
 /**
  * Returns a public project's metadata and storage
@@ -29,20 +29,18 @@ const handler: VercelApiHandler = async (req, res) => {
   }
 
   // Get project storage
-  const storage = await getProjectStorage(project.id);
+  const storage = (await getProjectStorage(project.id)) as Schema;
   if (!storage) {
     res.status(500).send("Error getting project");
     return;
   }
-
-  const simplifiedStorage = simplifyStorage(storage);
 
   // Return the metadata and storage
   // Cache the response for 1 hour
   res.setHeader("Cache-Control", "s-maxage=3600");
   res.status(200).json({
     metadata: project.metadata,
-    storage: simplifiedStorage,
+    storage,
   });
 };
 

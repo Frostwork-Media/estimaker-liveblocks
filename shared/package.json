@@ -2,7 +2,7 @@
   "name": "shared",
   "version": "1.0.0",
   "description": "",
-  "main": "index.ts",
+  "main": "src/index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -11,5 +11,9 @@
   "license": "ISC",
   "devDependencies": {
     "typescript": "^5.0.2"
+  },
+  "dependencies": {
+    "@liveblocks/client": "^1.3.4",
+    "object.upkeep": "^0.2.2"
   }
 }

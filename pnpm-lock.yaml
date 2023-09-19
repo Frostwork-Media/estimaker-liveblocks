@@ -57,14 +57,11 @@ importers:
         specifier: ^4.23.1
         version: 4.23.1(react@18.2.0)
       '@liveblocks/client':
-        specifier: ^1.2.1
-        version: 1.2.1
+        specifier: ^1.3.4
+        version: 1.3.4
       '@liveblocks/react':
-        specifier: ^1.2.1
-        version: 1.2.1(react@18.2.0)
-      '@liveblocks/zustand':
-        specifier: ^1.1.6
-        version: 1.1.6(zustand@4.3.9)
+        specifier: ^1.3.4
+        version: 1.3.4(react@18.2.0)
       '@quri/squiggle-components':
         specifier: ^0.7.0
         version: 0.7.0(@lezer/common@1.0.3)(react-dom@18.2.0)(react@18.2.0)
@@ -221,6 +218,13 @@ importers:
         version: 4.3.9(@types/node@20.4.5)
 
   shared:
+    dependencies:
+      '@liveblocks/client':
+        specifier: ^1.3.4
+        version: 1.3.4
+      object.upkeep:
+        specifier: ^0.2.2
+        version: 0.2.2
     devDependencies:
       typescript:
         specifier: ^5.0.2
@@ -1098,24 +1102,14 @@ packages:
       '@lezer/common': 1.0.3
     dev: false
 
-  /@liveblocks/client@1.1.6:
-    resolution: {integrity: sha512-rO95ZlwTyqCv8jBSZYmOdTGi+KlHwNkYcJnl5ZnHaEX3Vin/o0ZtdBi3Og8fH5TX8vOI4wIcFM9j1fpaWuzXJA==}
+  /@liveblocks/client@1.3.4:
+    resolution: {integrity: sha512-Y3E6iJet4MCcFFsF580lwEgn4rvnnJeqWO8uILQlruE25Je3WM4WDFISdtgAhJToNX4wsFO4tabQjI3B9Cu4yw==}
     dependencies:
-      '@liveblocks/core': 1.1.6
+      '@liveblocks/core': 1.3.4
     dev: false
 
-  /@liveblocks/client@1.2.1:
-    resolution: {integrity: sha512-Oh3h05fK0bpBhJ8zxBIDI2d/w1UXvaBuEBt1Gr6ZebqdAnBvW6L85hAEWbKKkRpokZyM79ZfRtOEqj9shJ9aww==}
-    dependencies:
-      '@liveblocks/core': 1.2.1
-    dev: false
-
-  /@liveblocks/core@1.1.6:
-    resolution: {integrity: sha512-+ut1Yv4qrQtYD/S9+dnCW5mYf8RWtSOqO6qtqkviii/8ufYVUxCoN27AjJ6qJ65981hhckmhcGtlss1v2XLy+w==}
-    dev: false
-
-  /@liveblocks/core@1.2.1:
-    resolution: {integrity: sha512-W1hNNw3Rc0fy9pj7s5FQuEmZwFqOomW8FcgZLSFg3QlhDfAsPfAJW5IMQXaBKc4C41aSlc/Pude5o1e7tQtu8g==}
+  /@liveblocks/core@1.3.4:
+    resolution: {integrity: sha512-xYp+HVsivJW+C4gNPLuvGzxGyhHUW4EZlhxnD860QxWoVI3sX9geUxEud2ln7KDndvo6ju18ZCGXcjBlVXsSBQ==}
     dev: false
 
   /@liveblocks/node@1.2.1:
@@ -1126,25 +1120,16 @@ packages:
       - encoding
     dev: false
 
-  /@liveblocks/react@1.2.1(react@18.2.0):
-    resolution: {integrity: sha512-JSOWVzi7p3YircwtTrXNJ28nc86uaFprW1XhH37Q0AGRwJ+Oy2WVllOmsRYRLtHONvHJS0YMprh6OHXI4XfgUg==}
+  /@liveblocks/react@1.3.4(react@18.2.0):
+    resolution: {integrity: sha512-oLc2kvYIEsTUQpZarKwjWWR9oRzuXWo1UWy+4PfCoP8Eyewrr3NV0gxgxWMP2gej9/7LYpeV26zHkiUUPAYRSQ==}
     peerDependencies:
       react: ^16.14.0 || ^17 || ^18
     dependencies:
-      '@liveblocks/client': 1.2.1
-      '@liveblocks/core': 1.2.1
+      '@liveblocks/client': 1.3.4
+      '@liveblocks/core': 1.3.4
+      nanoid: 3.3.6
       react: 18.2.0
       use-sync-external-store: 1.2.0(react@18.2.0)
-    dev: false
-
-  /@liveblocks/zustand@1.1.6(zustand@4.3.9):
-    resolution: {integrity: sha512-8VPTbjb2BK3xCQKMz6Hs64dxGYrcOx8U48elpn+V+Kc85D8AggyGJ/7bsPFga5TsXXnMfoheWineEXkIs2PQYw==}
-    peerDependencies:
-      zustand: ^4.1.3
-    dependencies:
-      '@liveblocks/client': 1.1.6
-      '@liveblocks/core': 1.1.6
-      zustand: 4.3.9(react@18.2.0)
     dev: false
 
   /@nodelib/fs.scandir@2.1.5:
@@ -4628,6 +4613,10 @@ packages:
   /object-hash@3.0.0:
     resolution: {integrity: sha512-RSn9F68PjH9HqtltsSnqYC1XXoWe9Bju5+213R98cNGttag9q9yAOTzdbsqvIa7aNm5WffBZFpWYr2aWrklWAw==}
     engines: {node: '>= 6'}
+
+  /object.upkeep@0.2.2:
+    resolution: {integrity: sha512-RiwC5pt2QIdffkoY2JGvGN6/q7tj0W3mAEaejbOyrHd9by1v9FKLzVgSQOZc0mP7MYRZw1aB8TjJyaA1r12uSQ==}
+    dev: false
 
   /once@1.4.0:
     resolution: {integrity: sha512-lNaJgI+2Q5URQBkccEKHTQOPaXdUxnZZElQTZY0MFUAuaEqe1E+Nyvgdz/aIyNi6Z9MzO5dv1H8n58/GELp3+w==}
