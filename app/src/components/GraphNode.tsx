@@ -54,6 +54,7 @@ export function GraphNode({ data, id }: NodeProps<NodeData<SquiggleNode>>) {
 
   const [editing, setEditing] = useState(false);
   const [currentLabel, setCurrentLabel] = useState(label);
+
   const setLabel = useMutation(
     ({ storage }, label: string) => {
       const node = storage.get("squiggle").get(id);
@@ -91,8 +92,10 @@ export function GraphNode({ data, id }: NodeProps<NodeData<SquiggleNode>>) {
       }: { oldVariableName: string; newVariableName: string }
     ) => {
       const nodes = storage.get("squiggle");
-      for (const id in nodes) {
+      for (const id in nodes.toObject()) {
         const node = nodes.get(id);
+        if (!node) continue;
+
         if (node.get("variableName") === oldVariableName)
           node.set("variableName", newVariableName);
 
@@ -101,7 +104,6 @@ export function GraphNode({ data, id }: NodeProps<NodeData<SquiggleNode>>) {
         const regex = new RegExp(`\\b${oldVariableName}\\b`, "g");
         node.set("value", value.replace(regex, newVariableName));
       }
-      storage.set("squiggle", nodes);
     },
     []
   );

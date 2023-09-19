@@ -1,8 +1,8 @@
 import { VercelApiHandler } from "@vercel/node";
 import { userFromSession } from "./_auth";
 import { LIVEBLOCKS_SECRET_KEY } from "./_config";
-import { Project } from "./_types";
 import { getProjectById } from "./_liveblocks";
+import { Room, RoomAccess } from "shared";
 
 interface RequestBody {
   roomId: string;
@@ -29,7 +29,7 @@ const setProjectName: VercelApiHandler = async (req, res) => {
   // Make sure the user is allowed to add users to the room
   const hasAccess =
     email in room.usersAccesses
-      ? room.usersAccesses[email].includes("room:write")
+      ? room.usersAccesses[email]?.includes(RoomAccess.RoomWrite)
       : false;
 
   if (!hasAccess) {
@@ -50,7 +50,7 @@ const setProjectName: VercelApiHandler = async (req, res) => {
     body: JSON.stringify({ metadata }),
   });
 
-  let updatedRoom = (await response.json()) as Project;
+  let updatedRoom = (await response.json()) as Room;
 
   // Return the updated room
   res.status(200).json(updatedRoom);

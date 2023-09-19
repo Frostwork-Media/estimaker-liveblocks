@@ -6,6 +6,7 @@ export * from "./schema";
 export * from "./jsonToLive";
 export * from "./jsonToLson";
 export * from "./types";
+export * from "./migrate";
 
 export interface PublicProject {
   metadata: ProjectMetadata;

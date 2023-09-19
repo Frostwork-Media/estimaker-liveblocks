@@ -20,6 +20,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/_/public/:project",
+    // TO DO: Need our migrate endpoint to accept a slug too
     element: <Public />,
   },
   {
@@ -42,6 +43,12 @@ const router = createBrowserRouter([
   },
   {
     path: "/project/:id",
+    loader: async ({ params }) => {
+      // Hit migrate endpoint to ensure data is up to date
+      if (params.projectId) await ensureDataUpToDate(params.projectId);
+
+      return null;
+    },
     element: (
       <AuthOnly>
         <Project />
@@ -49,6 +56,18 @@ const router = createBrowserRouter([
     ),
   },
 ]);
+
+async function ensureDataUpToDate(projectId: string) {
+  await fetch(`/api/project/migrate`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      projectId,
+    }),
+  });
+}
 
 export function Router() {
   return <RouterProvider router={router} />;
