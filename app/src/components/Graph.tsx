@@ -27,8 +27,8 @@ import { useEdges } from "@/lib/useEdges";
 import { GraphNode } from "./GraphNode";
 import GraphEdge from "./GraphEdge";
 import { useForwardSlashListener } from "@/lib/hooks";
-import { FloatingGraphDropdown } from "./FloatingGraphDropdown";
 import { ManifoldNode } from "./ManifoldNode";
+import { MetaforecastSearch } from "./MetaforecastSearch";
 
 const nodeTypes: NodeTypes = {
   [SQUIGGLE_NODE]: GraphNode,
@@ -213,6 +213,7 @@ function GraphInner() {
           onConnect={onConnect}
           onConnectStart={onConnectStart}
           onConnectEnd={onConnectEnd}
+          maxZoom={1}
           fitView
         >
           <Controls />
@@ -221,7 +222,7 @@ function GraphInner() {
           </Panel>
         </ReactFlow>
       </div>
-      <FloatingGraphDropdown />
+      <MetaforecastSearch />
     </>
   );
 }

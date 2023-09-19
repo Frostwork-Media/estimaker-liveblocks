@@ -53,7 +53,6 @@ export function GraphNode({ data, id }: NodeProps<NodeData<SquiggleNode>>) {
   );
 
   const [editing, setEditing] = useState(false);
-  const [currentLabel, setCurrentLabel] = useState(label);
 
   const setLabel = useMutation(
     ({ storage }, label: string) => {
@@ -108,7 +107,7 @@ export function GraphNode({ data, id }: NodeProps<NodeData<SquiggleNode>>) {
     []
   );
 
-  const updateNodeLabel = useCallback(
+  const updateNodeVariableName = useCallback(
     (label: string) => {
       if (!label) return;
       // get current variable name
@@ -117,11 +116,9 @@ export function GraphNode({ data, id }: NodeProps<NodeData<SquiggleNode>>) {
 
       // will replace values in all nodes
       changeNodeVarName({ oldVariableName, newVariableName });
-
-      setLabel(label);
       setEditing(false);
     },
-    [changeNodeVarName, setLabel, variableName]
+    [changeNodeVarName, variableName]
   );
 
   return (
@@ -133,36 +130,25 @@ export function GraphNode({ data, id }: NodeProps<NodeData<SquiggleNode>>) {
             <RxCross1 />
           </button>
         </div>
-        {editing ? (
-          <TextareaAutosize
-            className={classNames(TITLE_CLASSES, TITLE_CLASSES_INTERACTIVE)}
-            value={currentLabel}
-            ref={titleInputRef}
-            onChange={(e) => {
-              setCurrentLabel(e.target.value);
-            }}
-            // catch enter key and set label
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                e.stopPropagation();
-                updateNodeLabel(e.currentTarget.value);
-              }
-            }}
-            onBlur={() => updateNodeLabel(currentLabel)}
-          />
-        ) : (
-          <button
-            className={classNames(TITLE_CLASSES, TITLE_CLASSES_INTERACTIVE)}
-            data-rename-button
-            style={data.color ? { color: `hsl(${data.color})` } : {}}
-            onClick={() => {
-              setEditing(true);
-            }}
-          >
-            {label}
-          </button>
-        )}
+
+        <TextareaAutosize
+          className={classNames(TITLE_CLASSES, TITLE_CLASSES_INTERACTIVE)}
+          value={label}
+          ref={titleInputRef}
+          onChange={(e) => {
+            setLabel(e.target.value);
+          }}
+          // catch enter key and set label
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              e.stopPropagation();
+              updateNodeVariableName(label);
+            }
+          }}
+          onBlur={() => updateNodeVariableName(label)}
+        />
+
         <div className={NODE_CONTAINER_CLASSES}>
           <button
             className={VARIABLE_NAME_CLASSES}

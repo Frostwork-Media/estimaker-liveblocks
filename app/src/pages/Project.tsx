@@ -37,7 +37,6 @@ function Inner() {
   const squiggleNodes = useStorage((x) => x.squiggle);
 
   useEventListener(({ event }) => {
-    console.log(event);
     if (event.type === "SCHEMA_CHANGED") {
       window.location.reload();
     }
