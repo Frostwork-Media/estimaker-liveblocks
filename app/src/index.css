@@ -12,12 +12,12 @@ html {
   text-wrap: balance;
 }
 
-.react-flow__node-customNode > div {
+[class*="react-flow__node-"] > div {
   @apply outline outline-transparent rounded transition-all duration-200;
 }
 
-.react-flow__node-customNode.selected > div,
-.react-flow__node-customNode.dragging > div {
+[class*="react-flow__node-"].selected > div,
+[class*="react-flow__node-"].dragging > div {
   @apply outline-blue-500/20;
 }
 
