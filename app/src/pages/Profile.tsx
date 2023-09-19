@@ -6,7 +6,7 @@ import { useUserMetadata } from "@/lib/hooks";
 import { queryClient } from "@/lib/queryClient";
 import { useMutation } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { BiSave, BiSolidErrorCircle } from "react-icons/bi";
+import { BiSave } from "react-icons/bi";
 import { UserInfo } from "shared";
 
 export default function Profile() {
@@ -18,10 +18,6 @@ export default function Profile() {
         <h2 className="text-2xl">Username</h2>
         <p className="text-neutral-400 max-w-2xl">
           Your username is how other people will identify you on the platform.
-        </p>
-        <p className="text-sm my-4">
-          <BiSolidErrorCircle className="w-4 h-4 inline -mt-px" /> Note Changing
-          your username will also change the URL to any public project you own.
         </p>
         {/* Add a note that changing the username will change the url to any public project */}
         <div className="mt-2 grid gap-1">
