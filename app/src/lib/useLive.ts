@@ -2,7 +2,7 @@ import { useMutation } from "@/liveblocks.config";
 import { LiveList, LiveObject } from "@liveblocks/client";
 import { customNodeWidth } from "./constants";
 import { nanoid } from "nanoid";
-import { ManifoldNode, SquiggleNode } from "shared";
+import { SquiggleNode } from "shared";
 
 // export type LiveNodes = ReturnType<typeof useLiveNodes>;
 // export type LiveNode = LiveNodes extends ReadonlyMap<any, infer V> ? V : never;
@@ -50,26 +50,6 @@ export function useAddSquiggleNodeAtPosition() {
       // click it
       renameButton.click();
     }, 100);
-
-    // Return the id of the node so that the caller can use it
-    return id;
-  }, []);
-}
-
-/**
- * Add a manifold node at the given position
- */
-export function useAddManifoldNodeAtPosition() {
-  return useMutation(({ storage }, position: { x: number; y: number }) => {
-    const manifold = storage.get("manifold");
-    const node = new LiveObject<ManifoldNode>({
-      nodeType: "manifold",
-      x: position.x - customNodeWidth / 2,
-      y: position.y - 50,
-      link: "",
-    });
-    const id = nanoid();
-    manifold.set(id, node);
 
     // Return the id of the node so that the caller can use it
     return id;

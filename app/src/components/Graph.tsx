@@ -15,7 +15,7 @@ import type {
   EdgeTypes,
 } from "reactflow";
 import "reactflow/dist/style.css";
-import { CUSTOM_EDGE, SQUIGGLE_NODE, MANIFOLD_NODE } from "../lib/constants";
+import { CUSTOM_EDGE, SQUIGGLE_NODE } from "../lib/constants";
 import {
   useAddSquiggleNodeAtPosition,
   useLiveAddSuggestedEdge,
@@ -27,12 +27,10 @@ import { useEdges } from "@/lib/useEdges";
 import { GraphNode } from "./GraphNode";
 import GraphEdge from "./GraphEdge";
 import { useForwardSlashListener } from "@/lib/hooks";
-import { ManifoldNode } from "./ManifoldNode";
 import { MetaforecastSearch } from "./MetaforecastSearch";
 
 const nodeTypes: NodeTypes = {
   [SQUIGGLE_NODE]: GraphNode,
-  [MANIFOLD_NODE]: ManifoldNode,
 };
 
 const edgeTypes: EdgeTypes = {
@@ -49,9 +47,8 @@ export default function Graph() {
 
 function GraphInner() {
   const squiggle = useStorage((state) => state.squiggle);
-  const manifold = useStorage((state) => state.manifold);
   const selected = useGraphStore((state) => state.selected);
-  const nodes = createNodes({ squiggle, selected: selected, manifold });
+  const nodes = createNodes({ squiggle, selected: selected });
 
   const suggestedEdges = useStorage((state) =>
     Object.entries(state.suggestedEdges)
@@ -68,10 +65,6 @@ function GraphInner() {
     ) => {
       if (args.nodeType === "squiggle") {
         const node = storage.get("squiggle").get(id);
-        node.set("x", args.x);
-        node.set("y", args.y);
-      } else if (args.nodeType === "manifold") {
-        const node = storage.get("manifold").get(id);
         node.set("x", args.x);
         node.set("y", args.y);
       }

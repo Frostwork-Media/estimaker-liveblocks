@@ -6,11 +6,17 @@ migrations.set("1", () => {
   return INITIAL_STORAGE_RAW;
 });
 
-// migrations.set("2", (data: object) => {
-//   return {
-//     ...data,
-//     anotherString: "Hello World 222",
-//   };
-// });
+migrations.set("2", (data: any) => {
+  const newData = structuredClone(data);
+
+  // delete "manifold" and "metaculus" keys
+  delete newData["manifold"];
+  delete newData["metaculus"];
+
+  // add metaforecase key
+  newData["metaforecast"] = {};
+
+  return newData;
+});
 
 export const migrate = upkeep<Schema>(migrations);

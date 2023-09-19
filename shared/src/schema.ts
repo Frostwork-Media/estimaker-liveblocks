@@ -1,21 +1,25 @@
 import { jsonToLive } from "./jsonToLive";
-import { ManifoldNode, MetaculusNode, SquiggleNode } from "./nodes";
+import { MetaforecastNode, SquiggleNode } from "./nodes";
 
-export const SCHEMA_VERSION = "1";
+export const SCHEMA_VERSION = "2";
 
 export type Schema = {
   title: string;
+  /**
+   * Stores Squiggle Nodes
+   */
   squiggle: Record<string, SquiggleNode>;
-  manifold: Record<string, ManifoldNode>;
-  metaculus: Record<string, MetaculusNode>;
+  /**
+   * Stores Metaforecast Nodes
+   */
+  metaforecast: Record<string, MetaforecastNode>;
   suggestedEdges: Record<string, string[]>;
 };
 
 export const INITIAL_STORAGE_RAW: Schema = {
   title: "Untitled",
   squiggle: {},
-  manifold: {},
-  metaculus: {},
+  metaforecast: {},
   suggestedEdges: {},
 };
 

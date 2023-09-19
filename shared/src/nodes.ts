@@ -10,16 +10,9 @@ export type SquiggleNode = {
   color?: string;
 };
 
-export type ManifoldNode = {
+export type MetaforecastNode = {
   x: number;
   y: number;
-  nodeType: "manifold";
-  link: string;
-};
-
-export type MetaculusNode = {
-  x: number;
-  y: number;
-  nodeType: "metaculus";
+  nodeType: "metaforecast";
   link: string;
 };

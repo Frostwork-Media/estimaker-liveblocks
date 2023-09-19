@@ -45,7 +45,7 @@ const router = createBrowserRouter([
     path: "/project/:id",
     loader: async ({ params }) => {
       // Hit migrate endpoint to ensure data is up to date
-      if (params.projectId) await ensureDataUpToDate(params.projectId);
+      if (params.id) await ensureDataUpToDate(params.id);
 
       return null;
     },

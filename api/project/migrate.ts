@@ -14,6 +14,8 @@ import { SCHEMA_VERSION, jsonToLson, migrate } from "shared";
  * It doesn't return the data.
  */
 const handler: VercelApiHandler = async (req, res) => {
+  console.log("HELLO WORLD");
+
   const projectId = req.body.projectId as string;
   if (!projectId) {
     res.status(400).json({ error: "Missing projectId" });
@@ -28,6 +30,7 @@ const handler: VercelApiHandler = async (req, res) => {
 
   if (room.metadata.version !== SCHEMA_VERSION) {
     const storage = await getProjectStorage(projectId);
+    console.log("Storage", storage);
     if (!storage) {
       res.status(404).json({ error: "Project not found" });
       return;
@@ -38,6 +41,7 @@ const handler: VercelApiHandler = async (req, res) => {
       data: storage,
       version: room.metadata?.version,
     });
+    console.log("New storage", newStorage);
 
     // Delete current storage
     console.log("Deleting current storage");

@@ -1,4 +1,4 @@
-import { SQUIGGLE_NODE, MANIFOLD_NODE } from "./constants";
+import { SQUIGGLE_NODE } from "./constants";
 import { Schema } from "shared";
 import { Node } from "reactflow";
 
@@ -7,11 +7,9 @@ import { Node } from "reactflow";
  */
 export function createNodes({
   squiggle,
-  manifold,
   selected,
 }: {
   squiggle: Schema["squiggle"];
-  manifold: Schema["manifold"];
   selected: string[];
 }): Node<any>[] {
   const nodes: Node<any>[] = [];
@@ -31,17 +29,17 @@ export function createNodes({
     });
   }
 
-  for (const [id, node] of Object.entries(manifold)) {
-    nodes.push({
-      id,
-      data: {
-        ...node,
-      },
-      position: { x: node.x, y: node.y },
-      type: MANIFOLD_NODE,
-      selected: selected.includes(id),
-    });
-  }
+  // for (const [id, node] of Object.entries(manifold)) {
+  //   nodes.push({
+  //     id,
+  //     data: {
+  //       ...node,
+  //     },
+  //     position: { x: node.x, y: node.y },
+  //     type: MANIFOLD_NODE,
+  //     selected: selected.includes(id),
+  //   });
+  // }
 
   return nodes;
 }
