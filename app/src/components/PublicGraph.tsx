@@ -26,7 +26,6 @@ export function PublicGraph(props: Schema) {
 }
 
 function GraphInner({ squiggle, suggestedEdges, metaforecast }: Schema) {
-  // TO DO: Add real market nodes here
   const nodes = createNodes({
     squiggle,
     metaforecast,

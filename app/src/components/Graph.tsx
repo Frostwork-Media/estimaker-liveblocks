@@ -33,6 +33,7 @@ import GraphEdge from "./GraphEdge";
 import { useKeyboardListeners } from "@/lib/hooks";
 import { MetaforecastSearch } from "./MetaforecastSearch";
 import { MetaforecastNode } from "./MetaforecastNode";
+import { NodeTypes as TNodeTypes } from "shared";
 
 const nodeTypes: NodeTypes = {
   [SQUIGGLE_NODE]: GraphNode,
@@ -68,7 +69,7 @@ function GraphInner() {
     (
       { storage },
       id: string,
-      args: { nodeType: "squiggle" | "metaforecast"; x: number; y: number }
+      args: { nodeType: TNodeTypes; x: number; y: number }
     ) => {
       if (args.nodeType === "squiggle") {
         const node = storage.get("squiggle").get(id);
@@ -91,13 +92,12 @@ function GraphInner() {
             const position = change.position;
             if (!position) return;
             const { x, y } = position;
-            // TO DO: Improve typing
             const node = reactFlow.getNode(change.id);
             if (node)
               updateNodePosition(change.id, {
                 x,
                 y,
-                nodeType: node.type as any,
+                nodeType: node.type as TNodeTypes,
               });
             break;
           }

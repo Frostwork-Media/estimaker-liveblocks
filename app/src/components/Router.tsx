@@ -20,7 +20,6 @@ const router = createBrowserRouter([
   },
   {
     path: "/_/public/:project",
-    // TO DO: Need our migrate endpoint to accept a slug too
     element: <Public />,
   },
   {
