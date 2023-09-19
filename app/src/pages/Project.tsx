@@ -2,6 +2,7 @@ import { ClientSideSuspense } from "@liveblocks/react";
 import { useParams, Link } from "react-router-dom";
 import {
   RoomProvider,
+  useEventListener,
   useMutation,
   useOthers,
   useRoom,
@@ -34,6 +35,13 @@ function Inner() {
   const title = useStorage((state) => state.title) ?? "Untitled";
   const isOwner = useIsOwner();
   const squiggleNodes = useStorage((x) => x.squiggle);
+
+  useEventListener(({ event }) => {
+    console.log(event);
+    if (event.type === "SCHEMA_CHANGED") {
+      window.location.reload();
+    }
+  });
 
   return (
     <SquiggleNodesProvider nodes={squiggleNodes}>

@@ -15,6 +15,10 @@ type Presence = {
   // ...
 };
 
+type RoomEvent = {
+  type: "SCHEMA_CHANGED";
+};
+
 // Optionally, the type of custom events broadcasted and listened for in this
 // room. Must be JSON-serializable.
 // type RoomEvent = {};
@@ -27,10 +31,6 @@ export const {
     useMutation,
     useStatus,
     useRoom,
+    useEventListener,
   },
-} = createRoomContext<
-  Presence,
-  Storage,
-  UserMeta
-  /* RoomEvent */
->(client);
+} = createRoomContext<Presence, Storage, UserMeta, RoomEvent>(client);

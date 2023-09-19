@@ -25,6 +25,6 @@
     "@types/jsonwebtoken": "^9.0.2",
     "@types/node": "^20.4.5",
     "@vercel/node": "^2.15.1",
-    "typescript": "^5.0.2"
+    "typescript": "^5.2.2"
   }
 }

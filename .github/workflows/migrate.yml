@@ -1,0 +1,54 @@
+name: Migrate Storage
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  wait_for_deployment:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: UnlyEd/github-action-await-vercel@v1
+        id: await-vercel
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        with:
+          deployment-url: estimaker-liveblocks.vercel.app # Replace with your deployment URL
+          timeout: 10
+          poll-interval: 1
+
+      - name: Display deployment status
+        run: "echo The deployment at ${{ fromJson(steps.await-vercel.outputs.deploymentDetails).url }} is ${{ fromJson(steps.await-vercel.outputs.deploymentDetails).readyState }}"
+
+  migrate_storage:
+    needs: wait_for_deployment
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - id: get_version
+        name: Check if SCHEMA_VERSION line has changed
+        run: |
+          git diff --unified=0 HEAD^ HEAD shared/src/schema.ts > line_diff.txt
+
+          if grep -q '^\+.*SCHEMA_VERSION =' line_diff.txt; then
+            echo "SCHEMA_VERSION_CHANGED=true" >> $GITHUB_ENV
+          else
+            echo "SCHEMA_VERSION_CHANGED=false" >> $GITHUB_ENV
+          fi
+
+      - uses: pnpm/action-setup@v2
+        if: steps.get_version.outcome == 'success'
+        with:
+          run_install: true
+          version: 8.7.5
+
+      - name: Run Migrate Storage Script
+        if: steps.get_version.outcome == 'success'
+        env:
+          LIVEBLOCKS_SK: ${{ secrets.LIVEBLOCKS_SK }}
+        run: pnpm migrate-storage
