@@ -18,7 +18,6 @@ export function NodePanel() {
       </PopoverTrigger>
       <PopoverContent className="flex border border-neutral-300 rounded-lg p-2 shadow bg-white w-auto">
         <ChangeNodeColor selected={selected} />
-        {/* <LinkToMarket selected={selected} /> */}
       </PopoverContent>
     </Popover>
   );

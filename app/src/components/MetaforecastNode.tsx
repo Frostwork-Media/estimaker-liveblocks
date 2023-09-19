@@ -9,6 +9,7 @@ import {
   Option as TOption,
   MetaforecastNode as TMetaforecastNode,
 } from "shared";
+import { BiChevronRight } from "react-icons/bi";
 
 export function MetaforecastNode({
   data,
@@ -33,13 +34,24 @@ export function MetaforecastNode({
       {query.data ? (
         <div className="grid gap-2">
           <h3 className="text-3xl">{query.data.title}</h3>
-          <div className="grid gap-1">
-            {query.data.options.map((option) => (
-              <Option key={option.name} option={option} />
-            ))}
-          </div>
+          {query.data.options.length ? (
+            <div className="grid gap-1">
+              {query.data.options.map((option) => (
+                <Option key={option.name} option={option} />
+              ))}
+            </div>
+          ) : null}
         </div>
       ) : null}
+      <a
+        href={query.data?.url}
+        target="_blank"
+        rel="noreferrer"
+        className="text-blue-800 hover:underline flex items-center mt-2"
+      >
+        Open on {query.data?.platform.label}
+        <BiChevronRight className="inline-block ml-1" />
+      </a>
     </div>
   );
 }
