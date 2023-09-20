@@ -81,9 +81,9 @@ export function useKeyboardListeners() {
     }
 
     function onKeyDown(e: KeyboardEvent) {
-      if (e.key === "/" && !e.repeat) {
-        if (isEditing()) return;
+      if (isEditing()) return;
 
+      if (e.key === "/" && !e.repeat) {
         useClientStore.setState({
           floatingPopoverOpen: true,
           floatingPopoverMousePosition: mousePosition.current,
