@@ -35,7 +35,7 @@ const VARIABLE_NAME_CLASSES =
  * An individual node in the graphical editor
  */
 export function GraphNode({ data, id }: NodeProps<NodeData<SquiggleNode>>) {
-  const { label, variableName, showing, content } = data;
+  const { label, variableName, showing, content, value } = data;
   const selected = useGraphStore((state) => state.selected);
   const isSelected = selected.includes(id);
   const handleStyle = useMemo(() => {
@@ -178,7 +178,11 @@ export function GraphNode({ data, id }: NodeProps<NodeData<SquiggleNode>>) {
             {showing === "graph" ? <SquiggleGraph nodeId={id} /> : null}
           </div>
         ) : (
-          <SquiggleNodeMedian nodeType={nodeType} variableName={variableName} />
+          <SquiggleNodeMedian
+            nodeType={nodeType}
+            variableName={variableName}
+            value={value}
+          />
         )}
       </div>
       <Handle

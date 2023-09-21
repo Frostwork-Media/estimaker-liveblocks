@@ -15,10 +15,11 @@ module.exports = {
         "2xl": "1400px",
       },
     },
-    fontFamily: {
-      sans: ["Bricolage Grotesque", "sans-serif"],
-    },
     extend: {
+      fontFamily: {
+        sans: ["Bricolage Grotesque", "sans-serif"],
+        mono: ["Martian Mono", "monospace"],
+      },
       keyframes: {
         "accordion-down": {
           from: { height: 0 },
