@@ -1,7 +1,7 @@
 import { Handle, Position } from "reactflow";
 import type { NodeProps } from "reactflow";
 import { NodeData } from "../lib/types";
-import { SquiggleNodeValue, NodeValueImmutable } from "./SquiggleNodeValue";
+import { SquiggleNodeValue } from "./SquiggleNodeValue";
 import { RxBarChart } from "react-icons/rx";
 import { useMutation } from "../liveblocks.config";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -179,15 +179,17 @@ export function GraphNode({ data, id }: NodeProps<NodeData<SquiggleNode>>) {
                   <RxBarChart />
                 </ToggleGroup.Item>
               </ToggleGroup.Root>
-              {showing === "graph" ? <SquiggleGraph nodeId={id} /> : null}
             </div>
           ) : (
-            <SquiggleNodeMedian
-              nodeType={nodeType}
-              variableName={variableName}
-              value={value}
-            />
+            <>
+              <SquiggleNodeMedian
+                nodeType={nodeType}
+                variableName={variableName}
+                value={value}
+              />
+            </>
           )}
+          {showing === "graph" ? <SquiggleGraph nodeId={id} /> : null}
         </div>
       </div>
       <Handle
@@ -204,46 +206,39 @@ export function GraphNodeImmutable({
   data,
   id,
 }: NodeProps<NodeData<SquiggleNode>>) {
-  const { label, variableName, showing, color } = data;
+  const { label, variableName, showing, color, value } = data;
   const handleStyle = useMemo(() => {
     return {
       ..._handleStyle,
       backgroundColor: data.color ? `hsl(${data.color})` : undefined,
     };
   }, [data.color]);
-
+  const procesedRunResult = useSquiggleRunResult(
+    (state) => state.processedRunResult
+  );
+  const nodeType = procesedRunResult?.variables[variableName]?.type;
   return (
     <>
       <Handle type="target" position={Position.Top} style={handleStyle} />
-      <div
-        className={classNames(
-          "bg-transparent grid gap-1",
-          "nodrag",
-          customNodeWidthClass
-        )}
-      >
-        <h2
-          className={TITLE_CLASSES}
-          style={color ? { color: `hsl(${data.color})` } : {}}
+      <div className="py-2">
+        <div
+          className={classNames(
+            "bg-transparent grid gap-1",
+            "nodrag",
+            customNodeWidthClass
+          )}
         >
-          {label}
-        </h2>
-        <div className={NODE_CONTAINER_CLASSES}>
-          <span className={VARIABLE_NAME_CLASSES}>{`{${variableName}}`}</span>
-          <NodeValueImmutable value={data.value} />
-          <ToggleGroup.Root
-            className={TOGGLE_GROUP_CLASSES}
-            type="single"
-            value={showing}
+          <h2
+            className={TITLE_CLASSES}
+            style={color ? { color: `hsl(${data.color})` } : {}}
           >
-            <ToggleGroup.Item
-              className={TOGGLE_GROUP_ITEM_CLASSES}
-              value="graph"
-              aria-label="Left aligned"
-            >
-              <RxBarChart />
-            </ToggleGroup.Item>
-          </ToggleGroup.Root>
+            {label}
+          </h2>
+          <SquiggleNodeMedian
+            nodeType={nodeType}
+            variableName={variableName}
+            value={value}
+          />
           {showing === "graph" ? <SquiggleGraph nodeId={id} /> : null}
         </div>
       </div>

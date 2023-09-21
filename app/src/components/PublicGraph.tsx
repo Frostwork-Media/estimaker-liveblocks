@@ -7,6 +7,8 @@ import { GraphNodeImmutable } from "./GraphNode";
 import { GraphEdgeImmutable } from "./GraphEdge";
 import { Schema } from "shared";
 import { MetaforecastNode } from "./MetaforecastNode";
+import { useProjectCode } from "@/lib/useProjectCode";
+import { useSquiggleEnv } from "@/lib/useSquiggleRunResult";
 
 const nodeTypes: NodeTypes = {
   [SQUIGGLE_NODE]: GraphNodeImmutable,
@@ -18,6 +20,8 @@ const edgeTypes: EdgeTypes = {
 };
 
 export function PublicGraph(props: Schema) {
+  const code = useProjectCode();
+  useSquiggleEnv(code);
   return (
     <ReactFlowProvider>
       <GraphInner {...props} />
