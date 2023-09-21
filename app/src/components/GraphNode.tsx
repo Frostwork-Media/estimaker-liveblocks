@@ -14,6 +14,7 @@ import classNames from "classnames";
 import { SquiggleNode } from "shared";
 import { useGraphStore } from "@/lib/useGraphStore";
 import { SquiggleNodeMedian } from "./SquiggleNodeMedian";
+import { useSquiggleRunResult } from "@/lib/useSquiggleRunResult";
 
 const TITLE_CLASSES =
   "text-left py-2 rounded leading-7 text-4xl leading-tight resize-none focus:outline-none focus:ring-0 focus:border-transparent bg-transparent";
@@ -43,6 +44,11 @@ export function GraphNode({ data, id }: NodeProps<NodeData<SquiggleNode>>) {
       backgroundColor: data.color ? `hsl(${data.color})` : undefined,
     };
   }, [data.color]);
+
+  const procesedRunResult = useSquiggleRunResult(
+    (state) => state.processedRunResult
+  );
+  const nodeType = procesedRunResult?.variables[variableName]?.type;
 
   /** -- Here is where mutation related code begins -- */
 
@@ -117,7 +123,7 @@ export function GraphNode({ data, id }: NodeProps<NodeData<SquiggleNode>>) {
   return (
     <>
       <Handle type="target" position={Position.Top} style={handleStyle} />
-      <div className={`bg-white p-2 grid gap-1 ${customNodeWidthClass}`}>
+      <div className={`p-2 grid gap-1 ${customNodeWidthClass}`}>
         <TextareaAutosize
           className={classNames(TITLE_CLASSES, {
             "pointer-events-none": !isSelected,
@@ -172,7 +178,7 @@ export function GraphNode({ data, id }: NodeProps<NodeData<SquiggleNode>>) {
             {showing === "graph" ? <SquiggleGraph nodeId={id} /> : null}
           </div>
         ) : (
-          <SquiggleNodeMedian nodeId={id} />
+          <SquiggleNodeMedian nodeType={nodeType} variableName={variableName} />
         )}
       </div>
       <Handle

@@ -7,7 +7,7 @@ export function SquiggleGraph({ nodeId }: { nodeId: string }) {
   const code = getSquiggleCode(Object.entries(nodes), nodeId);
   return (
     <div className="w-full">
-      <SquiggleChart code={code} enableLocalSettings />
+      <SquiggleChart code={code} />
     </div>
   );
 }

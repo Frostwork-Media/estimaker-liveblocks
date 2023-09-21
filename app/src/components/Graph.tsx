@@ -34,6 +34,8 @@ import { useKeyboardListeners } from "@/lib/hooks";
 import { MetaforecastSearch } from "./MetaforecastSearch";
 import { MetaforecastNode } from "./MetaforecastNode";
 import { NodeTypes as TNodeTypes } from "shared";
+import { useProjectCode } from "@/lib/useProjectCode";
+import { useSquiggleEnv } from "@/lib/useSquiggleRunResult";
 
 const nodeTypes: NodeTypes = {
   [SQUIGGLE_NODE]: GraphNode,
@@ -45,6 +47,8 @@ const edgeTypes: EdgeTypes = {
 };
 
 export default function Graph() {
+  const code = useProjectCode();
+  useSquiggleEnv(code);
   return (
     <ReactFlowProvider>
       <GraphInner />
