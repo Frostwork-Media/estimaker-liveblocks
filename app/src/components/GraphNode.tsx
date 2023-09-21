@@ -17,7 +17,7 @@ import { SquiggleNodeMedian } from "./SquiggleNodeMedian";
 import { useSquiggleRunResult } from "@/lib/useSquiggleRunResult";
 
 const TITLE_CLASSES =
-  "text-left py-2 rounded leading-7 text-4xl leading-tight resize-none focus:outline-none focus:ring-0 focus:border-transparent bg-transparent";
+  "text-center py-2 rounded leading-7 text-4xl leading-tight resize-none focus:outline-none focus:ring-0 focus:border-transparent bg-transparent";
 const TOGGLE_GROUP_CLASSES = "flex justify-center rounded space-x-px mt-1";
 const TOGGLE_GROUP_ITEM_CLASSES =
   "bg-neutral-100 hover:bg-neutral-300 color-neutral-600 data-[state=on]:bg-blue-700 data-[state=on]:text-neutral-100 flex h-8 w-8 items-center justify-center bg-white text-base leading-4 first:rounded-l last:rounded-r focus:z-10 focus:outline-none";
@@ -123,67 +123,72 @@ export function GraphNode({ data, id }: NodeProps<NodeData<SquiggleNode>>) {
   return (
     <>
       <Handle type="target" position={Position.Top} style={handleStyle} />
-      <div className={`p-2 grid gap-1 ${customNodeWidthClass}`}>
-        <TextareaAutosize
-          className={classNames(TITLE_CLASSES, {
-            "pointer-events-none": !isSelected,
-          })}
-          value={content}
-          ref={titleInputRef}
-          disabled={!isSelected}
-          onChange={(e) => {
-            setContent(e.target.value);
-          }}
-          // catch enter key and set label
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              e.preventDefault();
-              e.stopPropagation();
-              updateNodeVariableName(label);
-            }
-          }}
-          onBlur={() => updateNodeVariableName(label)}
-          style={{
-            color: data.color ? `hsl(${data.color})` : undefined,
-          }}
-        />
-        {isSelected ? (
-          <div className={NODE_CONTAINER_CLASSES}>
-            <button
-              className={VARIABLE_NAME_CLASSES}
-              onClick={() => {
-                // copy variable name to clipboard
-                navigator.clipboard.writeText(variableName);
-              }}
-            >
-              {`{${variableName}}`}
-            </button>
-            <SquiggleNodeValue nodeId={id} />
-            <ToggleGroup.Root
-              className={TOGGLE_GROUP_CLASSES}
-              type="single"
-              value={showing}
-              onValueChange={(showing) => {
-                setShowing(showing as "graph" | undefined);
-              }}
-            >
-              <ToggleGroup.Item
-                className={TOGGLE_GROUP_ITEM_CLASSES}
-                value="graph"
-                aria-label="Left aligned"
-              >
-                <RxBarChart />
-              </ToggleGroup.Item>
-            </ToggleGroup.Root>
-            {showing === "graph" ? <SquiggleGraph nodeId={id} /> : null}
-          </div>
-        ) : (
-          <SquiggleNodeMedian
-            nodeType={nodeType}
-            variableName={variableName}
-            value={value}
+      <div className="py-2">
+        <div className={`p-2 grid gap-1 ${customNodeWidthClass}`}>
+          <TextareaAutosize
+            className={classNames(TITLE_CLASSES, {
+              "pointer-events-none": !isSelected,
+            })}
+            value={content}
+            ref={titleInputRef}
+            disabled={!isSelected}
+            onChange={(e) => {
+              setContent(e.target.value);
+            }}
+            // catch enter key and set label
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                e.stopPropagation();
+                updateNodeVariableName(label);
+                // blur
+                titleInputRef.current?.blur();
+              }
+            }}
+            data-rename-textarea
+            onBlur={() => updateNodeVariableName(label)}
+            style={{
+              color: data.color ? `hsl(${data.color})` : undefined,
+            }}
           />
-        )}
+          {isSelected ? (
+            <div className={NODE_CONTAINER_CLASSES}>
+              <SquiggleNodeValue nodeId={id} />
+              <button
+                className={VARIABLE_NAME_CLASSES}
+                onClick={() => {
+                  // copy variable name to clipboard
+                  navigator.clipboard.writeText(variableName);
+                }}
+              >
+                {`{${variableName}}`}
+              </button>
+              <ToggleGroup.Root
+                className={TOGGLE_GROUP_CLASSES}
+                type="single"
+                value={showing}
+                onValueChange={(showing) => {
+                  setShowing(showing as "graph" | undefined);
+                }}
+              >
+                <ToggleGroup.Item
+                  className={TOGGLE_GROUP_ITEM_CLASSES}
+                  value="graph"
+                  aria-label="Left aligned"
+                >
+                  <RxBarChart />
+                </ToggleGroup.Item>
+              </ToggleGroup.Root>
+              {showing === "graph" ? <SquiggleGraph nodeId={id} /> : null}
+            </div>
+          ) : (
+            <SquiggleNodeMedian
+              nodeType={nodeType}
+              variableName={variableName}
+              value={value}
+            />
+          )}
+        </div>
       </div>
       <Handle
         type="source"

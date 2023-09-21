@@ -13,11 +13,11 @@ html {
   text-wrap: balance;
 }
 
-[class*="react-flow__node-"] > div {
+[class*="react-flow__node-"] > div:nth-child(2) {
   @apply outline outline-transparent rounded;
 }
 
-[class*="react-flow__node-"].selected > div {
+[class*="react-flow__node-"].selected > div:nth-child(2) {
   @apply outline-slate-500/40;
 }
 

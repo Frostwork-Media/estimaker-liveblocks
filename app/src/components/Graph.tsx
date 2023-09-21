@@ -36,6 +36,7 @@ import { MetaforecastNode } from "./MetaforecastNode";
 import { NodeTypes as TNodeTypes } from "shared";
 import { useProjectCode } from "@/lib/useProjectCode";
 import { useSquiggleEnv } from "@/lib/useSquiggleRunResult";
+import { focusNodeTitleInput } from "@/lib/helpers";
 
 const nodeTypes: NodeTypes = {
   [SQUIGGLE_NODE]: GraphNode,
@@ -152,7 +153,11 @@ function GraphInner() {
         y: event.clientY,
       });
 
-      addSquiggleNode(projectedCoords);
+      const id = addSquiggleNode(projectedCoords);
+      // set selected
+      useGraphStore.setState({ selected: [id] });
+      // Focus the title input
+      focusNodeTitleInput(id);
     },
     [addSquiggleNode, reactFlowInstance]
   );
@@ -199,8 +204,16 @@ function GraphInner() {
         }
       }
 
-      // Reset the connecting state
-      useGraphStore.setState({ connecting: null });
+      // set selected
+      requestAnimationFrame(() => {
+        useGraphStore.setState({ selected: [nodeId] });
+
+        // Focus the title input
+        focusNodeTitleInput(nodeId);
+
+        // Reset the connecting state
+        useGraphStore.setState({ connecting: null });
+      });
     },
     [addSquiggleNode, liveAddSuggestedEdge, reactFlowInstance]
   );

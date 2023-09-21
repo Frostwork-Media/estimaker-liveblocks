@@ -26,7 +26,6 @@ export function useSquiggleEnv(code: string) {
     run(debouncedCode)
       .then((runResult) => {
         if (!runResult.ok) {
-          console.log(debouncedCode);
           if (runResult.value.tag === "compile") {
             throw new Error(runResult.value["_value"]);
           }
@@ -74,7 +73,6 @@ function processSquiggleResult(result: Awaited<ReturnType<typeof run>>) {
     };
   }
 
-  console.log(obj);
   return obj;
 }
 

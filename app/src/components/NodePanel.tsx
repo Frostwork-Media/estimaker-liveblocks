@@ -16,7 +16,12 @@ export function NodePanel() {
       <PopoverTrigger asChild>
         <span />
       </PopoverTrigger>
-      <PopoverContent className="flex border border-neutral-300 rounded-lg p-2 shadow bg-white w-auto">
+      <PopoverContent
+        onOpenAutoFocus={(e) => {
+          e.preventDefault();
+        }}
+        className="flex border border-neutral-300 rounded-lg p-2 shadow bg-white w-auto"
+      >
         <ChangeNodeColor selected={selected} />
       </PopoverContent>
     </Popover>

@@ -15,8 +15,6 @@ export function SquiggleNodeMedian({
 }) {
   const code = useProjectCode();
 
-  console.log({ nodeType, value });
-
   /**
    * This stores the last line of our squiggle code which will return our median.
    */

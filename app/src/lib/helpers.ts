@@ -73,3 +73,23 @@ export function mapToObject<K extends string, V>(
   }
   return obj;
 }
+
+/**
+ * Auto-select the input for naming the node
+ **/
+export function focusNodeTitleInput(id: string) {
+  setTimeout(() => {
+    // Find the element with the [data-id] attribute equal to the
+    // id of the node we just created
+    const element = document.querySelector(`[data-id="${id}"]`);
+    if (!element) return;
+
+    // find the data-rename-textarea and put the cursor in it
+    const input = element.querySelector(
+      "[data-rename-textarea]"
+    ) as HTMLTextAreaElement;
+    if (!input) return;
+
+    input.focus();
+  }, 100);
+}

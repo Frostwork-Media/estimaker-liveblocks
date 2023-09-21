@@ -34,23 +34,6 @@ export function useAddSquiggleNodeAtPosition() {
     const id = nanoid();
     nodes.set(id, node);
 
-    // Auto-select the input for naming the node
-    setTimeout(() => {
-      // Find the element with the [data-id] attribute equal to the
-      // id of the node we just created
-      const element = document.querySelector(`[data-id="${id}"]`);
-      if (!element) return;
-
-      // find the data-rename-button within that element
-      const renameButton = element.querySelector(
-        "[data-rename-button]"
-      ) as HTMLButtonElement;
-      if (!renameButton) return;
-
-      // click it
-      renameButton.click();
-    }, 100);
-
     // Return the id of the node so that the caller can use it
     return id;
   }, []);
