@@ -50,7 +50,11 @@ export function SquiggleNodeMedian({
   return (
     <div className="w-full text-center">
       <span className="inline-block text-2xl font-mono py-2 px-3 bg-slate-100 rounded">
-        {nodeType === "value" ? value : median}
+        {nodeType === "value"
+          ? value
+          : nodeType === "function"
+          ? value
+          : median}
       </span>
     </div>
   );

@@ -192,10 +192,18 @@ function GraphInner() {
       const y =
         event instanceof MouseEvent ? event.clientY : event.touches[0].clientY;
       const coords = reactFlowInstance.project({ x, y });
-      const nodeId = addSquiggleNode(coords);
 
-      // Create a suggested edge between the node the user started dragging
+      // ID of node we're connecting to
       const toConnectId = connecting.nodeId;
+      if (!toConnectId) return;
+      const node = reactFlowInstance.getNode(toConnectId);
+
+      // Create the node
+      const nodeId = addSquiggleNode({
+        ...coords,
+        initialValue: node?.data.variableName,
+      });
+
       if (toConnectId) {
         if (connecting.handleType === "target") {
           liveAddSuggestedEdge([nodeId, toConnectId]);

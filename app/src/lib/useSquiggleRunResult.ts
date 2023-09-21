@@ -91,6 +91,8 @@ function getType(s: ASTNode): ProcessedSquiggleNodeType {
     case "InfixCall":
       if (statement.op === "to") return "distribution";
       return "function";
+    case "Identifier":
+      return "function";
     default:
       throw new Error(`Unexpected statement type: ${statement.type}`);
   }
