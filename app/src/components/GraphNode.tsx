@@ -2,7 +2,7 @@ import { Handle, Position } from "reactflow";
 import type { NodeProps } from "reactflow";
 import { NodeData } from "../lib/types";
 import { SquiggleNodeValue, NodeValueImmutable } from "./SquiggleNodeValue";
-import { RxBarChart, RxCross1 } from "react-icons/rx";
+import { RxBarChart } from "react-icons/rx";
 import { useMutation } from "../liveblocks.config";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";
@@ -12,10 +12,11 @@ import { getVarName } from "@/lib/getVarName";
 import { customNodeWidthClass } from "@/lib/constants";
 import classNames from "classnames";
 import { SquiggleNode } from "shared";
+import { useGraphStore } from "@/lib/useGraphStore";
+import { SquiggleNodeMedian } from "./SquiggleNodeMedian";
 
 const TITLE_CLASSES =
   "text-left py-2 rounded leading-7 text-4xl leading-tight resize-none focus:outline-none focus:ring-0 focus:border-transparent bg-transparent";
-const TITLE_CLASSES_INTERACTIVE = "hover:bg-neutral-200";
 const TOGGLE_GROUP_CLASSES = "flex justify-center rounded space-x-px mt-1";
 const TOGGLE_GROUP_ITEM_CLASSES =
   "bg-neutral-100 hover:bg-neutral-300 color-neutral-600 data-[state=on]:bg-blue-700 data-[state=on]:text-neutral-100 flex h-8 w-8 items-center justify-center bg-white text-base leading-4 first:rounded-l last:rounded-r focus:z-10 focus:outline-none";
@@ -25,8 +26,7 @@ const _handleStyle = {
   height: 12,
 };
 
-const NODE_CONTAINER_CLASSES =
-  "px-2 py-3 rounded-md border bg-white grid gap-3 shadow-sm";
+const NODE_CONTAINER_CLASSES = "grid gap-3";
 const VARIABLE_NAME_CLASSES =
   "font-mono text-blue-600 text-sm text-left tracking-wider w-full overflow-hidden whitespace-nowrap overflow-ellipsis";
 
@@ -35,6 +35,8 @@ const VARIABLE_NAME_CLASSES =
  */
 export function GraphNode({ data, id }: NodeProps<NodeData<SquiggleNode>>) {
   const { label, variableName, showing, content } = data;
+  const selected = useGraphStore((state) => state.selected);
+  const isSelected = selected.includes(id);
   const handleStyle = useMemo(() => {
     return {
       ..._handleStyle,
@@ -43,14 +45,6 @@ export function GraphNode({ data, id }: NodeProps<NodeData<SquiggleNode>>) {
   }, [data.color]);
 
   /** -- Here is where mutation related code begins -- */
-
-  const deleteNode = useMutation(
-    ({ storage }) => {
-      if (!window.confirm("Are you sure you want to delete this node?")) return;
-      storage.get("squiggle").delete(id);
-    },
-    [id]
-  );
 
   const [editing, setEditing] = useState(false);
 
@@ -123,17 +117,14 @@ export function GraphNode({ data, id }: NodeProps<NodeData<SquiggleNode>>) {
   return (
     <>
       <Handle type="target" position={Position.Top} style={handleStyle} />
-      <div className={`bg-transparent grid gap-1 ${customNodeWidthClass}`}>
-        <div className="flex justify-end pr-1 pt-1">
-          <button className="text-blue-600 text-base" onClick={deleteNode}>
-            <RxCross1 />
-          </button>
-        </div>
-
+      <div className={`bg-white p-2 grid gap-1 ${customNodeWidthClass}`}>
         <TextareaAutosize
-          className={classNames(TITLE_CLASSES, TITLE_CLASSES_INTERACTIVE)}
+          className={classNames(TITLE_CLASSES, {
+            "pointer-events-none": !isSelected,
+          })}
           value={content}
           ref={titleInputRef}
+          disabled={!isSelected}
           onChange={(e) => {
             setContent(e.target.value);
           }}
@@ -146,37 +137,43 @@ export function GraphNode({ data, id }: NodeProps<NodeData<SquiggleNode>>) {
             }
           }}
           onBlur={() => updateNodeVariableName(label)}
+          style={{
+            color: data.color ? `hsl(${data.color})` : undefined,
+          }}
         />
-
-        <div className={NODE_CONTAINER_CLASSES}>
-          <button
-            className={VARIABLE_NAME_CLASSES}
-            onClick={() => {
-              // copy variable name to clipboard
-              navigator.clipboard.writeText(variableName);
-            }}
-          >
-            {`{${variableName}}`}
-          </button>
-          <SquiggleNodeValue nodeId={id} />
-          <ToggleGroup.Root
-            className={TOGGLE_GROUP_CLASSES}
-            type="single"
-            value={showing}
-            onValueChange={(showing) => {
-              setShowing(showing as "graph" | undefined);
-            }}
-          >
-            <ToggleGroup.Item
-              className={TOGGLE_GROUP_ITEM_CLASSES}
-              value="graph"
-              aria-label="Left aligned"
+        {isSelected ? (
+          <div className={NODE_CONTAINER_CLASSES}>
+            <button
+              className={VARIABLE_NAME_CLASSES}
+              onClick={() => {
+                // copy variable name to clipboard
+                navigator.clipboard.writeText(variableName);
+              }}
             >
-              <RxBarChart />
-            </ToggleGroup.Item>
-          </ToggleGroup.Root>
-          {showing === "graph" ? <SquiggleGraph nodeId={id} /> : null}
-        </div>
+              {`{${variableName}}`}
+            </button>
+            <SquiggleNodeValue nodeId={id} />
+            <ToggleGroup.Root
+              className={TOGGLE_GROUP_CLASSES}
+              type="single"
+              value={showing}
+              onValueChange={(showing) => {
+                setShowing(showing as "graph" | undefined);
+              }}
+            >
+              <ToggleGroup.Item
+                className={TOGGLE_GROUP_ITEM_CLASSES}
+                value="graph"
+                aria-label="Left aligned"
+              >
+                <RxBarChart />
+              </ToggleGroup.Item>
+            </ToggleGroup.Root>
+            {showing === "graph" ? <SquiggleGraph nodeId={id} /> : null}
+          </div>
+        ) : (
+          <SquiggleNodeMedian nodeId={id} />
+        )}
       </div>
       <Handle
         type="source"

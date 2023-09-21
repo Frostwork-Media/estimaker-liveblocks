@@ -218,6 +218,7 @@ function GraphInner() {
           onConnectStart={onConnectStart}
           onConnectEnd={onConnectEnd}
           maxZoom={1}
+          selectNodesOnDrag={false}
           fitView
         >
           <Controls />

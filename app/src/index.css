@@ -13,12 +13,11 @@ html {
 }
 
 [class*="react-flow__node-"] > div {
-  @apply outline outline-transparent rounded transition-all duration-200;
+  @apply outline outline-transparent rounded;
 }
 
-[class*="react-flow__node-"].selected > div,
-[class*="react-flow__node-"].dragging > div {
-  @apply outline-blue-500/20;
+[class*="react-flow__node-"].selected > div {
+  @apply outline-slate-500/40;
 }
 
 .squiggle > div > div:nth-child(2) {

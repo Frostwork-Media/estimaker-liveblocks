@@ -4,7 +4,8 @@ import toposort from "toposort";
 
 export function getSquiggleCode(
   nodesArray: [string, SquiggleNode][] | undefined,
-  nodeId: string
+  nodeId: string,
+  show: "graph" | "median" = "graph"
 ) {
   if (!nodesArray?.length) return "";
   // check if nodes is map
@@ -46,13 +47,18 @@ export function getSquiggleCode(
 
   const sortedIds = toposort.array(Array.from(new Set(nodeIds)), deps);
 
+  const lastLine =
+    show === "graph"
+      ? idToVarNameAndValue[nodeId][0]
+      : `quantile(${idToVarNameAndValue[nodeId][0]}, 0.5)`;
+
   const code =
     sortedIds
       .map((id) => {
         const [variableName, value] = idToVarNameAndValue[id];
         return `${variableName} = ${value}`;
       })
-      .join("\n") + `\n${idToVarNameAndValue[nodeId][0]}`;
+      .join("\n") + `\n${lastLine}`;
 
   return code;
 }

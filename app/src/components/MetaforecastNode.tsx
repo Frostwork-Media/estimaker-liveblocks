@@ -33,7 +33,7 @@ export function MetaforecastNode({
       {query.isLoading && "..."}
       {query.data ? (
         <div className="grid gap-2">
-          <h3 className="text-3xl">{query.data.title}</h3>
+          <h3 className="text-3xl text-slate-700">{query.data.title}</h3>
           {query.data.options.length ? (
             <div className="grid gap-1">
               {query.data.options.map((option) => (
