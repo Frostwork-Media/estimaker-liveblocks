@@ -1,6 +1,10 @@
 import { PublicGraph } from "@/components/PublicGraph";
 import { SquiggleNodesProvider } from "@/components/SquiggleNodesProvider";
 import { PROJECT_HEADER_STYLES } from "@/lib/sharedProjectStyles";
+import {
+  useCollabColorCleanup,
+  useCollaborators,
+} from "@/lib/useCollaborators";
 import { PublicStoreContext, createPublicStore } from "@/lib/usePublicStore";
 import { useQuery } from "@tanstack/react-query";
 import classNames from "classnames";
@@ -28,6 +32,9 @@ export default function Public() {
       suspense: true,
     }
   );
+
+  useCollaborators(publicProject.data?.id);
+  useCollabColorCleanup();
 
   if (!publicProject.data) throw new Error("Missing public project");
 

@@ -40,6 +40,7 @@ const handler: VercelApiHandler = async (req, res) => {
   res.setHeader("Cache-Control", "s-maxage=3600");
   res.status(200).json({
     metadata: project.metadata,
+    id: project.id,
     storage,
   });
 };

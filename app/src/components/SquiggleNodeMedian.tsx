@@ -8,10 +8,12 @@ export function SquiggleNodeMedian({
   nodeType,
   variableName,
   value,
+  displayColor = "#eee",
 }: {
   nodeType?: ProcessedSquiggleNodeType;
   variableName: string;
   value: string;
+  displayColor?: string;
 }) {
   const code = useProjectCode();
 
@@ -49,7 +51,10 @@ export function SquiggleNodeMedian({
 
   return (
     <div className="w-full text-center flex items-center justify-center gap-2">
-      <div>guy</div>
+      <div
+        className="w-4 h-4 rounded-full"
+        style={{ backgroundColor: displayColor }}
+      />
       <span className="inline-block text-2xl font-mono py-2 px-3 bg-slate-100 rounded">
         {nodeType === "value"
           ? value

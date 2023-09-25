@@ -11,6 +11,7 @@ export * from "./src/metaforecast";
 
 export interface PublicProject {
   metadata: ProjectMetadata;
+  id: string;
   storage: Schema;
 }
 

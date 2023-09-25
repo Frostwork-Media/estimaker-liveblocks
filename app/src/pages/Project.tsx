@@ -4,9 +4,7 @@ import {
   RoomProvider,
   useEventListener,
   useMutation,
-  useOthers,
   useRoom,
-  useSelf,
   useStorage,
 } from "../liveblocks.config";
 import { lazy, useState } from "react";
@@ -14,11 +12,6 @@ import { Button } from "@/components/ui/button";
 import { useMutation as useRQMutation } from "@tanstack/react-query";
 import AutosizeInput from "react-input-autosize";
 import { useSquigglePlaygroundUrl } from "@/lib/helpers";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { Collaborate } from "@/components/Collaborate";
 import { PublishModal } from "@/components/PublishModal";
 import { BiChevronLeft, BiDotsVerticalRounded, BiSave } from "react-icons/bi";
@@ -29,12 +22,19 @@ import { ProjectSettings } from "@/components/ProjectSettings";
 import { useIsOwner } from "@/lib/hooks";
 import { SquiggleNodesProvider } from "@/components/SquiggleNodesProvider";
 import { INITIAL_STORAGE } from "shared";
+import {
+  useCollabColorCleanup,
+  useCollaborators,
+} from "@/lib/useCollaborators";
+import { UsersInRoom } from "../components/UsersInRoom";
 const Graph = lazy(() => import("../components/Graph"));
 
-function Inner() {
+function Inner({ roomId }: { roomId: string }) {
   const title = useStorage((state) => state.title) ?? "Untitled";
   const isOwner = useIsOwner();
   const squiggleNodes = useStorage((x) => x.squiggle);
+  useCollaborators(roomId);
+  useCollabColorCleanup();
 
   useEventListener(({ event }) => {
     if (event.type === "SCHEMA_CHANGED") {
@@ -167,38 +167,8 @@ export default function Project() {
           </div>
         }
       >
-        {() => <Inner />}
+        {() => <Inner roomId={id} />}
       </ClientSideSuspense>
     </RoomProvider>
-  );
-}
-
-function UsersInRoom() {
-  const self = useSelf((state) => state.info);
-  const others = useOthers().map(({ info, id }) => ({ ...info, id }));
-  return (
-    <div className="flex mr-4">
-      {self && <UserInRoom {...self} />}
-      {others.map((user) => (
-        <UserInRoom key={user.id} {...user} />
-      ))}
-    </div>
-  );
-}
-
-function UserInRoom(info: { name: string; picture: string }) {
-  return (
-    <Tooltip>
-      <TooltipTrigger className="-ml-2">
-        <img
-          src={info.picture}
-          alt={info.name}
-          className="w-8 h-8 rounded-full border-2 border-white"
-        />
-      </TooltipTrigger>
-      <TooltipContent>
-        <span>{info.name}</span>
-      </TooltipContent>
-    </Tooltip>
   );
 }

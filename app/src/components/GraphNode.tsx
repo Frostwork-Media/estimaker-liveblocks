@@ -4,7 +4,14 @@ import { NodeData } from "../lib/types";
 import { SquiggleNodeValue } from "./SquiggleNodeValue";
 import { RxBarChart } from "react-icons/rx";
 import { useMutation } from "../liveblocks.config";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import TextareaAutosize from "react-textarea-autosize";
 import * as ToggleGroup from "@radix-ui/react-toggle-group";
 import { SquiggleGraph } from "./SquiggleGraph";
@@ -19,6 +26,7 @@ import {
   useSquiggleRunResult,
 } from "@/lib/useSquiggleRunResult";
 import { emailToVarSuffix } from "@/lib/emailToVarSuffix";
+import { useCollaboratorColors } from "@/lib/useCollaborators";
 
 const TITLE_CLASSES =
   "text-center py-2 rounded leading-7 text-4xl leading-tight resize-none focus:outline-none focus:ring-0 focus:border-transparent bg-transparent";
@@ -187,9 +195,7 @@ export function GraphNode({ data, id }: NodeProps<NodeData<SquiggleNode>>) {
           ) : (
             <>
               {nodeType === "function" ? (
-                <div className="font-mono leading-loose bg-slate-800 text-white p-3 rounded">
-                  {value}
-                </div>
+                <FunctionView>{value}</FunctionView>
               ) : (
                 <Medians
                   value={value}
@@ -217,7 +223,7 @@ export function GraphNodeImmutable({
   data,
   id,
 }: NodeProps<NodeData<SquiggleNode>>) {
-  const { label, variableName, showing, color, value } = data;
+  const { label, variableName, showing, color, value, overrides } = data;
   const handleStyle = useMemo(() => {
     return {
       ..._handleStyle,
@@ -245,11 +251,16 @@ export function GraphNodeImmutable({
           >
             {label}
           </h2>
-          <SquiggleNodeMedian
-            nodeType={nodeType}
-            variableName={variableName}
-            value={value}
-          />
+          {nodeType === "function" ? (
+            <FunctionView>{value}</FunctionView>
+          ) : (
+            <Medians
+              value={value}
+              overrides={overrides}
+              nodeType={nodeType}
+              variableName={variableName}
+            />
+          )}
           {showing === "graph" ? <SquiggleGraph nodeId={id} /> : null}
         </div>
       </div>
@@ -287,6 +298,9 @@ function Medians({
     },
     []
   );
+
+  const colors = useCollaboratorColors();
+
   return (
     <div className="grid gap-1">
       <SquiggleNodeMedian
@@ -301,9 +315,18 @@ function Medians({
             nodeType={nodeType}
             variableName={`${variableName}_${emailToVarSuffix(email)}`}
             value={overrides[email]}
+            displayColor={colors[email]}
           />
         );
       })}
+    </div>
+  );
+}
+
+function FunctionView({ children }: { children: ReactNode }) {
+  return (
+    <div className="font-mono leading-loose bg-slate-800 text-white p-3 rounded">
+      {children}
     </div>
   );
 }
