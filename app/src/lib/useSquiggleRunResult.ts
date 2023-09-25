@@ -23,6 +23,7 @@ export const useSquiggleRunResult = create<{
 export function useSquiggleEnv(code: string) {
   const debouncedCode = useDebouncedValue(code, 500);
   useEffect(() => {
+    if (!debouncedCode) return;
     run(debouncedCode)
       .then((runResult) => {
         if (!runResult.ok) {

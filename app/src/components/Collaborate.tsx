@@ -58,7 +58,7 @@ export function Collaborate() {
             <>
               <ul className="grid gap-2 max-h-32 overflow-y-auto">
                 {users.data.map((user) => (
-                  <li key={user} className="text-sm text-neutral-600 font-mono">
+                  <li key={user} className="text-xs text-neutral-500 font-mono">
                     {user}
                   </li>
                 ))}

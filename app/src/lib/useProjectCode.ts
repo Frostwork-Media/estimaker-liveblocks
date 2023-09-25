@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import toposort from "toposort";
 import { getVariables } from "./helpers";
 import { useSquiggleNodes } from "./useSquiggleNodes";
+import { emailToVarSuffix } from "./emailToVarSuffix";
 
 /**
  * Compiles all squiggle nodes into a single string of code
@@ -50,7 +51,19 @@ export function useProjectCode() {
           if (!found) return "";
           const [, node] = found;
           if (!node) return "";
-          return `${node.variableName} = ${node.value}`;
+          let result = `${node.variableName} = ${node.value}`;
+          // Create Values for the Collaborators as well
+          for (const [collaboratorEmail, collaboratorValue] of Object.entries(
+            node.overrides
+          )) {
+            if (!collaboratorValue) continue;
+            const collabVar = `${node.variableName}_${emailToVarSuffix(
+              collaboratorEmail
+            )}`;
+            result += `\n${collabVar} = ${collaboratorValue}`;
+          }
+
+          return result;
         })
         .join("\n");
 

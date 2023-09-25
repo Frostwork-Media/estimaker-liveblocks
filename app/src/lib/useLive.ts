@@ -1,8 +1,8 @@
 import { useMutation } from "@/liveblocks.config";
-import { LiveList, LiveObject } from "@liveblocks/client";
+import { LiveList } from "@liveblocks/client";
 import { customNodeWidth } from "./constants";
 import { nanoid } from "nanoid";
-import { SquiggleNode } from "shared";
+import { SquiggleNode, toLive } from "shared";
 
 // export type LiveNodes = ReturnType<typeof useLiveNodes>;
 // export type LiveNode = LiveNodes extends ReadonlyMap<any, infer V> ? V : never;
@@ -29,7 +29,7 @@ export function useAddSquiggleNodeAtPosition() {
     ) => {
       const nodes = storage.get("squiggle");
       const size = Object.keys(nodes.toObject()).length;
-      const node = new LiveObject<SquiggleNode>({
+      const baseNode: SquiggleNode = {
         nodeType: "squiggle",
         content: "",
         variableName: `var${size + 1}`,
@@ -38,7 +38,9 @@ export function useAddSquiggleNodeAtPosition() {
         // Not sure
         y: y - 50,
         value: initialValue,
-      });
+        overrides: {},
+      };
+      const node = toLive(baseNode);
       const id = nanoid();
       nodes.set(id, node);
 

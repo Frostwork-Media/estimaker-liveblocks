@@ -1,7 +1,7 @@
 import { jsonToLive } from "./jsonToLive";
 import { MetaforecastNode, SquiggleNode } from "./nodes";
 
-export const SCHEMA_VERSION = "2";
+export const SCHEMA_VERSION = "3";
 
 export type Schema = {
   title: string;

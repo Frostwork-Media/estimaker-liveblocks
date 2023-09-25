@@ -8,6 +8,8 @@ export type SquiggleNode = {
   showing?: "graph";
   /** An HSL interior string that can be used to style text or edges */
   color?: string;
+  /** Overrides from individual collaborators. The key is the collaborators name and the value is the value */
+  overrides: { [key: string]: string };
 };
 
 export type MetaforecastNode = {

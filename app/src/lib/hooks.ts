@@ -116,6 +116,6 @@ export function useKeyboardListeners() {
       wrapper.removeEventListener("mousemove", onMouseMouve);
       window.removeEventListener("keydown", onKeyDown);
     };
-  }, []);
+  }, [deleteNode]);
   return wrapperRef;
 }

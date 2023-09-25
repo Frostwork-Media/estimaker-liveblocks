@@ -14,7 +14,11 @@ import classNames from "classnames";
 import { SquiggleNode } from "shared";
 import { useGraphStore } from "@/lib/useGraphStore";
 import { SquiggleNodeMedian } from "./SquiggleNodeMedian";
-import { useSquiggleRunResult } from "@/lib/useSquiggleRunResult";
+import {
+  ProcessedSquiggleNodeType,
+  useSquiggleRunResult,
+} from "@/lib/useSquiggleRunResult";
+import { emailToVarSuffix } from "@/lib/emailToVarSuffix";
 
 const TITLE_CLASSES =
   "text-center py-2 rounded leading-7 text-4xl leading-tight resize-none focus:outline-none focus:ring-0 focus:border-transparent bg-transparent";
@@ -35,7 +39,7 @@ const VARIABLE_NAME_CLASSES =
  * An individual node in the graphical editor
  */
 export function GraphNode({ data, id }: NodeProps<NodeData<SquiggleNode>>) {
-  const { label, variableName, showing, content, value } = data;
+  const { label, variableName, showing, content, value, overrides } = data;
   const selected = useGraphStore((state) => state.selected);
   const isSelected = selected.includes(id);
   const handleStyle = useMemo(() => {
@@ -182,11 +186,18 @@ export function GraphNode({ data, id }: NodeProps<NodeData<SquiggleNode>>) {
             </div>
           ) : (
             <>
-              <SquiggleNodeMedian
-                nodeType={nodeType}
-                variableName={variableName}
-                value={value}
-              />
+              {nodeType === "function" ? (
+                <div className="font-mono leading-loose bg-slate-800 text-white p-3 rounded">
+                  {value}
+                </div>
+              ) : (
+                <Medians
+                  value={value}
+                  overrides={overrides}
+                  nodeType={nodeType}
+                  variableName={variableName}
+                />
+              )}
             </>
           )}
           {showing === "graph" ? <SquiggleGraph nodeId={id} /> : null}
@@ -249,5 +260,50 @@ export function GraphNodeImmutable({
         style={handleStyle}
       />
     </>
+  );
+}
+
+/**
+ * Displays medians for the owner and all collaborators which have supplied a different value
+ */
+function Medians({
+  value,
+  overrides,
+  nodeType,
+  variableName,
+}: {
+  value: string;
+  overrides: Record<string, string>;
+  nodeType: ProcessedSquiggleNodeType | undefined;
+  variableName: string;
+}) {
+  /**
+   * Store the emails of non-empty collaborator overrides
+   */
+  const collab = Object.entries(overrides).reduce<string[]>(
+    (acc, [email, value]) => {
+      if (value) acc.push(email);
+      return acc;
+    },
+    []
+  );
+  return (
+    <div className="grid gap-1">
+      <SquiggleNodeMedian
+        nodeType={nodeType}
+        variableName={variableName}
+        value={value}
+      />
+      {collab.map((email) => {
+        return (
+          <SquiggleNodeMedian
+            key={email}
+            nodeType={nodeType}
+            variableName={`${variableName}_${emailToVarSuffix(email)}`}
+            value={overrides[email]}
+          />
+        );
+      })}
+    </div>
   );
 }

@@ -38,7 +38,7 @@ export function SquiggleNodeMedian({
         median = Math.round(median * 100) + "%";
       } else {
         // Keep up to 3 significant digits
-        median = median.toPrecision(3);
+        median = parseFloat(median.toPrecision(3)).toFixed();
       }
 
       setMedian(median.toString());
@@ -48,7 +48,8 @@ export function SquiggleNodeMedian({
   if (!nodeType || !variableName) return null;
 
   return (
-    <div className="w-full text-center">
+    <div className="w-full text-center flex items-center justify-center gap-2">
+      <div>guy</div>
       <span className="inline-block text-2xl font-mono py-2 px-3 bg-slate-100 rounded">
         {nodeType === "value"
           ? value
