@@ -6,6 +6,8 @@ module.exports = {
     "./components/**/*.{ts,tsx}",
     "./app/**/*.{ts,tsx}",
     "./src/**/*.{ts,tsx}",
+    "./node_modules/@quri/ui/dist/**/*.js",
+    "./node_modules/@quri/squiggle-components/dist/**/*.js",
   ],
   theme: {
     container: {

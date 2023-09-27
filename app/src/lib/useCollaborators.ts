@@ -35,8 +35,8 @@ export function useCollaborators(roomId?: string) {
 }
 
 const colors: string[] = [
-  "#FFCCB1",
-  "#D8A7B1",
+  "#facc00",
+  "#D8A731",
   "#B1D8A7",
   "#88BBE4",
   "#CFC8EF",

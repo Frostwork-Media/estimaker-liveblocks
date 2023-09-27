@@ -206,7 +206,9 @@ export function GraphNode({ data, id }: NodeProps<NodeData<SquiggleNode>>) {
               )}
             </>
           )}
-          {showing === "graph" ? <SquiggleGraph nodeId={id} /> : null}
+          {showing === "graph" ? (
+            <SquiggleGraph variableName={variableName} overrides={overrides} />
+          ) : null}
         </div>
       </div>
       <Handle
@@ -221,7 +223,6 @@ export function GraphNode({ data, id }: NodeProps<NodeData<SquiggleNode>>) {
 
 export function GraphNodeImmutable({
   data,
-  id,
 }: NodeProps<NodeData<SquiggleNode>>) {
   const { label, variableName, showing, color, value, overrides } = data;
   const handleStyle = useMemo(() => {
@@ -261,7 +262,9 @@ export function GraphNodeImmutable({
               variableName={variableName}
             />
           )}
-          {showing === "graph" ? <SquiggleGraph nodeId={id} /> : null}
+          {showing === "graph" ? (
+            <SquiggleGraph variableName={variableName} overrides={overrides} />
+          ) : null}
         </div>
       </div>
       <Handle

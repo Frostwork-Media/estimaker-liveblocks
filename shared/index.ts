@@ -6,7 +6,6 @@ export * from "./src/schema";
 export * from "./src/jsonToLive";
 export * from "./src/jsonToLson";
 export * from "./src/types";
-export * from "./src/migrate";
 export * from "./src/metaforecast";
 
 export interface PublicProject {

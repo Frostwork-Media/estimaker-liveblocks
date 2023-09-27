@@ -1,7 +1,6 @@
 import { jsonToLive } from "./jsonToLive";
 import { MetaforecastNode, SquiggleNode } from "./nodes";
-
-export const SCHEMA_VERSION = "3";
+import { from } from "future-proof";
 
 export type Schema = {
   title: string;
@@ -16,13 +15,20 @@ export type Schema = {
   suggestedEdges: Record<string, string[]>;
 };
 
-export const INITIAL_STORAGE_RAW: Schema = {
+export const initialStorageRaw: Schema = {
   title: "Untitled",
   squiggle: {},
   metaforecast: {},
   suggestedEdges: {},
 };
 
-export const INITIAL_STORAGE = jsonToLive(INITIAL_STORAGE_RAW);
+export const initialStorage = jsonToLive(initialStorageRaw);
 
-export type Storage = typeof INITIAL_STORAGE;
+export type Storage = typeof initialStorage;
+
+export const { migrate, version } = from({
+  title: "Untitled",
+  squiggle: {},
+  metaforecast: {},
+  suggestedEdges: {},
+}).init(initialStorageRaw);

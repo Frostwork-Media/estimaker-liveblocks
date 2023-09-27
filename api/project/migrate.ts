@@ -6,7 +6,7 @@ import {
   setStorageById,
   updateRoomById,
 } from "../_liveblocks";
-import { SCHEMA_VERSION, jsonToLson, migrate } from "shared";
+import { jsonToLson, migrate, version } from "shared";
 
 /**
  * This endpoint takes a project Id and makes sure the data is on the latest version.
@@ -26,7 +26,7 @@ const handler: VercelApiHandler = async (req, res) => {
     return;
   }
 
-  if (room.metadata.version !== SCHEMA_VERSION) {
+  if (room.metadata.version !== version.toString()) {
     const storage = await getProjectStorage(projectId);
     if (!storage) {
       res.status(404).json({ error: "Project not found" });
@@ -34,10 +34,7 @@ const handler: VercelApiHandler = async (req, res) => {
     }
 
     console.log("Migrating project", projectId);
-    const [newStorage] = migrate({
-      data: storage,
-      version: room.metadata?.version,
-    });
+    const newStorage = migrate(storage, parseInt(room.metadata?.version, 10));
 
     // Delete current storage
     await deleteStorageById(projectId);
@@ -49,7 +46,7 @@ const handler: VercelApiHandler = async (req, res) => {
     await updateRoomById(projectId, {
       metadata: {
         ...room.metadata,
-        version: SCHEMA_VERSION,
+        version: version.toString(),
       },
     });
   }

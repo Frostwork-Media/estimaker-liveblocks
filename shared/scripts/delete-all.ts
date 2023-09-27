@@ -5,7 +5,7 @@
  * also have the chorus lyrics to 1995's "Total Eclipse of the Heart" on the environment.
  */
 
-import { Room } from "../src";
+import { Room } from "../";
 
 if (!process.env.TOTAL_ECLIPSE_OF_THE_HEART) {
   process.exit(0);

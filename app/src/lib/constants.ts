@@ -6,7 +6,7 @@ export const CUSTOM_EDGE = "customEdge";
 
 // KEEP THESE TWO IN SYNC
 export const customNodeWidth = 350;
-export const customNodeWidthClass = "w-[350px]";
+export const customNodeWidthClass = "min-w-[350px]";
 
 export const squiggleReservedWords = ["to"];
 

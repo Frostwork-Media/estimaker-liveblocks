@@ -1,7 +1,7 @@
 import { VercelApiHandler } from "@vercel/node";
 import { nanoid } from "nanoid";
 import { LIVEBLOCKS_SECRET_KEY } from "./_config";
-import { ProjectMetadata, SCHEMA_VERSION } from "shared";
+import { ProjectMetadata, version } from "shared";
 import { userFromSession } from "./_auth";
 
 const handler: VercelApiHandler = async (req, res) => {
@@ -14,11 +14,12 @@ const handler: VercelApiHandler = async (req, res) => {
   const id = `room-${nanoid()}`;
 
   const metadata: ProjectMetadata = {
-    version: SCHEMA_VERSION,
+    version: version.toString(),
     name: "Untitled",
     public: "false",
     slug: "",
     ownerId: user.id,
+    ownerEmail: email,
   };
 
   const body = {

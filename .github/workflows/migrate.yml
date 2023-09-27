@@ -33,12 +33,10 @@ jobs:
       - id: get_version
         name: Check if SCHEMA_VERSION line has changed
         run: |
-          git diff --unified=0 HEAD^ HEAD shared/src/schema.ts > line_diff.txt
-
-          if grep -q '^\+.*SCHEMA_VERSION =' line_diff.txt; then
-            echo "SCHEMA_VERSION_CHANGED=true" >> $GITHUB_ENV
-          else
+          if git diff --quiet HEAD^ HEAD -- shared/src/schema.ts; then
             echo "SCHEMA_VERSION_CHANGED=false" >> $GITHUB_ENV
+          else
+            echo "SCHEMA_VERSION_CHANGED=true" >> $GITHUB_ENV
           fi
 
       - uses: pnpm/action-setup@v2

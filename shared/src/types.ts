@@ -23,6 +23,7 @@ export type ProjectMetadata = {
    * This is the clerk Id of the user that created the project
    */
   ownerId: string;
+  ownerEmail: string;
 };
 
 export type Room = {

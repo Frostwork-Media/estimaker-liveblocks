@@ -21,13 +21,33 @@ import { SmallSpinner } from "@/components/SmallSpinner";
 import { ProjectSettings } from "@/components/ProjectSettings";
 import { useIsOwner } from "@/lib/hooks";
 import { SquiggleNodesProvider } from "@/components/SquiggleNodesProvider";
-import { INITIAL_STORAGE } from "shared";
+import { initialStorage } from "shared";
 import {
   useCollabColorCleanup,
   useCollaborators,
 } from "@/lib/useCollaborators";
 import { UsersInRoom } from "../components/UsersInRoom";
 const Graph = lazy(() => import("../components/Graph"));
+
+export default function Project() {
+  const { id } = useParams<{ id: string }>();
+  if (!id) throw new Error("Missing ID");
+  return (
+    <RoomProvider id={id} initialPresence={{}} initialStorage={initialStorage}>
+      <ClientSideSuspense
+        fallback={
+          <div className="h-screen flex justify-center items-center">
+            <span className="text-2xl animate-pulse text-purple-500">
+              Connecting...
+            </span>
+          </div>
+        }
+      >
+        {() => <Inner roomId={id} />}
+      </ClientSideSuspense>
+    </RoomProvider>
+  );
+}
 
 function Inner({ roomId }: { roomId: string }) {
   const title = useStorage((state) => state.title) ?? "Untitled";
@@ -150,25 +170,5 @@ function PageTitle() {
         </Button>
       )}
     </form>
-  );
-}
-
-export default function Project() {
-  const { id } = useParams<{ id: string }>();
-  if (!id) throw new Error("Missing ID");
-  return (
-    <RoomProvider id={id} initialPresence={{}} initialStorage={INITIAL_STORAGE}>
-      <ClientSideSuspense
-        fallback={
-          <div className="h-screen flex justify-center items-center">
-            <span className="text-2xl animate-pulse text-purple-500">
-              Connecting...
-            </span>
-          </div>
-        }
-      >
-        {() => <Inner roomId={id} />}
-      </ClientSideSuspense>
-    </RoomProvider>
   );
 }
