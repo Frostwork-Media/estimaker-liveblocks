@@ -310,6 +310,7 @@ function Medians({
         nodeType={nodeType}
         variableName={variableName}
         value={value}
+        displayColor="#C4D6E7"
       />
       {collab.map((email) => {
         return (

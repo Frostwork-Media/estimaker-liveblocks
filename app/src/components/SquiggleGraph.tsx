@@ -19,7 +19,8 @@ export function SquiggleGraph({
       dists.push(`{ name: "${key}", value: ${value} }`);
     }
     const distsCode = `{${projectCode}\nPlot.dists({
-      dists: [ ${dists.join(", ")} ]
+      dists: [ ${dists.join(", ")} ],
+      showSummary: false,
   })}`;
 
     console.log({ distsCode });

@@ -50,12 +50,11 @@ export function SquiggleNodeMedian({
   if (!nodeType || !variableName) return null;
 
   return (
-    <div className="w-full text-center flex items-center justify-center gap-2">
-      <div
-        className="w-4 h-4 rounded-full"
+    <div className="w-full text-center flex justify-center">
+      <span
+        className="inline-block text-2xl font-mono py-2 px-3 bg-slate-100 rounded"
         style={{ backgroundColor: displayColor }}
-      />
-      <span className="inline-block text-2xl font-mono py-2 px-3 bg-slate-100 rounded">
+      >
         {nodeType === "value"
           ? value
           : nodeType === "function"

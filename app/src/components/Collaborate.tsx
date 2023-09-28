@@ -1,19 +1,31 @@
 import { useRoom } from "../liveblocks.config";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { BiGroup } from "react-icons/bi";
+import { BiCheck, BiGroup, BiLink } from "react-icons/bi";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { useMutation as useRQMutation } from "@tanstack/react-query";
+import {
+  useMutation,
+  useMutation as useRQMutation,
+} from "@tanstack/react-query";
 import { queryClient } from "@/lib/queryClient";
 import { SmallSpinner } from "./SmallSpinner";
 import { useCollaborators } from "@/lib/useCollaborators";
+import { useMemo } from "react";
 
 export function Collaborate() {
   const room = useRoom();
+  const url = useMemo(() => {
+    if (!room.id) return "";
+    return `${window.location.origin}/project/${room.id}`;
+  }, [room.id]);
+  const copyUrlMutation = useMutation(async () => {
+    navigator.clipboard.writeText(url);
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+  });
   const collaboratorsQuery = useCollaborators(room.id);
   const addUserMutation = useRQMutation(async (userToAdd: string) => {
     if (!room.id) return;
@@ -88,6 +100,24 @@ export function Collaborate() {
               Add
             </Button>
           </form>
+          {collaboratorsQuery.data?.length ? (
+            <>
+              <hr />
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  copyUrlMutation.mutate();
+                }}
+              >
+                {copyUrlMutation.isLoading ? (
+                  <BiCheck className="w-4 h-4 mr-1" />
+                ) : (
+                  <BiLink className="w-4 h-4 mr-1" />
+                )}
+                Copy Share URL
+              </Button>
+            </>
+          ) : null}
         </div>
       </PopoverContent>
     </Popover>

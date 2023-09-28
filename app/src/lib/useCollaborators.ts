@@ -34,13 +34,7 @@ export function useCollaborators(roomId?: string) {
   );
 }
 
-const colors: string[] = [
-  "#facc00",
-  "#D8A731",
-  "#B1D8A7",
-  "#88BBE4",
-  "#CFC8EF",
-];
+const colors: string[] = ["#EF8636", "#B1D8A7", "#88BBE4", "#CFC8EF"];
 
 export const useCollaboratorColors = create<Record<string, string>>()(
   (_set) => ({})
